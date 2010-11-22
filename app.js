@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 /**
  * Module dependencies.
@@ -9,7 +10,7 @@ var app = module.exports = express.createServer();
 
 // Configuration
 
-app.configure(function(){
+app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.bodyDecoder());
@@ -21,17 +22,17 @@ app.configure(function(){
   app.use(express.staticProvider(__dirname + '/public'));
 });
 
-app.configure('development', function(){
+app.configure('development', function () {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
-app.configure('production', function(){
+app.configure('production', function () {
   app.use(express.errorHandler()); 
 });
 
 // Routes
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   res.render('index', {
     locals: {
       title: 'Express'
@@ -45,3 +46,6 @@ if (!module.parent) {
   app.listen(3000);
   console.log("Express server listening on port %d", app.address().port)
 }
+
+/* vim: set ts=2 sw=2: */
+
