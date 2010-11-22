@@ -40,6 +40,18 @@ app.get('/', function (req, res) {
   });
 });
 
+var userman = require('./userman');
+
+app.get('/register', function (req, res) {
+  res.render('register');
+});
+
+app.get('/checkuser', function (req, res) {
+  userman.checkUser(req.param('name'), function (result) {
+    res.send(result);
+  });
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {
@@ -47,5 +59,5 @@ if (!module.parent) {
   console.log("Express server listening on port %d", app.address().port)
 }
 
-/* vim: set ts=2 sw=2: */
+/* vim: set ts=2 sw=2 nocin si: */
 
