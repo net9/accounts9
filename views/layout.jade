@@ -1,6 +1,13 @@
 !!!
 html
   head
-    title= title
+    title= pageTitle(title)
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body!= body
+    script(type="text/javascript", src="/javascripts/jquery-1.4.4.min.js")
+  body
+    #header
+      #logo
+      #nav
+    #body!= body
+    script(type="text/javascript", src="/javascripts/script.js")
+

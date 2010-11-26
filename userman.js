@@ -12,7 +12,7 @@ exports.register = function (userinfo, callback) {
   // First make sure that the user doesn't exist.
   userbase.checkUser(userinfo.username, function (occupied) {
     if (occupied) {
-      callback({ success: false, error: 'user-exists' });
+      callback({ success: false, userinfo: userinfo, error: 'user-exists' });
       return;
     }
 

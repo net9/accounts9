@@ -1,4 +1,30 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+// Layout
+body { padding: 50px; font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+// Common
+input, textarea { font: inherit; }
+
+@input-padding: 5px;
+input[type="text"], input[type="password"], textarea { padding: @input-padding; border: 1px solid #ccc; }
+input[type="text"]:hover, input[type="password"]:hover, textarea:hover,
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+  border-color: #999;
 }
+
+.rounded-corners (@radius: 5px) { -moz-border-radius: @radius; -webkit-border-radius: @radius;
+  border-radius: @radius; }
+.button { .rounded-corners; padding: @input-padding; cursor: pointer; }
+input[type="button"] { .button; }
+input[type="submit"] { .button; font-weight: bold; }
+
+// Register
+#register-form {
+  width: 100%;
+  th {
+    text-align: right; width: 50%; vertical-align: top;
+    .tip { display: none; color: #333; font-weight: normal; }
+  }
+  td { vertical-align: top; }
+}
+#register-error { width: 300px; margin: 0 auto; border: 1px solid red; background: #f99; color: #600; padding: 5px; }
+

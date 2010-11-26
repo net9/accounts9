@@ -2,3 +2,64 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+input, textarea {
+  font: inherit;
+}
+input[type="text"], input[type="password"], textarea {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+input[type="text"]:hover,
+input[type="password"]:hover,
+textarea:hover,
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  border-color: #999;
+}
+.button {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+input[type="button"] {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+input[type="submit"] {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#register-form {
+  width: 100%;
+}
+#register-form th {
+  text-align: right;
+  width: 50%;
+  vertical-align: top;
+}
+#register-form th .tip {
+  display: none;
+  color: #333;
+  font-weight: normal;
+}
+#register-form td {
+  vertical-align: top;
+}
+#register-error {
+  width: 300px;
+  margin: 0 auto;
+  border: 1px solid red;
+  background: #f99;
+  color: #600;
+  padding: 5px;
+}

@@ -1,0 +1,761 @@
+True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta http-equiv="Expires" CONTENT="0">
+<meta http-equiv="Cache-Control" CONTENT="no-cache">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<link type="text/css" href="styles/gbp/theme/blue/menu.css" rel="stylesheet">
+<link type="text/css" href="styles/gbp/datepicker.css" rel="StyleSheet"/>
+<link type="text/css" href="styles/zhjw/grid.css" rel="stylesheet">
+<link type="text/css" href="styles/zhjw/css.css" rel="stylesheet">
+<link type="text/css" href="styles/zhjw/default.css" rel="stylesheet">
+<link type="text/css" href="styles/zhjw/common.css" rel="stylesheet">
+<link type="text/css" href="styles/zhjw/topmenu.css" rel="stylesheet">
+
+<script type="text/javascript" src="scripts/grid.js"></script>
+<script type="text/javascript" src="scripts/prototype.js"></script>
+<script type="text/javascript" src="scripts/gbp/page.js"></script>
+<script type="text/javascript" src="scripts/gbp/selectlist.js"></script>
+<script type="text/javascript" src="scripts/gbp/validation.js"></script>
+<script type="text/javascript" src="scripts/gbp/datepicker.js"></script>
+<script type="text/javascript" src="scripts/gbp/menu.js"></script>
+<script type="text/javascript" src="scripts/validator.jsp"></script>
+<script type="text/javascript" src="scripts/zhjw/pubFunction.js"></script>
+
+
+
+</head>
+
+<body class="infoBody">
+
+<script>
+function CloseWin()
+{
+window.parent.close();
+}
+</script>
+
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="logoTable">
+  <tr>
+    <td  style="filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr='#ebc8ff', endColorStr='#a95bd7', gradientType='1');padding-left:15px;"></td> 
+	<td class="top_logo"><img src="images/zhjw/logo_web.gif"  /></td> 
+	<td bgcolor="#A95BD7" width="6%" align="right" valign="bottom">
+	<!-- <a href="" onClick="CloseWin()" class="ban_exit">【退 出】</a>&nbsp;  -->
+	</td>
+</tr>
+</table>
+
+<script>
+function initTopLocal(){
+   initTop("本科生学籍信息",false);
+   //initTop("text","","本科生选课系统");
+   //initTopPart("text","本科生选课系统");
+   //initTopPart("image","images/zhjw/text.png");
+}
+</script>
+
+
+
+<script>
+
+function setInitValue(){
+}
+
+Event.observe(window, "load", setInitValue, false);
+</script>
+
+	
+
+
+	
+
+
+	
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1"
+	bgcolor="#FFFFFF" class="table_title_zi25">
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="17%" height="25" class="copyright_zi_hui_b_shadow">
+						★ 学籍信息：
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="99%" border="0" cellpadding="0" cellspacing="1"
+	bgcolor="#CCCCCC">
+	<tr>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			学号：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+			2009011266
+		</td>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright"
+			rowspan="8">
+			照片：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui" rowspan="8">
+			
+				<img src="xsBks.xsBksXjb.do?m=down&p_id=2009011266" width="130" height="155">
+			
+			
+		</td>
+	</tr>
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			姓名：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			杨旭东
+
+		</td>
+	</tr>
+
+
+	<tr>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			性别：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+			男
+
+		</td>
+	</tr>
+	<tr>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			民族：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+			汉族
+		</td>
+	</tr>
+	<tr>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+				院(系，所)：&nbsp;
+		</td>
+			<td align="left" bgcolor="#F2F2F2" class="hui">
+			
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			  计算机科学与技术系
+			  
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+				
+			
+	</tr>
+	<tr>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+				常用电子信箱：&nbsp;
+		</td>
+			<td align="left" bgcolor="#F2F2F2" class="hui">
+			
+
+		</td>
+	</tr>
+		<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			联系电话座机：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			
+
+		</td>
+	</tr>
+	<tr>
+
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			联系电话手机：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			
+
+		</td>
+	</tr>
+
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			身份证号：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			410502199012140017
+
+		</td>
+
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			第二学位否：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			否
+
+		</td>
+	</tr>
+
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			专业：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			计算机科学与技术
+			(0241)
+
+		</td>
+
+
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			教学班：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			计92
+
+		</td>
+	</tr>
+
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			是否有学籍：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			是
+
+		</td>
+
+
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			出生日期：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			1990年12月14日
+
+		</td>
+	</tr>
+
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			是否在校：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			是
+
+		</td>
+
+
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			收费类别：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			一般
+		</td>
+	</tr>
+
+	<tr>
+
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			是否辅修：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			否
+
+		</td>
+		<td height="25" align="right" bgcolor="#DFDFDF" class="copyright">
+			毕业日期：&nbsp;
+		</td>
+		<td align="left" bgcolor="#F2F2F2" class="hui">
+
+			2013年07月01日
+
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="1"
+	bgcolor="#FFFFFF" class="table_title_zi25">
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="17%" height="25" class="copyright_zi_hui_b_shadow">
+						★ 二学位信息：
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#FFFFFF" class="table_title_zi25">
+  <tr>
+  <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#E9CBF3">
+	<tr>
+		<td  style="font-weight: bold;">
+		<div align="center">
+			入学日期
+			</div>
+		</td>
+		<td style="font-weight: bold;">
+		<div align="center">
+			院系
+			</div>
+		</td>
+		<td  style="font-weight: bold;">
+		<div align="center">
+			专业
+			</div>
+		</td>
+	</tr>
+	
+	
+		<tr>
+			<td align="center" colspan="8" bgcolor="#F2F2F2" class="copyright_zi_hui_shadow">
+				<font style="font-weight: bold;">您目前没有二学位信息！</font>
+			</td>
+		</tr>
+	
+</table>
+</td></tr></table>
+<table width="100%" border="0" cellpadding="0" cellspacing="1"
+	bgcolor="#FFFFFF" class="table_title_zi25">
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="17%" height="25" class="copyright_zi_hui_b_shadow">
+						★ 学籍异动信息：
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#FFFFFF" class="table_title_zi25">
+  <tr>
+  <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#E9CBF3">
+	<tr class="data_list_title">
+		<td style="font-weight: bold;">
+		<div align="center">
+			异动时间
+			</div>
+		</td>
+		<td style="font-weight: bold;">
+		<div align="center">
+			异动类别
+			</div>
+		</td>
+		<!-- 
+		<td style="font-weight: bold;">
+		<div align="center">
+			异动原因
+			</div>
+		</td>
+		 -->
+	</tr>
+	
+	
+		<tr>
+			<td align="center" colspan="8" bgcolor="#F2F2F2" class="copyright_zi_hui_shadow">
+				<font style="font-weight: bold;">您目前没有学籍异动信息！</font>
+			</td>
+		</tr>
+	
+</table>
+	</div>
+</div>
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td height="30" align="center" bgcolor="#eabdf4" class="copyright_shadow">
+		&copy;版权所有：清华大学教务处、研究生院、注册中心 | 技术支持：<a href="http://www.cic.tsinghua.edu.cn" target="_blank">清华大学计算机与信息管理中心</a>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
+
+

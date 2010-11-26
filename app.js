@@ -30,6 +30,16 @@ app.configure('production', function () {
   app.use(express.errorHandler()); 
 });
 
+// Helper functions for view rendering
+var messages = require('./messages');
+app.helpers({
+  msg: messages.get.bind(messages),
+  pageTitle: function (title) {
+    if (title) return messages.get('page-title', title);
+    else return messages.get('index-page-title');
+  }
+});
+
 // Routes
 
 app.get('/', function (req, res) {
@@ -43,8 +53,28 @@ app.get('/', function (req, res) {
 var userman = require('./userman');
 
 app.get('/register', function (req, res) {
-  res.render('register');
+  res.render('register', { locals: { title: messages.get('Register') } });
 });
+
+app.post('/register', function (req, res) {
+  userman.register({
+    username: req.body.username,
+    password: req.body.password,
+    bio:      req.body.bio
+  }, function (result) {
+    if (result.success) res.redirect('users/' + result.userinfo.username);
+    else {
+      res.render('register', {
+        locals: {
+          title: messages.get('Register'),
+          userinfo: result.userinfo,
+          error: result.error
+        }
+      });
+    }
+  });
+});
+
 
 app.get('/checkuser', function (req, res) {
   userman.checkUser(req.param('name'), function (result) {
