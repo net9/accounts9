@@ -1,8 +1,11 @@
 h1 Register
-- if (locals.error)
-  #register-error!= msg('error-' + locals.error)
 form(method="POST", action="/register")
   table#register-form
+    - if (locals.error)
+      tr
+        th
+        td
+          #register-error!= msg('error-' + locals.error)
     tr
       th
         label(for="reg-username")= msg('Username')
