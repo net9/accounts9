@@ -21,12 +21,13 @@ exports.generateClientID = function (username, appname) {
   hasher.update(username + '/' + appname);
   var digest = hasher.digest('base64');
   // In base64 notation the digest always ends with '='. So we lose that.
-  return digest.replace(/\+/g, '-').slice(0, -1);
+  // Also + and / might not be very URL-friendly. We replace those with - and _.
+  return digest.slice(0, -1).replace(/\+/g, '-').replace(/\//g, '_');
 };
 
-exports.createApp = function (username, appinfo, callback) {
+exports.register = function (username, appinfo, callback) {
   // First make sure that no app by the same name exists.
-  appbase.checkByName(appname, function (occupied) {
+  appbase.checkByName(appinfo.name, function (occupied) {
     if (occupied) callback({ success: false, appinfo: appinfo, error: 'app-name-taken' });
     else {
       appbase.create({

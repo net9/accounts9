@@ -160,6 +160,34 @@ app.post('/editinfo', function (req, res) {
   });
 });
 
+app.all('/appreg', function (req, res, next) {
+  if (req.session.userinfo) next();
+  else res.redirect('/');
+});
+
+app.get('/appreg', function (req, res) {
+  res.render('appreg', { locals: { title: messages.get('register-new-app') } });
+});
+
+app.post('/appreg', function (req, res) {
+  appman.register(req.session.userinfo.username, {
+    name: req.body.name,
+    secret: req.body.secret,
+    desc: req.body.desc
+  }, function (result) {
+    if (result.success) res.redirect('/apps/' + result.appinfo.clientid);
+    else {
+      res.render('appreg', {
+        locals: {
+          title: messages.get('register-new-app'),
+          appinfo: result.appinfo,
+          error: result.error
+        }
+      });
+    }
+  });
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {

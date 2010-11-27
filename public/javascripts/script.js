@@ -1,10 +1,14 @@
 (function ($, undefined) {
 
+  var checkTips = function (id) {
+    $("#" + id).focus(function () { $("#" + id + "-tips").stop().slideDown(); })
+               .blur (function () { $("#" + id + "-tips").stop().slideUp();   });
+  };
+
   $(function () {
-    $("#reg-username").focus(function () { $("#reg-username-tips").stop().slideDown(); })
-                      .blur (function () { $("#reg-username-tips").stop().slideUp();   });
-    $("#reg-password").focus(function () { $("#reg-password-tips").stop().slideDown(); })
-                      .blur (function () { $("#reg-password-tips").stop().slideUp();   });
+    $.each(["reg-username", "reg-password", "appreg-name", "appreg-secret", "appreg-desc"], function (idx, val) {
+      checkTips(val);
+    });
   });
 
 })(jQuery);

@@ -22,7 +22,7 @@ form(method="POST", action="/register")
       th
         label(for="reg-bio")= msg('Bio')
       td
-        textarea(id="reg-bio", name="bio")
+        textarea(id="reg-bio", name="bio")= locals.userinfo ? userinfo.bio : ''
     tr
       th
       td

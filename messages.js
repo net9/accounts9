@@ -11,12 +11,19 @@ var messages = {
   'my-info': 'My information',
   'edit-my-info': 'Edit my infomation',
   'my-apps': 'My applications',
-  'create-new-app': 'Create new application',
+  'register-new-app': 'Register new application',
   'no-apps-yet': 'You haven\'t registered any apps yet.',
   'old-password': 'Old password',
   'new-password': 'New password',
   'error-wrong-old-pass': 'The old password you provided is wrong.',
-  'error-app-name-taken': 'Sorry, but an application with this name already exists. Please choose another name.'
+  'error-app-name-taken': 'Sorry, but an application with this name already exists. Please choose another name.',
+  'app-name': 'Application name',
+  'app-secret': 'Application secret',
+  'app-desc': 'Application description',
+  'appreg-name-tips': 'The name of your application. Make it short and descriptive.',
+  'appreg-secret-tips': 'This will be used to authenticate your application; it functions as a password.',
+  'appreg-desc-tips': 'Write a short description of what your application does. This will be presented to the users.',
+  'error-retrieving-apps': 'Could not retrieve list of applications.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.

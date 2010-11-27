@@ -4,7 +4,7 @@ var mongoose = require("mongoose").Mongoose,
     db = mongoose.connect('mongodb://localhost/net9-auth');
 
 mongoose.model('App', {
-  properties: ['name', 'clientid', 'clientsecret', 'desc', { 'owners' : [] }],
+  properties: ['name', 'clientid', 'secret', 'desc', { 'owners' : [] }],
   indexes:    ['name', 'clientid', 'owners']
 });
 var App = db.model('App');

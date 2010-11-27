@@ -13,9 +13,12 @@ h1= msg('welcome', userinfo.username)
         a.button(href="/editinfo")= msg('edit-my-info')
 .section#section-apps
   h2= msg('my-apps')
-  - if (apps.length)
-    ul#app-list!= partial('appitem', apps)
+  - if (apps.success)
+    - if (apps.apps.length)
+      ul#app-list!= partial('appitem', apps.apps)
+    - else
+      div= msg('no-apps-yet')
   - else
-    div= msg('no-apps-yet')
-  a.button(href="/apps-register")= msg('create-new-app')
+    div= msg('error-retrieving-apps')
+  a.button(href="/appreg")= msg('register-new-app')
 
