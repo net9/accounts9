@@ -3,6 +3,7 @@ net9-auth
 The authentication module for the new net9 system.
 
 What we have right now:
+
 * User registration
 * User info editing
   * TODO: what should be classified as normal info and what should go in the key-value store?
