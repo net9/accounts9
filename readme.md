@@ -2,11 +2,15 @@ net9-auth
 =========
 The authentication module for the new net9 system.
 
-To-do list:
-
+What we have right now:
 * User registration
 * User info editing
+  * TODO: what should be classified as normal info and what should go in the key-value store?
 * App registration (sign up for an app token)
+  * TODO: edit/remove.
+
+To-do list:
+
 * OAuth 2.0 for apps
 * (maybe) a key-value store?
 * later use LDAP for user info storage, for now use mongo
