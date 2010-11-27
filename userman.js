@@ -17,9 +17,21 @@ exports.register = function (userinfo, callback) {
     }
 
     // When everything looks good, insert the record.
-    userbase.create(userinfo, function (result) {
-      callback(result);
+    userbase.create(userinfo, function (success, err) {
+      if (success) callback({ success: true, userinfo: userinfo });
+      else callback({ success: false, userinfo: userinfo, error: err });
     });
   });
+};
+
+exports.authenticate = function (userinfo, callback) {
+  userbase.authenticate(userinfo, function (success, err) {
+    if (success) callback({ success: true, userinfo: userinfo });
+    else callback({ success: false, userinfo: userinfo, error: err });
+  });
+};
+
+exports.getApps = function (username, callback) {
+  callback({ success: true, apps: [] });
 };
 

@@ -1,11 +1,11 @@
-h1 Register
+h1= title
 form(method="POST", action="/register")
   table#register-form
     - if (locals.error)
       tr
         th
         td
-          #register-error!= msg('error-' + locals.error)
+          #register-error!= msg('error-' + error)
     tr
       th
         label(for="reg-username")= msg('Username')

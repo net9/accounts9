@@ -19,19 +19,13 @@ input[type="text"], input[type="password"], textarea {
   -moz-box-shadow: 0 1px 0 #ececec;
   -webkit-box-shadow: 0 1px 0 #ececec;
 }
-.botright-shift (@offset: 1px) {
-  margin-top: @offset;
-  margin-left: @offset;
-  margin-right: 0 - @offset;
-  margin-bottom: 0 - @offset;
-}
 
-@button-padding: 8px;
+@button-padding: 1ex;
 
-@gray-grad-start: #e3e3e3;
+@gray-grad-start: #eeeeee;
 @gray-grad-end:   #dbdbdb;
 @gray-border:     #d4d4d4;
-@gray-hover-aug:  #111111;
+@gray-hover-aug:  #0f0f0f;
 @blue-grad-start: #5e9ae2;
 @blue-grad-end:   #3570b8;
 @blue-border:     #2e63a5;
@@ -48,7 +42,8 @@ input[type="text"], input[type="password"], textarea {
   .rounded-corners;
   .gradient-top-down(@grad-start, @grad-end);
   .box-shadow;
-  padding: @button-padding;
+  display: block;
+  padding: @button-padding @button-padding * 1.5;
   cursor: pointer;
   border: 1px solid @border;
   margin: 0;
@@ -57,11 +52,11 @@ input[type="text"], input[type="password"], textarea {
     border-color: @border + @hover-aug;
   }
   &:active {
-    .botright-shift;
     .gradient-top-down(@grad-end + @hover-aug, @grad-start + @hover-aug);
   }
 }
-input[type="button"] {
+a.button, a.button:visited { color: black; text-decoration: none; }
+input[type="button"], a.button {
   .button(@gray-grad-start, @gray-grad-end, @gray-border, @gray-hover-aug);
   text-shadow: 1px 1px 0 rgba(160,160,160,0.9);
 }
@@ -70,14 +65,21 @@ input[type="submit"] {
   font-weight: bold; color: white; text-shadow: 1px 1px 0 rgba(46,99,165,0.9);
 }
 
-// Register
-#register-form {
+// Register & Login
+#register-form, #login-form {
   width: 100%;
   th {
-    text-align: right; width: 50%; vertical-align: top;
+    text-align: right; width: 50%;
     .tip { display: none; color: #333; font-weight: normal; }
   }
-  td { vertical-align: top; }
 }
-#register-error { width: 300px; border: 1px solid red; background: #f99; color: #600; padding: 5px; }
+#register-form { th, td { vertical-align: top; } }
+#register-error, #login-error {
+  width: 300px; border: 1px solid red; color: #600; padding: 5px;
+  .gradient-top-down(#f99, #f66);
+}
+#reg-submit, #login-submit, #login-register { float: left; margin-right: 1em; }
+
+// Dashboard
+#logout { float: right; }
 

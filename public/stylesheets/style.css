@@ -21,35 +21,36 @@ textarea:focus {
   -moz-box-shadow: 0 1px 0 #ececec;
   -webkit-box-shadow: 0 1px 0 #ececec;
 }
-input[type="button"] {
+a.button, a.button:visited {
+  color: black;
+  text-decoration: none;
+}
+input[type="button"], a.button {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  background: #e3e3e3;
-  background: -webkit-gradient(linear, center bottom, center top, from(#dbdbdb), to(#e3e3e3));
-  background: -moz-linear-gradient(90deg, #dbdbdb, #e3e3e3);
+  background: #eeeeee;
+  background: -webkit-gradient(linear, center bottom, center top, from(#dbdbdb), to(#eeeeee));
+  background: -moz-linear-gradient(90deg, #dbdbdb, #eeeeee);
   -moz-box-shadow: 0 1px 0 #ececec;
   -webkit-box-shadow: 0 1px 0 #ececec;
-  padding: 8px;
+  display: block;
+  padding: 1ex 1.5ex;
   cursor: pointer;
   border: 1px solid #d4d4d4;
   margin: 0;
-  text-shadow: 1px 1px 0 rgba(40, 40, 40, 0.9);
+  text-shadow: 1px 1px 0 rgba(160, 160, 160, 0.9);
 }
-input[type="button"]:hover {
-  background: #f4f4f4;
-  background: -webkit-gradient(linear, center bottom, center top, from(#ececec), to(#f4f4f4));
-  background: -moz-linear-gradient(90deg, #ececec, #f4f4f4);
-  border-color: #e5e5e5;
+input[type="button"]:hover, a.button:hover {
+  background: #fdfdfd;
+  background: -webkit-gradient(linear, center bottom, center top, from(#eaeaea), to(#fdfdfd));
+  background: -moz-linear-gradient(90deg, #eaeaea, #fdfdfd);
+  border-color: #e3e3e3;
 }
-input[type="button"]:active {
-  margin-top: 1px;
-  margin-left: 1px;
-  margin-right: -1px;
-  margin-bottom: -1px;
-  background: #ececec;
-  background: -webkit-gradient(linear, center bottom, center top, from(#f4f4f4), to(#ececec));
-  background: -moz-linear-gradient(90deg, #f4f4f4, #ececec);
+input[type="button"]:active, a.button:active {
+  background: #eaeaea;
+  background: -webkit-gradient(linear, center bottom, center top, from(#fdfdfd), to(#eaeaea));
+  background: -moz-linear-gradient(90deg, #fdfdfd, #eaeaea);
 }
 input[type="submit"] {
   -moz-border-radius: 5px;
@@ -60,7 +61,8 @@ input[type="submit"] {
   background: -moz-linear-gradient(90deg, #3570b8, #5e9ae2);
   -moz-box-shadow: 0 1px 0 #ececec;
   -webkit-box-shadow: 0 1px 0 #ececec;
-  padding: 8px;
+  display: block;
+  padding: 1ex 1.5ex;
   cursor: pointer;
   border: 1px solid #2e63a5;
   margin: 0;
@@ -75,34 +77,35 @@ input[type="submit"]:hover {
   border-color: #3a7bc9;
 }
 input[type="submit"]:active {
-  margin-top: 1px;
-  margin-left: 1px;
-  margin-right: -1px;
-  margin-bottom: -1px;
   background: #4188dc;
   background: -webkit-gradient(linear, center bottom, center top, from(#6ab2ff), to(#4188dc));
   background: -moz-linear-gradient(90deg, #6ab2ff, #4188dc);
 }
-#register-form {
+#register-form, #login-form {
   width: 100%;
 }
-#register-form th {
+#register-form th, #login-form th {
   text-align: right;
   width: 50%;
-  vertical-align: top;
 }
-#register-form th .tip {
+#register-form th .tip, #login-form th .tip {
   display: none;
   color: #333;
   font-weight: normal;
 }
-#register-form td {
+#register-form th, #register-form td {
   vertical-align: top;
 }
-#register-error {
+#register-error, #login-error {
   width: 300px;
   border: 1px solid red;
-  background: #f99;
   color: #600;
   padding: 5px;
+  background: #ff9999;
+  background: -webkit-gradient(linear, center bottom, center top, from(#ff6666), to(#ff9999));
+  background: -moz-linear-gradient(90deg, #ff6666, #ff9999);
+}
+#reg-submit, #login-submit, #login-register {
+  float: left;
+  margin-right: 1em;
 }

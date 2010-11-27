@@ -22,8 +22,19 @@ exports.create = function (userinfo, callback) {
     password: userinfo.password,
     bio: userinfo.bio
   }).save(function (err, docs) {
-    if (err) callback({ success: false, error: err });
-    else callback({ success: true, userinfo: userinfo });
+    if (err) callback(false, err);
+    else callback(true);
+  });
+};
+
+exports.authenticate = function (userinfo, callback) {
+  var User = db.model('User');
+  User.find({ username: userinfo.username }).one(function (user) {
+    if (user === null || user.password !== userinfo.password) {
+      callback(false, 'user-pass-no-match');
+    } else {
+      callback(true);
+    }
   });
 };
 
