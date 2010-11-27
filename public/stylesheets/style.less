@@ -5,10 +5,9 @@ body { padding: 50px; font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; 
 input, textarea { font: inherit; }
 
 @input-padding: 5px;
-input[type="text"], input[type="password"], textarea { padding: @input-padding; border: 1px solid #ccc; }
-input[type="text"]:hover, input[type="password"]:hover, textarea:hover,
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-  border-color: #999;
+input[type="text"], input[type="password"], textarea {
+  padding: @input-padding; border: 1px solid #ccc;
+  &:hover, &:focus { border-color: #999; }
 }
 
 .rounded-corners (@radius: 5px) { -moz-border-radius: @radius; -webkit-border-radius: @radius;

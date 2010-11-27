@@ -15,7 +15,7 @@ textarea:hover,
 input[type="text"]:focus,
 input[type="password"]:focus,
 textarea:focus {
-  border-color: #999;
+  border-color: #999999;
 }
 .button {
   -moz-border-radius: 5px;
