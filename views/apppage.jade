@@ -1,0 +1,19 @@
+h1= title
+table#appinfo-table
+  tr
+    th= msg('client-id')
+    td= appinfo.clientid
+  tr
+    th= msg('app-desc')
+    td= appinfo.desc
+  tr
+    th= msg('app-owners')
+    td
+      ul#owners-list!= partial('appowner', appinfo.owners)
+  tr
+    th
+    td
+      - if (amOwner)
+        a.button.default-button(href='/apps/' + appinfo.clientid + '/edit')= msg('edit-app-info')
+        a.button.warning-button(href='/apps/' + appinfo.clientid + '/remove')= msg('remove-app')
+

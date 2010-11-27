@@ -44,3 +44,10 @@ exports.register = function (username, appinfo, callback) {
   });
 };
 
+exports.getByID = function (clientid, callback) {
+  appbase.getByID(clientid, function (success, appOrErr) {
+    if (success) callback({ success: true, appinfo: appOrErr });
+    else callback({ success: false, error: appOrErr });
+  });
+};
+

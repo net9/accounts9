@@ -188,6 +188,24 @@ app.post('/appreg', function (req, res) {
   });
 });
 
+app.get('/apps/:clientid', function (req, res) {
+  appman.getByID(req.params.clientid, function (result) {
+    if (result.success) {
+      res.render('apppage', {
+        locals: {
+          title: messages.get('app-page-title', result.appinfo.name),
+          appinfo: result.appinfo,
+          amOwner: req.session.userinfo &&
+            result.appinfo.owners.indexOf(req.session.userinfo.username) !== -1
+        }
+      });
+    } else {
+      if (result.error === 'app-not-found') res.send(404);
+      else res.send(500);
+    }
+  });
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {

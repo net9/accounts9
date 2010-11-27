@@ -29,3 +29,10 @@ exports.create = function (appinfo, callback) {
   });
 };
 
+exports.getByID = function (clientid, callback) {
+  App.find({ clientid: clientid }).one(function (app) {
+    if (app === null) callback(false, 'app-not-found');
+    else callback(true, app.toObject());
+  });
+};
+

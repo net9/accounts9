@@ -23,7 +23,12 @@ var messages = {
   'appreg-name-tips': 'The name of your application. Make it short and descriptive.',
   'appreg-secret-tips': 'This will be used to authenticate your application; it functions as a password.',
   'appreg-desc-tips': 'Write a short description of what your application does. This will be presented to the users.',
-  'error-retrieving-apps': 'Could not retrieve list of applications.'
+  'error-retrieving-apps': 'Could not retrieve the list of applications.',
+  'app-page-title': 'Application: $1',
+  'client-id': 'Client ID',
+  'app-owners': 'Application owners',
+  'edit-app-info': 'Edit application information',
+  'remove-app': 'Remove this application'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
