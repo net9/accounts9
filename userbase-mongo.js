@@ -9,18 +9,14 @@ mongoose.model('User', {
 });
 var User = db.model('User');
 
-exports.checkUser = function (name, callback) {
-  User.count({ username: name }, function (count) {
+exports.checkUser = function (username, callback) {
+  User.count({ username: username }, function (count) {
     callback(count !== 0);
   });
 };
 
 exports.create = function (userinfo, callback) {
-  var newUser = new User({
-    username: userinfo.username,
-    password: userinfo.password,
-    bio: userinfo.bio
-  });
+  var newUser = new User(userinfo);
   newUser.save(function (err) {
     if (err) callback(false, err);
     else callback(true, newUser.toObject());
@@ -43,6 +39,12 @@ exports.update = function (userinfo, callback) {
       if (err) callback(false, err);
       else callback(true, user.toObject());
     });
+  });
+};
+
+exports.getApps = function (username, callback) {
+  App.find({ owners: username }).all(function (arr) {
+    callback(true, arr.map(function (app) { return app.toObject(); }));
   });
 };
 

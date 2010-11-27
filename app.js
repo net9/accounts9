@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var userman = require('./userman');
-var messages = require('./messages');
+var express = require('express'),
+    userman = require('./userman'),
+    appman = require('./appman'),
+    messages = require('./messages');
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -45,7 +46,7 @@ app.helpers({
 app.get('/', function (req, res) {
   if (req.session.userinfo) {
     // When logged in, display a dashboard of information.
-    userman.getApps(req.session.userinfo.username, function (apps) {
+    appman.getAllByUser(req.session.userinfo.username, function (apps) {
       res.render('dashboard', {
         locals: {
           title: messages.get('Dashboard'),

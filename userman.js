@@ -31,10 +31,6 @@ exports.authenticate = function (userinfo, callback) {
   });
 };
 
-exports.getApps = function (username, callback) {
-  callback({ success: true, apps: [] });
-};
-
 exports.editInfo = function (newinfo, callback) {
   userbase.authenticate({
     username: newinfo.username,

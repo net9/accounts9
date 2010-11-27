@@ -15,7 +15,8 @@ var messages = {
   'no-apps-yet': 'You haven\'t registered any apps yet.',
   'old-password': 'Old password',
   'new-password': 'New password',
-  'error-wrong-old-pass': 'The old password you provided is wrong.'
+  'error-wrong-old-pass': 'The old password you provided is wrong.',
+  'error-app-name-taken': 'Sorry, but an application with this name already exists. Please choose another name.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
