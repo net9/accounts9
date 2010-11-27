@@ -10,11 +10,65 @@ input[type="text"], input[type="password"], textarea {
   &:hover, &:focus { border-color: #999; }
 }
 
-.rounded-corners (@radius: 5px) { -moz-border-radius: @radius; -webkit-border-radius: @radius;
-  border-radius: @radius; }
-.button { .rounded-corners; padding: @input-padding; cursor: pointer; }
-input[type="button"] { .button; }
-input[type="submit"] { .button; font-weight: bold; }
+.rounded-corners (@radius: 5px) {
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  border-radius: @radius;
+}
+.box-shadow {
+  -moz-box-shadow: 0 1px 0 #ececec;
+  -webkit-box-shadow: 0 1px 0 #ececec;
+}
+.botright-shift (@offset: 1px) {
+  margin-top: @offset;
+  margin-left: @offset;
+  margin-right: 0 - @offset;
+  margin-bottom: 0 - @offset;
+}
+
+@button-padding: 8px;
+
+@gray-grad-start: #e3e3e3;
+@gray-grad-end:   #dbdbdb;
+@gray-border:     #d4d4d4;
+@gray-hover-aug:  #111111;
+@blue-grad-start: #5e9ae2;
+@blue-grad-end:   #3570b8;
+@blue-border:     #2e63a5;
+@blue-hover-aug:  #0c1824;
+.gradient-top-down (@start, @end) {
+  background: @start;
+  background: -webkit-gradient(linear,center bottom,center top,from(@end),to(@start));
+  background: -moz-linear-gradient(90deg,@end,@start);
+}
+.button (@grad-start: @gray-grad-start,
+         @grad-end:   @gray-grad-end,
+         @border:     @gray-border,
+         @hover-aug:  @gray-hover-aug) {
+  .rounded-corners;
+  .gradient-top-down(@grad-start, @grad-end);
+  .box-shadow;
+  padding: @button-padding;
+  cursor: pointer;
+  border: 1px solid @border;
+  margin: 0;
+  &:hover {
+    .gradient-top-down(@grad-start + @hover-aug, @grad-end + @hover-aug);
+    border-color: @border + @hover-aug;
+  }
+  &:active {
+    .botright-shift;
+    .gradient-top-down(@grad-end + @hover-aug, @grad-start + @hover-aug);
+  }
+}
+input[type="button"] {
+  .button(@gray-grad-start, @gray-grad-end, @gray-border, @gray-hover-aug);
+  text-shadow: 1px 1px 0 rgba(160,160,160,0.9);
+}
+input[type="submit"] {
+  .button(@blue-grad-start, @blue-grad-end, @blue-border, @blue-hover-aug);
+  font-weight: bold; color: white; text-shadow: 1px 1px 0 rgba(46,99,165,0.9);
+}
 
 // Register
 #register-form {
@@ -25,5 +79,5 @@ input[type="submit"] { .button; font-weight: bold; }
   }
   td { vertical-align: top; }
 }
-#register-error { width: 300px; margin: 0 auto; border: 1px solid red; background: #f99; color: #600; padding: 5px; }
+#register-error { width: 300px; border: 1px solid red; background: #f99; color: #600; padding: 5px; }
 

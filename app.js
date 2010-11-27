@@ -5,7 +5,6 @@
  */
 
 var express = require('express');
-
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -74,7 +73,6 @@ app.post('/register', function (req, res) {
     }
   });
 });
-
 
 app.get('/checkuser', function (req, res) {
   userman.checkUser(req.param('name'), function (result) {
