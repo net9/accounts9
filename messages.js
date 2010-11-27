@@ -12,7 +12,10 @@ var messages = {
   'edit-my-info': 'Edit my infomation',
   'my-apps': 'My applications',
   'create-new-app': 'Create new application',
-  'no-apps-yet': 'You haven\'t registered any apps yet.'
+  'no-apps-yet': 'You haven\'t registered any apps yet.',
+  'old-password': 'Old password',
+  'new-password': 'New password',
+  'error-wrong-old-pass': 'The old password you provided is wrong.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.

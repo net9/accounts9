@@ -116,6 +116,49 @@ app.get('/checkuser', function (req, res) {
   });
 });
 
+app.all('/editinfo', function (req, res, next) {
+  if (req.session.userinfo) next();
+  else res.redirect('/');
+});
+
+app.get('/editinfo', function (req, res) {
+  // When a user requests to edit his info, we provide him with his current
+  // username and bio for rendering in the view.
+  // This won't leak the password, as the view will ask for userinfo.oldpass
+  // and userinfo.newpass.
+  res.render('editinfo', {
+    locals: {
+      title: messages.get('edit-my-info'),
+      userinfo: req.session.userinfo
+    }
+  });
+});
+
+app.post('/editinfo', function (req, res) {
+  var newInfo = {
+    username: req.session.userinfo.username,
+    oldpass:  req.body.oldpass,
+    newpass:  req.body.newpass,
+    bio:      req.body.bio
+  };
+  userman.editInfo(newInfo, function (result) {
+    if (result.success) {
+      // If the editing succeeds, update the user info stored in the session.
+      req.session.userinfo = result.userinfo;
+      res.redirect('/');
+    } else {
+      // On error, give back what was given to us. This fills the password fields.
+      res.render('editinfo', {
+        locals: {
+          title: messages.get('edit-my-info'),
+          userinfo: newInfo,
+          error: result.error
+        }
+      });
+    }
+  });
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {

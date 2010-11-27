@@ -1,0 +1,31 @@
+h1= title
+form(method="POST", action="/editinfo")
+  table#editinfo-form
+    - if (locals.error)
+      tr
+        th
+        td
+          #editinfo-error!= msg('error-' + error)
+    tr
+      th= msg('Username')
+      td= userinfo.username
+    tr
+      th
+        label(for="editinfo-old-password")= msg('old-password')
+      td
+        input(type="password", id="editinfo-old-password", name="oldpass", value=userinfo.oldpass || '')
+    tr
+      th
+        label(for="editinfo-new-password")= msg('new-password')
+      td
+        input(type="password", id="editinfo-new-password", name="newpass", value=userinfo.newpass || '')
+    tr
+      th
+        label(for="editinfo-bio")= msg('Bio')
+      td
+        textarea(id="editinfo-bio", name="bio")= userinfo.bio
+    tr
+      th
+      td
+        input(type="submit", id="editinfo-submit", value=msg('Submit'))
+

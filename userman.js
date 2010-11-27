@@ -17,9 +17,9 @@ exports.register = function (userinfo, callback) {
     }
 
     // When everything looks good, insert the record.
-    userbase.create(userinfo, function (success, err) {
-      if (success) callback({ success: true, userinfo: userinfo });
-      else callback({ success: false, userinfo: userinfo, error: err });
+    userbase.create(userinfo, function (success, userOrErr) {
+      if (success) callback({ success: true, userinfo: userOrErr });
+      else callback({ success: false, userinfo: userinfo, error: userOrErr });
     });
   });
 };
@@ -34,4 +34,25 @@ exports.authenticate = function (userinfo, callback) {
 exports.getApps = function (username, callback) {
   callback({ success: true, apps: [] });
 };
+
+exports.editInfo = function (newinfo, callback) {
+  userbase.authenticate({
+    username: newinfo.username,
+    password: newinfo.oldpass
+  }, function (success, err) {
+    if (success) {
+      userbase.update({
+        username: newinfo.username,
+        password: newinfo.newpass,
+        bio:      newinfo.bio
+      }, function (success, userOrErr) {
+        if (success) callback({ success: true, userinfo: userOrErr });
+        else callback({ success: false, error: userOrErr });
+      });
+    } else {
+      callback({ success: false, error: 'wrong-old-pass' });
+    }
+  });
+};
+
 
