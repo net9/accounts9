@@ -25,9 +25,9 @@ exports.register = function (userinfo, callback) {
 };
 
 exports.authenticate = function (userinfo, callback) {
-  userbase.authenticate(userinfo, function (success, err) {
-    if (success) callback({ success: true, userinfo: userinfo });
-    else callback({ success: false, userinfo: userinfo, error: err });
+  userbase.authenticate(userinfo, function (success, userOrErr) {
+    if (success) callback({ success: true, userinfo: userOrErr });
+    else callback({ success: false, userinfo: userinfo, error: userOrErr });
   });
 };
 

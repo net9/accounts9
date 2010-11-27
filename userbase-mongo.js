@@ -33,7 +33,7 @@ exports.authenticate = function (userinfo, callback) {
     if (user === null || user.password !== userinfo.password) {
       callback(false, 'user-pass-no-match');
     } else {
-      callback(true);
+      callback(true, user);
     }
   });
 };

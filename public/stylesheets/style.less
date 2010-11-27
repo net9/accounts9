@@ -2,6 +2,11 @@
 body { padding: 50px; font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
 
 // Common
+.clear { clear: both; }
+a {
+  &:link, &:visited { color: #37d; text-decoration: none; }
+  &:hover, &:active { color: #59f; text-decoration: underline; }
+}
 input, textarea { font: inherit; }
 
 @input-padding: 5px;
@@ -21,6 +26,8 @@ input[type="text"], input[type="password"], textarea {
 }
 
 @button-padding: 1ex;
+.left-button (@margin-right: 1em) { float: left; margin-right: @margin-right; }
+.right-button (@margin-left: 1em) { float: right; margin-left: @margin-left; }
 
 @gray-grad-start: #eeeeee;
 @gray-grad-end:   #dbdbdb;
@@ -42,14 +49,16 @@ input[type="text"], input[type="password"], textarea {
   .rounded-corners;
   .gradient-top-down(@grad-start, @grad-end);
   .box-shadow;
+  margin: 0;
+  .left-button;
   display: block;
   padding: @button-padding @button-padding * 1.5;
   cursor: pointer;
   border: 1px solid @border;
-  margin: 0;
   &:hover {
     .gradient-top-down(@grad-start + @hover-aug, @grad-end + @hover-aug);
     border-color: @border + @hover-aug;
+    text-decoration: none;
   }
   &:active {
     .gradient-top-down(@grad-end + @hover-aug, @grad-start + @hover-aug);
@@ -78,8 +87,16 @@ input[type="submit"] {
   width: 300px; border: 1px solid red; color: #600; padding: 5px;
   .gradient-top-down(#f99, #f66);
 }
-#reg-submit, #login-submit, #login-register { float: left; margin-right: 1em; }
 
 // Dashboard
-#logout { float: right; }
+#logout { .right-button; }
+
+.section { width: 41%; margin: 1ex 3%; padding: 1ex 1%; }
+#section-userinfo { float: left; }
+#section-apps { float: right; }
+.section h2 { font-size: 110%; border-bottom: 1px dotted #666; margin: 1ex -1em; }
+
+#userinfo-table { width: 100%; th { text-align: right; vertical-align: top; } }
+
+#app-list { li { display: block; } }
 

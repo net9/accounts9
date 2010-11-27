@@ -1,3 +1,21 @@
-h1!= msg('welcome', userinfo.username)
 a.button(href="/logout", id="logout")= msg('Logout')
+h1= msg('welcome', userinfo.username)
+.clear
+.section#section-userinfo
+  h2= msg('my-info')
+  table#userinfo-table
+    tr
+      th= msg('Bio')
+      td= userinfo.bio
+    tr
+      th
+      td
+        a.button(href="/editinfo")= msg('edit-my-info')
+.section#section-apps
+  h2= msg('my-apps')
+  - if (apps.length)
+    ul#app-list!= partial('appitem', apps)
+  - else
+    div= msg('no-apps-yet')
+  a.button(href="/apps-register")= msg('create-new-app')
 

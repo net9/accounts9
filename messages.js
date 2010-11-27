@@ -7,7 +7,12 @@ var messages = {
   'reg-password-tips': 'Do not use silly passwords.',
   'error-user-exists': 'Sorry, but this username is already taken. Please choose another one.',
   'error-user-pass-no-match': 'The username and password you provided don\'t match.',
-  'welcome': 'Welcome, $1!'
+  'welcome': 'Welcome, $1!',
+  'my-info': 'My information',
+  'edit-my-info': 'Edit my infomation',
+  'my-apps': 'My applications',
+  'create-new-app': 'Create new application',
+  'no-apps-yet': 'You haven\'t registered any apps yet.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
