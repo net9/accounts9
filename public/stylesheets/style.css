@@ -109,3 +109,6 @@ input[type="submit"]:active {
   float: left;
   margin-right: 1em;
 }
+#logout {
+  float: right;
+}

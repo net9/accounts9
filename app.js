@@ -95,8 +95,10 @@ app.post('/register', function (req, res) {
     password: req.body.password,
     bio:      req.body.bio
   }, function (result) {
-    if (result.success) res.redirect('users/' + result.userinfo.username);
-    else {
+    if (result.success) {
+      req.session.userinfo = result.userinfo;
+      res.redirect('/');
+    } else {
       res.render('register', {
         locals: {
           title: messages.get('Register'),
