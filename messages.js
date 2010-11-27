@@ -9,7 +9,7 @@ var messages = {
   'error-user-pass-no-match': 'The username and password you provided don\'t match.',
   'welcome': 'Welcome, $1!',
   'my-info': 'My information',
-  'edit-my-info': 'Edit my infomation',
+  'edit-my-info': 'Edit my information',
   'my-apps': 'My applications',
   'register-new-app': 'Register new application',
   'no-apps-yet': 'You haven\'t registered any apps yet.',
