@@ -51,3 +51,10 @@ exports.getByID = function (clientid, callback) {
   });
 };
 
+exports.deleteByID = function (clientid, callback) {
+  appbase.deleteByID(clientid, function (success, err) {
+    if (success) callback({ success: true });
+    else callback({ success: false, error: err });
+  });
+};
+

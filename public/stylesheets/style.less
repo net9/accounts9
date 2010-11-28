@@ -68,10 +68,10 @@ input[type="text"], input[type="password"], textarea {
     .gradient-top-down(@grad-end + @hover-aug, @grad-start + @hover-aug);
   }
 }
-a.button, a.button:visited { color: black; text-decoration: none; }
+a.button, a.button:visited { text-decoration: none; }
 input[type="button"], a.button {
   .button(@gray-grad-start, @gray-grad-end, @gray-border, @gray-hover-aug);
-  text-shadow: 1px 1px 0 rgba(180,180,180,0.9);
+  color: black; text-shadow: 1px 1px 0 rgba(180,180,180,0.9);
 }
 input[type="submit"], a.default-button {
   .button(@blue-grad-start, @blue-grad-end, @blue-border, @blue-hover-aug);

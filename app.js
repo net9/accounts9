@@ -188,22 +188,50 @@ app.post('/appreg', function (req, res) {
   });
 });
 
-app.get('/apps/:clientid', function (req, res) {
+app.all('/apps/:clientid/:op?', function (req, res, next) {
   appman.getByID(req.params.clientid, function (result) {
     if (result.success) {
-      res.render('apppage', {
-        locals: {
-          title: messages.get('app-page-title', result.appinfo.name),
-          appinfo: result.appinfo,
-          amOwner: req.session.userinfo &&
-            result.appinfo.owners.indexOf(req.session.userinfo.username) !== -1
-        }
-      });
+      req.appinfo = result.appinfo;
+      req.amOwner = req.session.userinfo &&
+        result.appinfo.owners.indexOf(req.session.userinfo.username) !== -1;
+      next();
     } else {
       if (result.error === 'app-not-found') res.send(404);
       else res.send(500);
     }
   });
+});
+
+app.get('/apps/:clientid', function (req, res) {
+  res.render('apppage', {
+    locals: {
+      title: messages.get('app-page-title', req.appinfo.name),
+      appinfo: req.appinfo,
+      amOwner: req.amOwner
+    }
+  });
+});
+
+app.all('/apps/:clientid/remove', function (req, res) {
+  if (!req.amOwner) res.send(403);
+  else if (req.method !== 'POST' || req.body.confirm !== 'yes') {
+    res.render('appremoveconfirm', {
+      locals: {
+        title: messages.get('removing-app', req.appinfo.name),
+        appinfo: req.appinfo
+      }
+    });
+  } else {
+    appman.deleteByID(req.params.clientid, function (result) {
+      if (result.success) res.redirect('/');
+      else res.redirect('/apps/' + req.params.clientid);
+    });
+  }
+});
+
+app.all('/apps/:clientid/edit', function (req, res, next) {
+  if (!req.amOwner) res.send(403);
+  else next();
 });
 
 // Only listen on $ node app.js

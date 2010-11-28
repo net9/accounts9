@@ -36,3 +36,9 @@ exports.getByID = function (clientid, callback) {
   });
 };
 
+exports.deleteByID = function (clientid, callback) {
+  App.remove({ clientid: clientid }, function () {
+    callback(true);
+  });
+};
+

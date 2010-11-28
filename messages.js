@@ -28,7 +28,11 @@ var messages = {
   'client-id': 'Client ID',
   'app-owners': 'Application owners',
   'edit-app-info': 'Edit application information',
-  'remove-app': 'Remove this application'
+  'remove-app': 'Remove this application',
+  'removing-app': 'Removing application: $1',
+  'removing-app-confirm': 'Are you sure you want to remove the application <strong>$1</strong>? This cannot be undone.',
+  'yes-wanna-continue': 'Yes, I want to continue',
+  'no-wanna-back-out': 'No, I wasn\'t ready'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
