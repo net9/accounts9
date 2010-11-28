@@ -26,8 +26,6 @@ input[type="text"], input[type="password"], textarea {
 }
 
 @button-padding: 1ex;
-.left-button (@margin-right: 1em) { float: left; margin-right: @margin-right; }
-.right-button (@margin-left: 1em) { float: right; margin-left: @margin-left; }
 
 @gray-grad-start: #eeeeee;
 @gray-grad-end:   #dbdbdb;
@@ -37,8 +35,8 @@ input[type="text"], input[type="password"], textarea {
 @blue-grad-end:   #3570b8;
 @blue-border:     #2e63a5;
 @blue-hover-aug:  #0c1824;
-@red-grad-start:  #dc5f59;
-@red-grad-end:    #b33630;
+@red-grad-start:  #eb645e;
+@red-grad-end:    #c23b35;
 @red-border:      #cd504a;
 @red-hover-aug:   #0f0505;
 .gradient-top-down (@start, @end) {
@@ -53,9 +51,8 @@ input[type="text"], input[type="password"], textarea {
   .rounded-corners;
   .gradient-top-down(@grad-start, @grad-end);
   .box-shadow;
-  margin: 0;
-  .left-button;
-  display: block;
+  margin: .5ex 1ex;
+  display: inline-block;
   padding: @button-padding @button-padding * 1.5;
   cursor: pointer;
   border: 1px solid @border;
@@ -99,7 +96,7 @@ a.warning-button {
 }
 
 // Dashboard
-#logout { .right-button; }
+#logout { float: right; }
 
 .section { width: 41%; margin: 1ex 3%; padding: 1ex 1%; }
 #section-userinfo { float: left; }
