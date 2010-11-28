@@ -1,11 +1,5 @@
-
 form(method="POST", action="/login?returnto=/")
   table#login-form
-    - if (locals.error)
-      tr
-        th
-        td
-          #login-error!= msg('error-' + error)
     tr
       th
         label(for="login-username")= msg('Username')

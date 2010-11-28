@@ -1,13 +1,12 @@
 !!!
 html
   head
-    title= pageTitle(locals.title)
+    title= pageTitle(title)
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
   body
-    #header
-      #logo
-      #nav
+    h1= title
+    != partial('flash', getFlashArray(this.flash()))
     #body!= body
     script(type="text/javascript", src="/javascripts/script.js")
 

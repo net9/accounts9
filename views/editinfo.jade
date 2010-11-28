@@ -1,11 +1,5 @@
-h1= title
 form(method="POST", action="/editinfo")
   table#editinfo-form
-    - if (locals.error)
-      tr
-        th
-        td
-          #editinfo-error!= msg('error-' + error)
     tr
       th= msg('Username')
       td= userinfo.username

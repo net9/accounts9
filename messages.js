@@ -7,7 +7,10 @@ var messages = {
   'reg-password-tips': 'Do not use silly passwords.',
   'error-user-exists': 'Sorry, but this username is already taken. Please choose another one.',
   'error-user-pass-no-match': 'The username and password you provided don\'t match.',
-  'welcome': 'Welcome, $1!',
+  'error-unknown': 'Unknown error.',
+  'error-unauthorized': 'You are unauthorized to perform that action.',
+  'info-register-welcome': 'Welcome to the net9 user platform, $1! You can play around here.',
+  'my-dashboard': 'My dashboard',
   'my-info': 'My information',
   'edit-my-info': 'Edit my information',
   'my-apps': 'My applications',
@@ -15,6 +18,7 @@ var messages = {
   'no-apps-yet': 'You haven\'t registered any apps yet.',
   'old-password': 'Old password',
   'new-password': 'New password',
+  'info-editinfo-success': 'Your user information is successfully updated.',
   'error-wrong-old-pass': 'The old password you provided is wrong.',
   'error-app-name-taken': 'Sorry, but an application with this name already exists. Please choose another name.',
   'app-name': 'Application name',
@@ -23,6 +27,7 @@ var messages = {
   'appreg-name-tips': 'The name of your application. Make it short and descriptive.',
   'appreg-secret-tips': 'This will be used to authenticate your application; it functions as a password.',
   'appreg-desc-tips': 'Write a short description of what your application does. This will be presented to the users.',
+  'info-new-app-success': 'The application is successfully created.',
   'error-retrieving-apps': 'Could not retrieve the list of applications.',
   'app-page-title': 'Application: $1',
   'client-id': 'Client ID',
@@ -32,7 +37,8 @@ var messages = {
   'removing-app': 'Removing application: $1',
   'removing-app-confirm': 'Are you sure you want to remove the application <strong>$1</strong>? This cannot be undone.',
   'yes-wanna-continue': 'Yes, I want to continue',
-  'no-wanna-back-out': 'No, I wasn\'t ready'
+  'no-wanna-back-out': 'No, I wasn\'t ready',
+  'info-app-removal-success': 'The application $1 was successfully removed.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.

@@ -1,11 +1,5 @@
-h1= title
 form(method="POST", action="/appreg")
   table#appreg-form
-    - if (locals.error)
-      tr
-        th
-        td
-          #appreg-error!= msg('error-' + error)
     tr
       th
         label(for="appreg-name")= msg('app-name')

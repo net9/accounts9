@@ -38,6 +38,22 @@ app.helpers({
   pageTitle: function (title) {
     if (title) return messages.get('page-title', title);
     else return messages.get('index-page-title');
+  },
+  getFlashArray: function (flash) {
+    // Turn this:
+    //   { 'info': ['info1', 'info2'], 'error': ['error1'] }
+    // into this:
+    //   [ { type: 'info', message: 'info1' }
+    //   , { type: 'info', message: 'info2' }
+    //   , { type: 'error', message: 'error1' }]
+    // for ease with view partials rendering.
+    var flashes = [];
+    for (var key in flash) {
+      flash[key].forEach(function (msg) {
+        flashes.push({ type: key, message: msg });
+      });
+    }
+    return flashes;
   }
 });
 
@@ -49,14 +65,14 @@ app.get('/', function (req, res) {
     appman.getAllByUser(req.session.userinfo.username, function (apps) {
       res.render('dashboard', {
         locals: {
-          title: messages.get('Dashboard'),
+          title: messages.get('my-dashboard'),
           userinfo: req.session.userinfo,
           apps: apps
         }
       });
     });
   } else {
-    res.render('index');
+    res.render('index', { locals: { title: messages.get('Login') } });
   }
 });
 
@@ -70,10 +86,11 @@ app.post('/login', function (req, res) {
       req.session.userinfo = result.userinfo;
       res.redirect(redirectURL);
     } else {
+      req.flash('error', result.error);
       res.render('index', {
         locals: {
-          userinfo: result.userinfo,
-          error: result.error
+          title: messages.get('Login'),
+          userinfo: result.userinfo
         }
       });
     }
@@ -98,13 +115,14 @@ app.post('/register', function (req, res) {
   }, function (result) {
     if (result.success) {
       req.session.userinfo = result.userinfo;
+      req.flash('info', 'register-welcome|' + result.userinfo.username);
       res.redirect('/');
     } else {
+      req.flash('error', result.error);
       res.render('register', {
         locals: {
           title: messages.get('Register'),
-          userinfo: result.userinfo,
-          error: result.error
+          userinfo: result.userinfo
         }
       });
     }
@@ -146,14 +164,15 @@ app.post('/editinfo', function (req, res) {
     if (result.success) {
       // If the editing succeeds, update the user info stored in the session.
       req.session.userinfo = result.userinfo;
+      req.flash('info', 'editinfo-success');
       res.redirect('/');
     } else {
       // On error, give back what was given to us. This fills the password fields.
+      req.flash('error', result.error);
       res.render('editinfo', {
         locals: {
           title: messages.get('edit-my-info'),
-          userinfo: newInfo,
-          error: result.error
+          userinfo: newInfo
         }
       });
     }
@@ -175,13 +194,15 @@ app.post('/appreg', function (req, res) {
     secret: req.body.secret,
     desc: req.body.desc
   }, function (result) {
-    if (result.success) res.redirect('/apps/' + result.appinfo.clientid);
-    else {
+    if (result.success) {
+      req.flash('info', 'new-app-success');
+      res.redirect('/apps/' + result.appinfo.clientid);
+    } else {
+      req.flash('error', result.error);
       res.render('appreg', {
         locals: {
           title: messages.get('register-new-app'),
-          appinfo: result.appinfo,
-          error: result.error
+          appinfo: result.appinfo
         }
       });
     }
@@ -213,8 +234,10 @@ app.get('/apps/:clientid', function (req, res) {
 });
 
 app.all('/apps/:clientid/remove', function (req, res) {
-  if (!req.amOwner) res.send(403);
-  else if (req.method !== 'POST' || req.body.confirm !== 'yes') {
+  if (!req.amOwner) {
+    req.flash('error', 'unauthorized');
+    res.redirect('/apps/' + req.params.clientid);
+  } else if (req.method !== 'POST' || req.body.confirm !== 'yes') {
     res.render('appremoveconfirm', {
       locals: {
         title: messages.get('removing-app', req.appinfo.name),
@@ -223,15 +246,22 @@ app.all('/apps/:clientid/remove', function (req, res) {
     });
   } else {
     appman.deleteByID(req.params.clientid, function (result) {
-      if (result.success) res.redirect('/');
-      else res.redirect('/apps/' + req.params.clientid);
+      if (result.success) {
+        req.flash('info', 'app-removal-success|' + req.params.clientid);
+        res.redirect('/');
+      } else {
+        req.flash('error', 'unknown');
+        res.redirect('/apps/' + req.params.clientid);
+      }
     });
   }
 });
 
 app.all('/apps/:clientid/edit', function (req, res, next) {
-  if (!req.amOwner) res.send(403);
-  else next();
+  if (!req.amOwner) {
+    req.flash('error', 'unauthorized');
+    res.redirect('/apps/' + req.params.clientid);
+  } else next();
 });
 
 // Only listen on $ node app.js
