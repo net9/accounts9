@@ -1,4 +1,4 @@
-table#appinfo-table
+table.info-table
   tr
     th= msg('client-id')
     td= appinfo.clientid
@@ -8,7 +8,7 @@ table#appinfo-table
   tr
     th= msg('app-owners')
     td
-      ul#owners-list!= partial('appowner', appinfo.owners)
+      ul.operable-list!= partial('appowner', appinfo.owners)
   tr
     th
     td

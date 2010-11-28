@@ -2,7 +2,7 @@ a.button(href="/logout", id="logout")= msg('Logout')
 .clear
 .section#section-userinfo
   h2= msg('my-info')
-  table#userinfo-table
+  table.info-table
     tr
       th= msg('Bio')
       td= userinfo.bio
@@ -14,7 +14,7 @@ a.button(href="/logout", id="logout")= msg('Logout')
   h2= msg('my-apps')
   - if (apps.success)
     - if (apps.apps.length)
-      ul#app-list!= partial('appitem', apps.apps)
+      ul.operable-list!= partial('appitem', apps.apps)
     - else
       div= msg('no-apps-yet')
   - else
