@@ -42,3 +42,20 @@ exports.deleteByID = function (clientid, callback) {
   });
 };
 
+exports.authenticate = function (clientid, secret, callback) {
+  App.find({ clientid: clientid }).one(function (app) {
+    if (app === null) callback(false, 'no-such-app-clientid');
+    else if (app.secret !== secret) callback(false, 'wrong-secret');
+    else callback(true, app.toObject());
+  });
+};
+
+exports.update = function (appinfo, callback) {
+  App.find({ clientid: appinfo.clientid}).one(function (app) {
+    app.merge(appinfo).save(function (err) {
+      if (err) callback(false, err);
+      else callback(true, app.toObject());
+    });
+  });
+};
+

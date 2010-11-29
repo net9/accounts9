@@ -23,9 +23,9 @@ exports.create = function (userinfo, callback) {
   });
 };
 
-exports.authenticate = function (userinfo, callback) {
-  User.find({ username: userinfo.username }).one(function (user) {
-    if (user === null || user.password !== userinfo.password) {
+exports.authenticate = function (username, password, callback) {
+  User.find({ username: username }).one(function (user) {
+    if (user === null || user.password !== password) {
       callback(false, 'user-pass-no-match');
     } else {
       callback(true, user.toObject());

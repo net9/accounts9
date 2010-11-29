@@ -5,6 +5,7 @@
  */
 
 var express = require('express'),
+    sys = require('sys'),
     userman = require('./userman'),
     appman = require('./appman'),
     messages = require('./messages');
@@ -54,6 +55,9 @@ app.helpers({
       });
     }
     return flashes;
+  },
+  inspect: function (obj) {
+    return sys.inpect(obj);
   }
 });
 
@@ -262,6 +266,39 @@ app.all('/apps/:clientid/edit', function (req, res, next) {
     req.flash('error', 'unauthorized');
     res.redirect('/apps/' + req.params.clientid);
   } else next();
+});
+
+app.get('/apps/:clientid/edit', function (req, res) {
+  res.render('appedit', {
+    locals: {
+      title: messages.get('editing-app', req.appinfo.name),
+      appinfo: req.appinfo
+    }
+  });
+});
+
+app.post('/apps/:clientid/edit', function (req, res) {
+  var newInfo = {
+    clientid: req.params.clientid,
+    name: req.body.name,
+    oldsecret: req.body.oldsecret,
+    newsecret: req.body.newsecret,
+    desc: req.body.desc
+  };
+  appman.updateInfo(newInfo, function (result) {
+    if (result.success) {
+      req.flash('info', 'app-editinfo-success');
+      res.redirect('/apps/' + req.params.clientid);
+    } else {
+      req.flash('error', result.error);
+      res.render('appedit', {
+        locals: {
+          title: messages.get('editing-app', req.appinfo.name),
+          appinfo: newInfo
+        }
+      });
+    }
+  });
 });
 
 // Only listen on $ node app.js

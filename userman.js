@@ -25,17 +25,14 @@ exports.register = function (userinfo, callback) {
 };
 
 exports.authenticate = function (userinfo, callback) {
-  userbase.authenticate(userinfo, function (success, userOrErr) {
+  userbase.authenticate(userinfo.username, userinfo.password, function (success, userOrErr) {
     if (success) callback({ success: true, userinfo: userOrErr });
     else callback({ success: false, userinfo: userinfo, error: userOrErr });
   });
 };
 
 exports.editInfo = function (newinfo, callback) {
-  userbase.authenticate({
-    username: newinfo.username,
-    password: newinfo.oldpass
-  }, function (success, err) {
+  userbase.authenticate(newinfo.username, newinfo.oldpass, function (success, userOrErr) {
     if (success) {
       userbase.update({
         username: newinfo.username,

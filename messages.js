@@ -38,7 +38,14 @@ var messages = {
   'removing-app-confirm': 'Are you sure you want to remove the application <strong>$1</strong>? This cannot be undone.',
   'yes-wanna-continue': 'Yes, I want to continue',
   'no-wanna-back-out': 'No, I wasn\'t ready',
-  'info-app-removal-success': 'The application $1 was successfully removed.'
+  'info-app-removal-success': 'The application $1 was successfully removed.',
+  'editing-app': 'Editing application information: $1',
+  'error-wrong-old-secret': 'The old application secret you provided is wrong.',
+  'info-app-editinfo-success': 'The application\'s information is successfully updated.',
+  'old-app-secret': 'Old application secret',
+  'new-app-secret': 'New application secret',
+  'wrong-secret': 'The application secret you provided is wrong.',
+  'error-no-such-app-clientid': 'No application with this client ID exists.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.

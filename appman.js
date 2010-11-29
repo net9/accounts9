@@ -58,3 +58,24 @@ exports.deleteByID = function (clientid, callback) {
   });
 };
 
+exports.updateInfo = function (appinfo, callback) {
+  appbase.authenticate(appinfo.clientid, appinfo.oldsecret, function (success, appOrErr) {
+    if (success) {
+      appbase.update({
+        clientid: appinfo.clientid,
+        name: appinfo.name,
+        secret: appinfo.newsecret,
+        desc: appinfo.desc
+      }, function (success, appOrErr) {
+        if (success) callback({ success: true, appinfo: appOrErr });
+        else callback({ success: false, error: appOrErr });
+      });
+    } else {
+      callback({
+        success: false,
+        error: appOrErr === 'wrong-secret' ? 'wrong-old-secret' : appOrErr
+      });
+    }
+  });
+};
+
