@@ -76,7 +76,7 @@ app.get('/', function (req, res) {
       });
     });
   } else {
-    res.render('index', { locals: { title: messages.get('Login') } });
+    res.render('login', { locals: { title: messages.get('Login') } });
   }
 });
 
@@ -91,7 +91,7 @@ app.post('/login', function (req, res) {
       res.redirect(redirectURL);
     } else {
       req.flash('error', result.error);
-      res.render('index', {
+      res.render('login', {
         locals: {
           title: messages.get('Login'),
           userinfo: result.userinfo
