@@ -1,4 +1,6 @@
-form(method="POST", action="/login?returnto=/")
+form(method="POST", action="/login")
+  - if (locals.returnto)
+    input(type="hidden", name="returnto", value=returnto)
   table.form-table
     tr
       th
