@@ -56,6 +56,7 @@ input[type="text"], input[type="password"], textarea {
   padding: @button-padding @button-padding * 1.5;
   cursor: pointer;
   border: 1px solid @border;
+  position: relative;
   &:hover {
     .gradient-top-down(@grad-start + @hover-aug, @grad-end + @hover-aug);
     border-color: @border + @hover-aug;
@@ -63,6 +64,7 @@ input[type="text"], input[type="password"], textarea {
   }
   &:active {
     .gradient-top-down(@grad-end + @hover-aug, @grad-start + @hover-aug);
+    left: 1px; top: 1px;
   }
 }
 a.button, a.button:visited { text-decoration: none; }
