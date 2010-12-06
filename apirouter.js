@@ -6,10 +6,11 @@ var appman = require('./appman'),
 module.exports = function (app) {
 
   app.get('/api/authorize', function (req, res) {
-    var clientid = req.params.client_id,
-        redirect_uri = req.params.redirect_uri,
-        state = req.params.state ? '&state=' + req.params.state : '',
-        scope = req.params.scope;
+    var clientid = req.query.client_id,
+        redirect_uri = req.query.redirect_uri,
+        state = req.query.state ? '&state=' + req.query.state : '',
+        scope = req.query.scope || 'a b';
+    // FIXME: Add scope support.
     if (!clientid) {
       if (redirect_uri) {
         res.redirect(redirect_uri + '?error=invalid_request' + state);
@@ -19,6 +20,11 @@ module.exports = function (app) {
     } else {
       appman.getByID(clientid, function (result) {
         if (result.success) {
+          // FIXME: temporarily adding /apps/:clientid. Use real list later.
+          result.appinfo.redirectURIs = [
+            'http://server4.net9.org/apps/' + clientid,
+            'http://localhost:3000/apps/' + clientid
+          ];
           // Make sure that redirect_uri is one of what we have.
           if (result.appinfo.redirectURIs.indexOf(redirect_uri) === -1) {
             res.redirect(redirect_uri + '?error=redirect_uri_mismatch' + state);
@@ -54,10 +60,10 @@ module.exports = function (app) {
   });
 
   app.post('/api/authorize', function (req, res) {
-    if (!req.session.oauthinfo[req.params.client_id] || !req.session.userinfo) res.redirect(req.url);
+    if (!req.session.oauthinfo[req.query.client_id] || !req.session.userinfo) res.redirect(req.url);
     else {
-      var oauthinfo = req.session.oauthinfo[req.params.client_id];
-      delete req.session.oauthinfo[req.params.client_id];
+      var oauthinfo = req.session.oauthinfo[req.query.client_id];
+      delete req.session.oauthinfo[req.query.client_id];
       if (req.body.yes) {
         // TODO: Grant code and perform accordingly.
         res.redirect(oauthinfo.redirect_uri + '?code=abcdefg');

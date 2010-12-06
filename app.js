@@ -6,7 +6,6 @@
 
 var express = require('express'),
     sys = require('sys'),
-    //express_namespace = require('express-namespace'),
     userman = require('./userman'),
     appman = require('./appman'),
     messages = require('./messages');
@@ -30,7 +29,8 @@ app.configure(function () {
 });
 
 app.configure('development', function () {
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.use(express.logger());
 });
 
 app.configure('production', function () {

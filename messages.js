@@ -45,7 +45,9 @@ var messages = {
   'old-app-secret': 'Old application secret',
   'new-app-secret': 'New application secret',
   'wrong-secret': 'The application secret you provided is wrong.',
-  'error-no-such-app-clientid': 'No application with this client ID exists.'
+  'error-no-such-app-clientid': 'No application with this client ID exists.',
+  'authenticating': 'Authenticating application: $1',
+  'app-auth-message': 'Are you sure you want to authenticate the application <a href="/apps/$1" target="_blank"><strong>$2</strong></a>? If you do, <strong>$2</strong> will have access to your personal data.'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.

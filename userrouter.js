@@ -15,7 +15,7 @@ module.exports = function (app) {
   });
 
   app.post('/login', function (req, res) {
-    var redirectURL = req.query.returnto || '/';
+    var redirectURL = req.param('returnto') || '/';
     userman.authenticate({
       username: req.body.username,
       password: req.body.password

@@ -66,9 +66,9 @@ input[type="text"], input[type="password"], textarea {
   }
 }
 a.button, a.button:visited { text-decoration: none; }
-input[type="button"], a.button, input.button {
+input[type="button"], a.button, input[type="submit"].normal-button {
   .button(@gray-grad-start, @gray-grad-end, @gray-border, @gray-hover-aug);
-  color: black; text-shadow: 1px 1px 0 rgba(180,180,180,0.9);
+  font-weight: normal; color: black; text-shadow: 1px 1px 0 rgba(180,180,180,0.9);
 }
 input[type="submit"], a.default-button, input.default-button {
   .button(@blue-grad-start, @blue-grad-end, @blue-border, @blue-hover-aug);
