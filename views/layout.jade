@@ -5,8 +5,13 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
   body
-    h1= title
-    != partial('flash', getFlashArray(this.flash()))
-    #body!= body
+    #container
+      #header
+        #menu!= partial('menuitem', getMenuItems(this.session.menu))
+        a#logo(href="/")
+      h1= title
+      != partial('flash', getFlashArray(this.flash()))
+      #body!= body
+      .clear
     script(type="text/javascript", src="/javascripts/script.js")
 

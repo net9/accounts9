@@ -60,6 +60,9 @@ app.helpers({
     }
     return flashes;
   },
+  getMenuItems: function (menu) {
+    return [];
+  },
   inspect: function (obj) {
     return sys.inspect(obj);
   }
