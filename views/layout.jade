@@ -9,9 +9,10 @@ html
       #header
         #menu!= partial('menuitem', getMenuItems(this.session.menu))
         a#logo(href="/")
-      h1= title
-      != partial('flash', getFlashArray(this.flash()))
-      #body!= body
-      .clear
+      #content
+        h1= title
+        != partial('flash', getFlashArray(this.flash()))
+        #body!= body
+        .clear
     script(type="text/javascript", src="/javascripts/script.js")
 
