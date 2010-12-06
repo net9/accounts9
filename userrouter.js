@@ -15,19 +15,19 @@ module.exports = function (app) {
   });
 
   app.post('/login', function (req, res) {
-    var redirectURL = req.param('returnto') || '/';
     userman.authenticate({
       username: req.body.username,
       password: req.body.password
     }, function (result) {
       if (result.success) {
         req.session.userinfo = result.userinfo;
-        res.redirect(redirectURL);
+        res.redirect(req.param('returnto') || '/');
       } else {
         req.flash('error', result.error);
         res.render('login', {
           locals: {
             title: messages.get('Login'),
+            returnto: req.param('returnto'),
             userinfo: result.userinfo
           }
         });
