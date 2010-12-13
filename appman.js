@@ -58,6 +58,13 @@ exports.deleteByID = function (clientid, callback) {
   });
 };
 
+exports.authenticate = function (appinfo, callback) {
+  appbase.authenticate(appinfo.clientid, appinfo.secret, function (success, appOrErr) {
+    if (success) callback({ success: true, appinfo: appOrErr });
+    else callback({ success: false, error: appOrErr });
+  });
+};
+
 exports.updateInfo = function (appinfo, callback) {
   appbase.authenticate(appinfo.clientid, appinfo.oldsecret, function (success, appOrErr) {
     if (success) {

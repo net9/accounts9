@@ -24,6 +24,13 @@ exports.register = function (userinfo, callback) {
   });
 };
 
+exports.getByName = function (username, callback) {
+  userbase.getByName(username, function (success, userOrErr) {
+    if (success) callback({ success: true, userinfo: userOrErr });
+    else callback({ success: false, username: username, error: userOrErr });
+  });
+};
+
 exports.authenticate = function (userinfo, callback) {
   userbase.authenticate(userinfo.username, userinfo.password, function (success, userOrErr) {
     if (success) callback({ success: true, userinfo: userOrErr });

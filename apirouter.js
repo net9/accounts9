@@ -1,6 +1,8 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
 var appman = require('./appman'),
+    oauthman = require('./oauthman'),
+    userman = require('./userman'),
     messages = require('./messages');
 
 module.exports = function (app) {
@@ -15,14 +17,14 @@ module.exports = function (app) {
       if (redirect_uri) {
         res.redirect(redirect_uri + '?error=invalid_request' + state);
       } else {
-        res.send({ error: 'invalid_request' });
+        res.send({ error: 'invalid_request' }, 400);
       }
     } else {
       appman.getByID(clientid, function (result) {
         if (result.success) {
           // FIXME: temporarily adding /apps/:clientid. Use real list later.
           result.appinfo.redirectURIs = [
-            'http://server4.net9.org/apps/' + clientid,
+            'http://accounts.net9.org/apps/' + clientid,
             'http://localhost:3000/apps/' + clientid
           ];
           // Make sure that redirect_uri is one of what we have.
@@ -65,12 +67,83 @@ module.exports = function (app) {
       var oauthinfo = req.session.oauthinfo[req.query.client_id];
       delete req.session.oauthinfo[req.query.client_id];
       if (req.body.yes) {
-        // TODO: Grant code and perform accordingly.
-        res.redirect(oauthinfo.redirect_uri + '?code=abcdefg');
+        // Grant code and perform accordingly.
+        oauthman.generateCode({
+          username: req.session.userinfo.username,
+          scope: oauthinfo.scope,
+          redirect_uri: oauthinfo.redirect_uri,
+          clientid: req.query.client_id
+        }, function (code) {
+          if (code === null) res.send(500);
+          else res.redirect(oauthinfo.redirect_uri + '?code=' + code + oauthinfo.state);
+        });
       } else {
         res.redirect(oauthinfo.redirect_uri + '?error=access_denied' + oauthinfo.state);
       }
     }
+  });
+
+  app.all('/api/access_token', function (req, res) {
+    var clientid = req.param("client_id"),
+        secret = req.param("client_secret"),
+        redirect_uri = req.param("redirect_uri"),
+        code = req.param("code");
+    // TODO: Add scope support.
+    // TODO: Add refresh token support.
+    // First step: Make sure everything needed is provided.
+    if (!clientid || !secret || !redirect_uri || !code) {
+      res.send({ error: 'invalid_request' }, 400);
+    } else {
+      // Second step: Make sure the client ID and secret match.
+      appman.authenticate({ clientid: clientid, secret: secret }, function (result) {
+        if (!result.success) res.send({ error: 'invalid_client' }, 400);
+        else {
+          // Third step: Make sure that the client ID, redirect URI and the code match.
+          oauthman.getCode(code, function (result) {
+            if (!result.success || result.codeinfo.redirect_uri !== redirect_uri ||
+                result.codeinfo.clientid !== clientid) {
+              res.send({ error: 'invalid_grant' }, 400);
+            } else {
+              // Fourth step: Generate the access token from what we have.
+              // Note that this also invalidates the code.
+              oauthman.generateAccessTokenFromCode(result.codeinfo, function (result) {
+                if (!result.success) res.send(500);
+                else {
+                  // Finally send the access token.
+                  var accessToken = result.accessToken;
+                  res.send({
+                    access_token: accessToken.accesstoken,
+                    expires_in: ~~((accessToken.expiredate - new Date()) / 1000)
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+
+  app.all('/api/*', function (req, res, next) {
+    var token = req.param('access_token');
+    if (token) {
+      oauthman.getAccessToken(token, function (result) {
+        if (result.success) {
+          req.tokeninfo = result.tokeninfo;
+          next();
+        } else res.send({ error: 'invalid_token' }, 403);
+      });
+    } else res.send({ error: 'invalid_token' }, 403);
+  });
+
+  app.get('/api/userinfo', function (req, res) {
+    userman.getByName(req.tokeninfo.username, function (result) {
+      if (result.success) {
+        delete result.userinfo.password;
+        delete result.userinfo._id;
+      }
+      res.send(result);
+    });
   });
 
 };

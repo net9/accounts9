@@ -23,6 +23,16 @@ exports.create = function (userinfo, callback) {
   });
 };
 
+exports.getByName = function (username, callback) {
+  User.find({ username: username }).one(function (user) {
+    if (user === null) {
+      callback(false, 'no-such-user');
+    } else {
+      callback(true, user.toObject());
+    }
+  });
+};
+
 exports.authenticate = function (username, password, callback) {
   User.find({ username: username }).one(function (user) {
     if (user === null || user.password !== password) {
