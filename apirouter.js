@@ -27,8 +27,9 @@ module.exports = function (app) {
             'http://accounts.net9.org/apps/' + clientid,
             'http://localhost:3000/apps/' + clientid
           ];
-          // Make sure that redirect_uri is one of what we have.
-          if (result.appinfo.redirectURIs.indexOf(redirect_uri) === -1) {
+          // TODO: Make sure that redirect_uri is one of what we have.
+          //if (result.appinfo.redirectURIs.indexOf(redirect_uri) === -1) {
+          if (false) {
             res.redirect(redirect_uri + '?error=redirect_uri_mismatch' + state);
           } else {
             // Jam the authentication info into the session as we'll need it in the later steps.
