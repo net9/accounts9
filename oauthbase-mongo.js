@@ -1,24 +1,28 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var mongoose = require("mongoose").Mongoose,
-    db = mongoose.connect('mongodb://localhost/net9-auth');
+var mongoose = require("mongoose");
 
-mongoose.model('OAuthCode', {
-  properties: ['code', 'expiredate', 'username', 'redirect_uri', 'clientid', 'scope'],
-  indexes:    ['code'],
-  cast:       { expiredate: Date }
-});
-var Code = db.model('OAuthCode');
+mongoose.connect('mongodb://localhost/net9-auth');
+
+mongoose.model('OAuthCode', new mongoose.Schema({
+  code:         { type: String, index: true },
+  expiredate:   Date,
+  username:     String,
+  redirect_uri: String,
+  clientid:     String,
+  scope:        String
+}));
+var Code = mongoose.model('OAuthCode');
 
 exports.getCode = function (code, callback) {
-  Code.find({ code: code }).one(function (code) {
+  Code.findOne({ code: code }, function (err, code) {
     if (code === null) callback(false, 'no-such-code');
     else callback(true, code.toObject());
   });
 };
 
 exports.upsertCode = function (codeinfo, callback) {
-  Code.find({ code: codeinfo.code }).one(function (code) {
+  Code.findOne({ code: codeinfo.code }, function (err, code) {
     var newCode = code === null ? new Code(codeinfo) : code.merge(codeinfo);
     newCode.save(function (err) {
       if (err) callback(false, err);
@@ -28,27 +32,29 @@ exports.upsertCode = function (codeinfo, callback) {
 };
 
 exports.deleteCode = function (code, callback) {
-  Code.remove({ code: code }, function () {
-    callback(true);
+  Code.remove({ code: code }, function (err) {
+    callback(err ? false : true, err);
   });
 };
 
-mongoose.model('AccessToken', {
-  properties: ['accesstoken', 'expiredate', 'username', 'clientid', 'scope'],
-  indexes:    ['accesstoken'],
-  cast:       { expiredate: Date }
-});
-var AccessToken = db.model('AccessToken');
+mongoose.model('AccessToken', new mongoose.Schema({
+  accesstoken:  { type: String, index: true },
+  expiredate:   Date,
+  username:     String,
+  clientid:     String,
+  scope:        String
+}));
+var AccessToken = mongoose.model('AccessToken');
 
 exports.getAccessToken = function (token, callback) {
-  AccessToken.find({ accesstoken: token }).one(function (token) {
+  AccessToken.findOne({ accesstoken: token }, function (err, token) {
     if (token === null) callback(false, 'no-such-token');
     else callback(true, token.toObject());
   });
 };
 
 exports.upsertAccessToken = function (tokeninfo, callback) {
-  AccessToken.find({ accesstoken: tokeninfo.accesstoken }).one(function (token) {
+  AccessToken.findOne({ accesstoken: tokeninfo.accesstoken }, function (err, token) {
     var newToken = token === null ? new AccessToken(tokeninfo) : token.merge(tokeninfo);
     newToken.save(function (err) {
       if (err) callback(false, err);

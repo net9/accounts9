@@ -5,9 +5,7 @@
  */
 
 var express = require('express'),
-    sys = require('sys'),
-    userman = require('./userman'),
-    appman = require('./appman'),
+    util = require('util'),
     messages = require('./messages');
 var app = module.exports = express.createServer();
 
@@ -19,7 +17,7 @@ app.configure(function () {
   app.use(express.bodyDecoder());
   app.use(express.methodOverride());
   app.use(express.cookieDecoder());
-  app.use(express.session());
+  app.use(express.session({ secret: 'joe-king-pilot-for-hire' }));
   app.use(express.compiler({ src: __dirname + '/public', enable: ['less'] }));
   app.use(app.router);
   app.use(express.router(require('./approuter')));
@@ -64,7 +62,7 @@ app.helpers({
     return [];
   },
   inspect: function (obj) {
-    return sys.inspect(obj);
+    return util.inspect(obj);
   }
 });
 
@@ -73,7 +71,7 @@ app.helpers({
 app.get('/', function (req, res) {
   if (req.session.userinfo) {
     // When logged in, display a dashboard of information.
-    appman.getAllByUser(req.session.userinfo.username, function (apps) {
+    require('./appman').getAllByUser(req.session.userinfo.username, function (apps) {
       res.render('dashboard', {
         locals: {
           title: messages.get('my-dashboard'),
@@ -84,12 +82,11 @@ app.get('/', function (req, res) {
     });
   } else {
     res.redirect('/login');
-    //res.render('login', { locals: { title: messages.get('Login') } });
   }
 });
 
 app.get('/test', function (req, res) {
-  res.send(sys.inspect(req));
+  res.send(util.inspect(req));
 });
 
 // Only listen on $ node app.js

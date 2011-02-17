@@ -1,4 +1,5 @@
 *~
 *.swp
 public/stylesheets/*.css
+config.js
 
