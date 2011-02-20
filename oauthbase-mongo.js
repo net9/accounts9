@@ -54,6 +54,10 @@ exports.getAccessToken = function (token, callback) {
 };
 
 exports.upsertAccessToken = function (tokeninfo, callback) {
+  // Delete excess object keys, or mongoose will vomit
+  delete tokeninfo.code;
+  delete tokeninfo.redirect_uri;
+  // Now do the upserting.
   AccessToken.findOne({ accesstoken: tokeninfo.accesstoken }, function (err, token) {
     var newToken = token === null ? new AccessToken(tokeninfo) : token.merge(tokeninfo);
     newToken.save(function (err) {

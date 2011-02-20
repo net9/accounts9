@@ -13,7 +13,6 @@ var User = mongoose.model('User');
 
 exports.checkUser = function (username, callback) {
   User.count({ username: username }, function (err, count) {
-    console.log('checkUser ' + username + count);
     callback(count !== 0);
   });
 };
@@ -27,7 +26,7 @@ exports.create = function (userinfo, callback) {
 };
 
 exports.getByName = function (username, callback) {
-  User.findOne({ username: username }, function (user) {
+  User.findOne({ username: username }, function (err, user) {
     if (user === null) {
       callback(false, 'no-such-user');
     } else {

@@ -69,7 +69,6 @@ exports.getByName = function (username, callback) {
 exports.authenticate = function (username, password, callback) {
   // This is just about the same as exports.getByName, you just have to
   // authenticate as the real authenticating user instead of the master.
-  console.log("trying auth with user:" + "uid=" + username + "," + config.user_base_dn + ";password is " + password);
   connect({
     dn: "uid=" + username + "," + config.user_base_dn,
     secret: password
