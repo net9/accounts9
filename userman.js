@@ -38,21 +38,27 @@ exports.authenticate = function (userinfo, callback) {
   });
 };
 
-exports.editInfo = function (newinfo, callback) {
-  userbase.authenticate(newinfo.username, newinfo.oldpass, function (success, userOrErr) {
-    if (success) {
-      userbase.update({
-        username: newinfo.username,
-        password: newinfo.newpass,
-        bio:      newinfo.bio
-      }, function (success, userOrErr) {
-        if (success) callback({ success: true, userinfo: userOrErr });
-        else callback({ success: false, error: userOrErr });
-      });
-    } else {
-      callback({ success: false, error: 'wrong-old-pass' });
-    }
+var updateInfo = function (newinfo, callback) {
+  userbase.update(newinfo, function (success, userOrErr) {
+    if (success) callback({ success: true, userinfo: userOrErr });
+    else callback({ success: false, error: userOrErr });
   });
+};
+
+exports.editInfo = function (newinfo, callback) {
+  // Authenticate only if the user wants to change the password (ie. newinfo.newpass != '')
+  if (newinfo.newpass) {
+    userbase.authenticate(newinfo.username, newinfo.oldpass, function (success, userOrErr) {
+      if (success) {
+        newinfo.password = newinfo.newpass;
+        updateInfo(newinfo, callback);
+      } else {
+        callback({ success: false, error: 'wrong-old-pass' });
+      }
+    });
+  } else {
+    updateInfo(newinfo, callback);
+  }
 };
 
 

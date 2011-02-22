@@ -1,7 +1,8 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
 var userman = require('./userman'),
-    messages = require('./messages');
+    messages = require('./messages'),
+    utils = require('./utils');
 
 module.exports = function (app) {
 
@@ -49,7 +50,7 @@ module.exports = function (app) {
     userman.register({
       username: req.body.username,
       password: req.body.password,
-      bio:      req.body.bio
+      email:    req.body.email
     }, function (result) {
       if (result.success) {
         req.session.userinfo = result.userinfo;
@@ -80,7 +81,7 @@ module.exports = function (app) {
 
   app.get('/editinfo', function (req, res) {
     // When a user requests to edit his info, we provide him with his current
-    // username and bio for rendering in the view.
+    // info for rendering in the view.
     // This won't leak the password, as the view will ask for userinfo.oldpass
     // and userinfo.newpass.
     res.render('editinfo', {
@@ -92,12 +93,9 @@ module.exports = function (app) {
   });
 
   app.post('/editinfo', function (req, res) {
-    var newInfo = {
-      username: req.session.userinfo.username,
-      oldpass:  req.body.oldpass,
-      newpass:  req.body.newpass,
-      bio:      req.body.bio
-    };
+    var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website',
+        'mobile', 'givenname', 'surname', 'fullname', 'address', 'nickname']);
+    newInfo.username = req.session.userinfo.username;
     userman.editInfo(newInfo, function (result) {
       if (result.success) {
         // If the editing succeeds, update the user info stored in the session.

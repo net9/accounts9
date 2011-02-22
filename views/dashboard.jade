@@ -3,9 +3,35 @@ a.button(href="/logout", id="logout")= msg('Logout')
 .section#section-userinfo
   h2= msg('my-info')
   table.info-table
+    - if (userinfo.nickname)
+      tr
+        th= msg('Nickname')
+        td= userinfo.nickname
+    - if (userinfo.fullname)
+      tr
+        th= msg('full-name')
+        td= userinfo.fullname
     tr
-      th= msg('Bio')
-      td= userinfo.bio
+      th= msg('Email')
+      td
+        a(href="mailto:" + userinfo.email)= userinfo.email
+    - if (userinfo.mobile)
+      tr
+        th= msg('Mobile')
+        td= userinfo.mobile
+    - if (userinfo.website)
+      tr
+        th= msg('Website')
+        td
+          a(href=userinfo.website)=userinfo.website
+    - if (userinfo.address)
+      tr
+        th= msg('Address')
+        td= userinfo.address
+    - if (userinfo.bio)
+      tr
+        th= msg('Bio')
+        td= userinfo.bio
     tr
       th
       td

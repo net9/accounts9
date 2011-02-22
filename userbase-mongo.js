@@ -1,5 +1,10 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
+/* Hey, why don't we just deprecate this module?
+ * Since we'll be using LDAP anyway, it sure is the right thing to do...
+ * Okay so this is formally deprecated. Or obsolete. Whatever.
+ */
+
 var mongoose = require("mongoose");
 
 mongoose.connect('mongodb://localhost/net9-auth');
