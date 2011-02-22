@@ -3,5 +3,6 @@ exports.subset = function (src, attrs) {
   attrs.forEach(function (attr) {
     newObj[attr] = src[attr];
   });
+  return newObj;
 };
 

@@ -94,8 +94,13 @@ module.exports = function (app) {
 
   app.post('/editinfo', function (req, res) {
     var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website',
-        'mobile', 'givenname', 'surname', 'fullname', 'address', 'nickname']);
+        'mobile', 'givenname', 'surname', 'address', 'nickname']);
+
+    if (req.body.fullname === 'surgiven') newInfo.fullname = newInfo.surname + newInfo.givenname;
+    else if (req.body.fullname === 'sur-given') newInfo.fullname = newInfo.surname + ' ' + newInfo.givenname;
+    else newInfo.fullname = newInfo.givenname + ' ' + newInfo.surname;
     newInfo.username = req.session.userinfo.username;
+
     userman.editInfo(newInfo, function (result) {
       if (result.success) {
         // If the editing succeeds, update the user info stored in the session.

@@ -21,6 +21,8 @@ var messages = {
   'old-password': 'Old password',
   'change-password-tips': 'Leave this blank unless you wish to change your password.',
   'new-password': 'New password',
+  'given-name': 'Given name',
+  'full-name': 'Full name',
   'info-editinfo-success': 'Your user information is successfully updated.',
   'error-wrong-old-pass': 'The old password you provided is wrong.',
   'error-app-name-taken': 'Sorry, but an application with this name already exists. Please choose another name.',

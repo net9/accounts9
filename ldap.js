@@ -25,6 +25,13 @@ var Connection = function() {
         }
     });
 
+    binding.addListener("modify", function(msgid, success) {
+      if (typeof(requests[msgid].successCB) != "undefined") {
+        requests[msgid].successCB(success);
+        delete requests[msgid];
+      }
+    });
+
     binding.addListener("unknown", function(errmsg, msgid, type) {
         console.log("Unknown response detected "+errmsg+" "+msgid+" "+type);
     });
@@ -99,6 +106,15 @@ var Connection = function() {
 
         requests[msgid] = r;
     }
+
+    self.modify = function (dn, mods, successCB, errCB) {
+      requestcount++;
+      var r = new Request(successCB, errCB);
+      var msgid = r.doAction(function () {
+        return binding.modify(dn, mods);
+      });
+      requests[msgid] = r;
+    };
 
     self.close = function(a) {
         binding.close(a);

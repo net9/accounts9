@@ -1,7 +1,7 @@
 form(method="POST", action="/register")
   table.form-table
     tr
-      td(colspan="2") msg('register-info')
+      td(colspan="2")= msg('register-info')
     tr
       th
         label(for="reg-username")= msg('Username')
@@ -17,7 +17,7 @@ form(method="POST", action="/register")
     tr
       th
         label(for="reg-email")= msg('Email')
-        .tip#reg-password-tips!= msg('reg-email-tips')
+        .tip#reg-email-tips!= msg('reg-email-tips')
       td
         input#reg-email(type="email", name="email", value=locals.userinfo ? userinfo.email : '')
     tr

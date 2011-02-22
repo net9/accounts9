@@ -139,10 +139,6 @@ module.exports = function (app) {
 
   app.get('/api/userinfo', function (req, res) {
     userman.getByName(req.tokeninfo.username, function (result) {
-      if (result.success) {
-        delete result.userinfo.password;
-        delete result.userinfo._id;
-      }
       res.send(result);
     });
   });
