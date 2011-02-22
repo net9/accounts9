@@ -1,4 +1,4 @@
-var ldapbinding = require("./ldap_binding");
+var ldapbinding = require("./build/default/ldap_binding");
 
 var Connection = function() {
     var requests = {};
