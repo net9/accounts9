@@ -2,6 +2,19 @@ net9-auth
 =========
 The authentication module for the new net9 system.
 
+Installation & Running
+----------------------
+
+    git clone git://github.com/Wyverald/net9-auth.git
+    cd net9-auth
+    cp config.example.js config.js
+    vim config.js
+    node-waf configure build
+    node app.js
+
+Miscellaneous
+-------------
+
 What we have right now:
 
 * User registration
@@ -9,8 +22,8 @@ What we have right now:
 * App registration (sign up for an app token)
 * OAuth 2.0
   * TODO: Refresh token, scope support, remember an app is authorized, etc.
-* Partial LDAP support (authentication and search only)
-  * TODO: Create and modify
+* Partial LDAP support (authentication, search and modify)
+  * TODO: ldapadd
 
 To-do list:
 

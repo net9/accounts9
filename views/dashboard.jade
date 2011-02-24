@@ -23,7 +23,7 @@ a.button(href="/logout", id="logout")= msg('Logout')
       tr
         th= msg('Website')
         td
-          a(href=userinfo.website)=userinfo.website
+          a(href=userinfo.website)= userinfo.website
     - if (userinfo.address)
       tr
         th= msg('Address')

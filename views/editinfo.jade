@@ -14,13 +14,13 @@ form(method="POST", action="/editinfo")
     tr
       th
         label(for="editinfo-old-password")= msg('old-password')
-        .tip#editinfo-old-password-tips!= msg('change-password-tips')
+        .tip#editinfo-old-password-tips!= msg('editinfo-password-tips')
       td
         input#editinfo-old-password(type="password", name="oldpass", value=userinfo.oldpass || '')
     tr
       th
         label(for="editinfo-new-password")= msg('new-password')
-        .tip#editinfo-new-password-tips!= msg('change-password-tips')
+        .tip#editinfo-new-password-tips!= msg('editinfo-password-tips')
       td
         input#editinfo-new-password(type="password", name="newpass", value=userinfo.newpass || '')
     tr
@@ -57,6 +57,7 @@ form(method="POST", action="/editinfo")
     tr
       th
         label(for="editinfo-website")= msg('Website')
+        .tip#editinfo-website-tips!= msg('editinfo-website-tips')
       td
         input#editinfo-mobile(type="text", name="website", value=userinfo.website)
     tr
