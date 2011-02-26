@@ -32,6 +32,13 @@ var Connection = function() {
       }
     });
 
+    binding.addListener("rename", function(msgid, success) {
+      if (typeof(requests[msgid].successCB) != "undefined") {
+        requests[msgid].successCB(success);
+        delete requests[msgid];
+      }
+    });
+
     binding.addListener("unknown", function(errmsg, msgid, type) {
         console.log("Unknown response detected "+errmsg+" "+msgid+" "+type);
     });
@@ -112,6 +119,23 @@ var Connection = function() {
       var r = new Request(successCB, errCB);
       var msgid = r.doAction(function () {
         return binding.modify(dn, mods);
+      });
+      requests[msgid] = r;
+    };
+
+    self.rename = function (dn, newrdn, newparent, delold, successCB, errCB) {
+      requestcount++;
+      if (typeof newparent === 'function') {
+        successCB = newparent; errCB = delold;
+        newparent = ""; delold = true;
+      }
+      if (typeof delold === 'function') {
+        errCB = successCB; successCB = delold; delold = true;
+      }
+
+      var r = new Request(successCB, errCB);
+      var msgid = r.doAction(function () {
+        return binding.rename(dn, newrdn, newparent, delold);
       });
       requests[msgid] = r;
     };

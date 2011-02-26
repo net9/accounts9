@@ -94,7 +94,7 @@ module.exports = function (app) {
 
   app.post('/editinfo', function (req, res) {
     var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website',
-        'mobile', 'givenname', 'surname', 'address', 'nickname']);
+        'mobile', 'givenname', 'surname', 'address', 'nickname', 'nextNameChangeDate']);
 
     if (req.body.fullname === 'surgiven') newInfo.fullname = newInfo.surname + newInfo.givenname;
     else if (req.body.fullname === 'sur-given') newInfo.fullname = newInfo.surname + ' ' + newInfo.givenname;
@@ -114,6 +114,55 @@ module.exports = function (app) {
           locals: {
             title: messages.get('edit-my-info'),
             userinfo: newInfo
+          }
+        });
+      }
+    });
+  });
+
+  app.all('/changename', function (req, res, next) {
+    // As usual, you have to be logged in to change your username.
+    if (!req.session.userinfo) res.redirect('/');
+    else {
+      // Are you allowed to change it this frequently?
+      if (req.session.userinfo.nextNameChangeDate > Date.now()) {
+        // No you're not.
+        req.flash('error', 'change-name-later|' +
+            new Date(req.session.userinfo.nextNameChangeDate));
+        res.redirect('/');
+      } else {
+        // Fair enough.
+        next();
+      }
+    }
+  });
+
+  app.get('/changename', function (req, res) {
+    res.render('changename', {
+      locals: {
+        title: messages.get('changing-username'),
+        nameChange: { oldname: req.session.userinfo.username }
+      }
+    });
+  });
+
+  app.post('/changename', function (req, res) {
+    var nameChange = {
+      oldname: req.session.userinfo.username,
+      newname: req.body.newname,
+      password: req.body.password
+    };
+    userman.rename(nameChange, function (result) {
+      if (result.success) {
+        req.session.userinfo = result.userinfo;
+        req.flash('info', 'change-name-success');
+        res.redirect('/');
+      } else {
+        req.flash('error', result.error);
+        res.render('changename', {
+          locals: {
+            title: messages.get('changing-username'),
+            nameChange: nameChange
           }
         });
       }

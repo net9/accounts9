@@ -16,6 +16,7 @@ static Persistent<String> search_symbol;
 static Persistent<String> init_symbol;
 static Persistent<String> bind_symbol;
 static Persistent<String> modify_symbol;
+static Persistent<String> rename_symbol;
 static Persistent<String> unknown_symbol;
 static Persistent<String> serverdown;
 
@@ -47,11 +48,13 @@ class Connection : EventEmitter {
     NODE_SET_PROTOTYPE_METHOD(t, "authenticate", Authenticate);
     NODE_SET_PROTOTYPE_METHOD(t, "search",       Search);
     NODE_SET_PROTOTYPE_METHOD(t, "modify",       Modify);
+    NODE_SET_PROTOTYPE_METHOD(t, "rename",       Rename);
 
     search_symbol  = NODE_PSYMBOL("search");
     init_symbol    = NODE_PSYMBOL("init");
     bind_symbol    = NODE_PSYMBOL("bind");
     modify_symbol  = NODE_PSYMBOL("modify");
+    rename_symbol  = NODE_PSYMBOL("rename");
     unknown_symbol = NODE_PSYMBOL("unknown");
     serverdown     = NODE_PSYMBOL("serverdown");
 
@@ -168,6 +171,20 @@ protected:
     return msgid;
   }
 
+  int Rename(const char *dn, const char *newrdn, const char *newparent,
+      int deleteoldrdn)
+  {
+    HandleScope scope;
+    int msgid;
+
+    if (ldap == NULL) return LDAP_SERVER_DOWN;
+
+    msgid = ldap_modrdn(ldap, dn, newrdn);
+
+    if (msgid == LDAP_SERVER_DOWN) Emit(serverdown, 0, NULL);
+    return msgid;
+  }
+
   int Event(int whatisthis) 
   {
     HandleScope scope;
@@ -215,6 +232,16 @@ protected:
         args[1] = Local<Value>::New(Integer::New(1));
       }
       Emit(modify_symbol, 2, args);
+      break;
+
+    case  LDAP_RES_MODDN:
+      args[0] = Local<Value>::New(Integer::New(msgid));
+      if (ldap_result2error(ldap, ldap_res, 0) != LDAP_SUCCESS) {
+        args[1] = Local<Value>::New(Integer::New(0));
+      } else {
+        args[1] = Local<Value>::New(Integer::New(1));
+      }
+      Emit(rename_symbol, 2, args);
       break;
 
     default:
@@ -419,13 +446,39 @@ protected:
     }
 
     ldapmods[numOfMods] = NULL;
-    //LDAPMod **ldapmods = (LDAPMod **) malloc(sizeof(LDAPMod *) * 2);
 
     if ((sres = c->Modify(*dn, ldapmods)) < 0) {
       c->Emit(serverdown, 0, NULL);
     }
 
     ldap_mods_free(ldapmods, 1);
+
+    return scope.Close(Local<Value>::New(Integer::New(sres)));
+  }
+
+  static Handle<Value> Rename(const Arguments &args)
+  {
+    HandleScope scope;
+
+    Connection *c = ObjectWrap::Unwrap<Connection>(args.This());
+    int sres;
+
+    // Validate args.
+    if (args.Length() < 2)      return THROW("Required arguments: dn, newrdn");
+    if (!args[0]->IsString())   return THROW("dn should be a string");
+    if (!args[1]->IsString())   return THROW("newrdn should be a string");
+    if (!args[2]->IsString())   return THROW("newparent should be a string");
+    if (!args[3]->IsBoolean())  return THROW("deleteoldrdn should be a bool");
+
+    // Prepare args.
+    String::Utf8Value dn(args[0]);
+    String::Utf8Value newrdn(args[1]);
+    String::Utf8Value newparent(args[2]);
+    int deleteoldrdn = args[3]->BooleanValue();
+
+    if ((sres = c->Rename(*dn, *newrdn, *newparent, deleteoldrdn)) < 0) {
+      c->Emit(serverdown, 0, NULL);
+    }
 
     return scope.Close(Local<Value>::New(Integer::New(sres)));
   }

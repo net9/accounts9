@@ -3,4 +3,5 @@
 public/stylesheets/*.css
 config.js
 build
+.lock-wscript
 

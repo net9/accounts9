@@ -4,7 +4,11 @@ form(method="POST", action="/editinfo")
       th= msg('Username')
       td
         = userinfo.username
-        a(href="/changeusername")= msg('change')
+        div
+          - if (userinfo.nextNameChangeDate > Date.now())
+            != msg('next-name-change', new Date(userinfo.nextNameChangeDate))
+          - else
+            a#editinfo-change-name(href="/changename")= msg('change')
     tr
       th
         label(for="editinfo-nickname")= msg('Nickname')

@@ -35,11 +35,12 @@ var connect = function (options, callback) {
 };
 
 exports.checkUser = function (username, callback) {
+  if (username === '') { callback(true); return; }
   connect(function (err, lconn) {
     // If an error occurred during the connection, just temporarily
     // say that the username is occupied. XXX
     if (err) callback(true);
-    lconn.search(config.user_base_dn, "uid=" + username, "*", function (result) {
+    else lconn.search(config.user_base_dn, "uid=" + username, "*", function (result) {
       lconn.close();
       callback(result.length !== 0);
     });
@@ -65,7 +66,8 @@ var getByName = function (lconn, username, callback) {
         mobile: f("mobile"),
         website: f("labeledURI"),
         address: f("registeredAddress"),
-        bio: f("description")
+        bio: f("description"),
+        nextNameChangeDate: +f("businessCategory")    // Should be number
       });
     }
   }, function (err) {
@@ -77,7 +79,7 @@ var getByName = function (lconn, username, callback) {
 exports.getByName = function (username, callback) {
   connect(function (err, lconn) {
     if (err) callback(false, err);
-    getByName(lconn, username, callback);
+    else getByName(lconn, username, callback);
   });
 };
 
@@ -116,30 +118,58 @@ exports.create = function (userinfo, callback) {
 exports.update = function (userinfo, callback) {
   connect(function (err, lconn) {
     if (err) callback(false, err);
-    
-    var mods = [
-      { type: 'displayName', vals: [ userinfo.nickname ] },
-      { type: 'sn', vals: [ userinfo.surname ] },
-      { type: 'givenName', vals: [ userinfo.givenname ] },
-      { type: 'cn', vals: [ userinfo.fullname ] },
-      { type: 'mail', vals: [ userinfo.email ] },
-      { type: 'mobile', vals: [ userinfo.mobile ] },
-      { type: 'labeledURI', vals: [ userinfo.website ] },
-      { type: 'registeredAddress', vals: [ userinfo.address ] },
-      { type: 'description', vals: [ userinfo.bio ] }
-    ];
+    else {
+      var mods = [
+        { type: 'displayName', vals: [ userinfo.nickname ] },
+        { type: 'sn', vals: [ userinfo.surname ] },
+        { type: 'givenName', vals: [ userinfo.givenname ] },
+        { type: 'cn', vals: [ userinfo.fullname ] },
+        { type: 'mail', vals: [ userinfo.email ] },
+        { type: 'mobile', vals: [ userinfo.mobile ] },
+        { type: 'labeledURI', vals: [ userinfo.website ] },
+        { type: 'registeredAddress', vals: [ userinfo.address ] },
+        { type: 'description', vals: [ userinfo.bio ] }
+      ];
 
-    if (userinfo.password) {
-      mods.push({ type: 'userPassword', vals: [ genPassword(userinfo.password) ] });
-    }
-
-    lconn.modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (success) {
-      if (success) getByName(lconn, userinfo.username, callback);
-      else {
-        lconn.close();
-        callback(false, null);
+      if (userinfo.password) {
+        mods.push({ type: 'userPassword', vals: [ genPassword(userinfo.password) ] });
       }
-    });
+
+      lconn.modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (success) {
+        if (success) getByName(lconn, userinfo.username, callback);
+        else {
+          lconn.close();
+          callback(false, 'modify');
+        }
+      });
+    }
+  });
+};
+
+exports.rename = function (oldname, newname, callback) {
+  connect(function (err, lconn) {
+    if (err) callback(false, err);
+    else {
+      // Do the renaming.
+      lconn.rename('uid=' + oldname + ',' + config.user_base_dn, 'uid=' + newname, function (success) {
+        if (success) {
+          // Now update the name change date. For 30 days you can't touch it!
+          lconn.modify('uid=' + newname + ',' + config.user_base_dn, [
+            { type: 'businessCategory', vals: [ Date.now() + 2592000000 ] }
+          ], function (success) {
+            // Finally return the result.
+            if (success) getByName(lconn, newname, callback);
+            else {
+              lconn.close();
+              callback(false, 'modify');
+            }
+          });
+        } else {
+          lconn.close();
+          callback(false, 'rename');
+        }
+      });
+    }
   });
 };
 
