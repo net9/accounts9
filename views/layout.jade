@@ -7,12 +7,18 @@ html
   body
     #container
       #header
-        #menu!= partial('menuitem', getMenuItems(this.session.menu))
+        #menu
+          - if (this.session.userinfo)
+            != msg('logged-in-as', this.session.userinfo.username)
+            a#logout(href="/logout")= msg('Logout')
         a#logo(href="/")
+          img(src="/images/logo200.png", width="200", height="150")
+          img(src="/images/accounts200.png", width="200", height="150")
       #content
         h1= title
         != partial('flash', getFlashArray(this.flash()))
         #body!= body
         .clear
+      #footer!= msg('footer-text')
     script(type="text/javascript", src="/javascripts/script.js")
 

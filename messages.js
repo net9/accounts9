@@ -3,6 +3,7 @@
 var messages = {
   'page-title': '$1 - net9 Auth',
   'index-page-title': 'net9 Auth',
+  'logged-in-as': 'Logged in as <strong>$1</strong> | ',
   'register-info': 'Please fill out the form below. Every field is required; you can supply more information after signing up.',
   'reg-username-tips': 'This will be the name you use for logging in. You will be able to change it later.',
   'reg-password-tips': 'It is advised that you use a reasonably complicated password, with both alphanumerical and punctuational characters.',
@@ -60,7 +61,8 @@ var messages = {
   'wrong-secret': 'The application secret you provided is wrong.',
   'error-no-such-app-clientid': 'No application with this client ID exists.',
   'authenticating': 'Authenticating application: $1',
-  'app-auth-message': 'Are you sure you want to authenticate the application <a href="/apps/$1" target="_blank"><strong>$2</strong></a>? If you do, <strong>$2</strong> will have access to your personal data.'
+  'app-auth-message': 'Are you sure you want to authenticate the application <a href="/apps/$1" target="_blank"><strong>$2</strong></a>? If you do, <strong>$2</strong> will have access to your personal data.',
+  'footer-text': '<p>This website you\'re viewing is made possible by countless developers from all over the world. Hail them.</p><p>THU.CS&T.SAST.Network</p>'
 };
 
 // Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
