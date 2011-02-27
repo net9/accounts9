@@ -112,21 +112,34 @@ exports.create = function (userinfo, callback) {
   connect(function (err, lconn) {
     if (err) callback(false, err);
     else {
-      var mods = [
-        { type: 'uid', vals: [ userinfo.username ] },
-        { type: 'sn', vals: [ userinfo.username ] },
-        { type: 'cn', vals: [ userinfo.username ] },
-        { type: 'objectClass', vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson' ] },
-        { type: 'mail', vals: [ userinfo.email ] },
-        { type: 'userPassword', vals: [ genPassword(userinfo.password) ] }
-      ];
+      // First find a suitable uidNumber for our little guest.
+      lconn.search(config.user_base_dn, "objectClass=posixAccount", "uidNumber", function (result) {
+        // The new uidNumber should be one greater than the current greatest.
+        var newUid = result.reduce(function (house, guest) {
+          return house > +guest.uidNumber[0] ? house : +guest.uidNumber[0];
+        }, 0) + 1;
 
-      lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
-        if (!err) getByName(lconn, userinfo.username, callback);
-        else {
-          lconn.close();
-          callback(false, err);
-        }
+        // Now prepare the mods.
+        var mods = [
+          { type: 'uid', vals: [ userinfo.username ] },
+          { type: 'sn', vals: [ userinfo.username ] },
+          { type: 'cn', vals: [ userinfo.username ] },
+          { type: 'objectClass',
+            vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount' ] },
+          { type: 'mail', vals: [ userinfo.email ] },
+          { type: 'userPassword', vals: [ genPassword(userinfo.password) ] },
+          { type: 'gidNumber', vals: [ 4999 ] },
+          { type: 'uidNumber', vals: [ newUid ] },
+          { type: 'homeDirectory', vals: [ '/home/' + userinfo.username ] }
+        ];
+
+        lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
+          if (!err) getByName(lconn, userinfo.username, callback);
+          else {
+            lconn.close();
+            callback(false, err);
+          }
+        });
       });
     }
   });
