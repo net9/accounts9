@@ -47,11 +47,7 @@ module.exports = function (app) {
   });
 
   app.post('/register', function (req, res) {
-    userman.register({
-      username: req.body.username,
-      password: req.body.password,
-      email:    req.body.email
-    }, function (result) {
+    userman.register(utils.subset(req.body, ["username", "password", "email"]), function (result) {
       if (result.success) {
         req.session.userinfo = result.userinfo;
         req.flash('info', 'register-welcome|' + result.userinfo.username);

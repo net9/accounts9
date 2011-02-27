@@ -9,10 +9,14 @@ exports.checkUser = function (username, callback) {
 };
 
 exports.register = function (userinfo, callback) {
-  // First make sure that the user doesn't exist.
+  // Let's do some verification first! TODO: Better verification.
+  if (!userinfo.password || !userinfo.email) {
+    callback({ success: false, userinfo: userinfo, error: 'fields-required' });
+  }
+  // Now make sure that the user doesn't exist.
   userbase.checkUser(userinfo.username, function (occupied) {
     if (occupied) {
-      callback({ success: false, userinfo: userinfo, error: 'user-exists' });
+      callback({ success: false, userinfo: userinfo, error: 'Already exists' });
       return;
     }
 
@@ -71,7 +75,7 @@ exports.rename = function (nameChange, callback) {
     } else {
       // Is the target name occupied?
       userbase.checkUser(nameChange.newname, function (occupied) {
-        if (occupied) callback({ success: false, error: 'user-exists' });
+        if (occupied) callback({ success: false, error: 'Already exists' });
         else userbase.rename(nameChange.oldname, nameChange.newname, function (success, userOrErr) {
           if (success) callback({ success: true, userinfo: userOrErr });
           else callback({ success: false, error: userOrErr });

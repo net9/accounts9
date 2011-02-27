@@ -14,9 +14,14 @@ using namespace node; //NOLINT
 
 static Persistent<String> search_symbol;
 static Persistent<String> init_symbol;
+/*
 static Persistent<String> bind_symbol;
 static Persistent<String> modify_symbol;
 static Persistent<String> rename_symbol;
+static Persistent<String> add_symbol;
+*/
+// All the above, to "event_symbol"
+static Persistent<String> event_symbol;
 static Persistent<String> unknown_symbol;
 static Persistent<String> serverdown;
 
@@ -49,12 +54,17 @@ class Connection : EventEmitter {
     NODE_SET_PROTOTYPE_METHOD(t, "search",       Search);
     NODE_SET_PROTOTYPE_METHOD(t, "modify",       Modify);
     NODE_SET_PROTOTYPE_METHOD(t, "rename",       Rename);
+    NODE_SET_PROTOTYPE_METHOD(t, "add",          Add);
 
     search_symbol  = NODE_PSYMBOL("search");
     init_symbol    = NODE_PSYMBOL("init");
+    /*
     bind_symbol    = NODE_PSYMBOL("bind");
     modify_symbol  = NODE_PSYMBOL("modify");
     rename_symbol  = NODE_PSYMBOL("rename");
+    add_symbol     = NODE_PSYMBOL("add");
+    */
+    event_symbol   = NODE_PSYMBOL("event");
     unknown_symbol = NODE_PSYMBOL("unknown");
     serverdown     = NODE_PSYMBOL("serverdown");
 
@@ -185,6 +195,18 @@ protected:
     return msgid;
   }
 
+  int Add(const char *dn, LDAPMod **attrs) {
+    HandleScope scope;
+    int msgid;
+
+    if (ldap == NULL) return LDAP_SERVER_DOWN;
+
+    msgid = ldap_add(ldap, dn, attrs);
+
+    if (msgid == LDAP_SERVER_DOWN) Emit(serverdown, 0, NULL);
+    return msgid;
+  }
+
   int Event(int whatisthis) 
   {
     HandleScope scope;
@@ -192,6 +214,7 @@ protected:
     Handle<Value> args[3];
     int msgid;
     int res;
+    int error;
 
     if (ldap == NULL) {
       // disconnect event, or something arriving after
@@ -206,16 +229,20 @@ protected:
     }
 
     msgid = ldap_msgid(ldap_res);
+    error = ldap_result2error(ldap, ldap_res, 0);
 
     switch(res) {
-    case  LDAP_RES_BIND:
+    case LDAP_RES_BIND:
+    case LDAP_RES_MODIFY:
+    case LDAP_RES_MODDN:
+    case LDAP_RES_ADD:
       args[0] = Integer::New(msgid);
-      if (ldap_result2error(ldap, ldap_res, 0) != LDAP_SUCCESS) {
-        args[1] = Local<Value>::New(Integer::New(0));
+      if (error != LDAP_SUCCESS) {
+        args[1] = Local<Value>::New(String::New(ldap_err2string(error)));
       } else {
-        args[1] = Local<Value>::New(Integer::New(1));
+        args[1] = Null();
       }
-      Emit(bind_symbol, 2, args);
+      Emit(event_symbol, 2, args);
       break;
 
     case  LDAP_RES_SEARCH_RESULT:
@@ -224,28 +251,8 @@ protected:
       Emit(search_symbol, 2, args);
       break;
 
-    case  LDAP_RES_MODIFY:
-      args[0] = Local<Value>::New(Integer::New(msgid));
-      if (ldap_result2error(ldap, ldap_res, 0) != LDAP_SUCCESS) {
-        args[1] = Local<Value>::New(Integer::New(0));
-      } else {
-        args[1] = Local<Value>::New(Integer::New(1));
-      }
-      Emit(modify_symbol, 2, args);
-      break;
-
-    case  LDAP_RES_MODDN:
-      args[0] = Local<Value>::New(Integer::New(msgid));
-      if (ldap_result2error(ldap, ldap_res, 0) != LDAP_SUCCESS) {
-        args[1] = Local<Value>::New(Integer::New(0));
-      } else {
-        args[1] = Local<Value>::New(Integer::New(1));
-      }
-      Emit(rename_symbol, 2, args);
-      break;
-
     default:
-      args[0] = Local<Value>::New(String::New(ldap_err2string(res)));
+      args[0] = Local<Value>::New(String::New(ldap_err2string(error)));
       args[1] = Local<Value>::New(Integer::New(msgid));
       args[2] = Local<Value>::New(Integer::New(res));
       Emit(unknown_symbol, 3, args);
@@ -479,6 +486,69 @@ protected:
     if ((sres = c->Rename(*dn, *newrdn, *newparent, deleteoldrdn)) < 0) {
       c->Emit(serverdown, 0, NULL);
     }
+
+    return scope.Close(Local<Value>::New(Integer::New(sres)));
+  }
+
+  static Handle<Value> Add(const Arguments &args)
+  {
+    HandleScope scope;
+
+    Connection *c = ObjectWrap::Unwrap<Connection>(args.This());
+    int sres;
+
+    // Validate args. God.
+    if (args.Length() < 2)      return THROW("Required arguments: dn, attrs");
+    if (!args[0]->IsString())   return THROW("dn should be a string");
+    if (!args[1]->IsArray())    return THROW("attrs should be an array");
+
+    String::Utf8Value dn(args[0]);
+    Local<Array> attrsHandle = Local<Array>::Cast(args[1]);
+    
+    int numOfAttrs = attrsHandle->Length();
+    for (int i = 0; i < numOfAttrs; i++) {
+      // Hey this is still so cumbersome.
+      if (!attrsHandle->Get(Integer::New(i))->IsObject()) {
+        return THROW("Each attr should be an object");
+      }
+    }
+
+    // Now prepare the LDAPMod array.
+    LDAPMod **ldapmods = (LDAPMod **) malloc(sizeof(LDAPMod *) * (numOfAttrs + 1));
+
+    for (int i = 0; i < numOfAttrs; i++) {
+      Local<Object> attrHandle =
+          Local<Object>::Cast(attrsHandle->Get(Integer::New(i)));
+
+      ldapmods[i] = (LDAPMod *) malloc(sizeof(LDAPMod));
+
+      // Step 1: mod_op
+      ldapmods[i]->mod_op = 0;
+
+      // Step 2: mod_type
+      String::Utf8Value mod_type(attrHandle->Get(String::New("type")));
+      ldapmods[i]->mod_type = strdup(*mod_type);
+
+      // Step 3: mod_vals
+      Local<Array> attrValsHandle =
+          Local<Array>::Cast(attrHandle->Get(String::New("vals")));
+      int attrValsLength = attrValsHandle->Length();
+      ldapmods[i]->mod_values = (char **) malloc(sizeof(char *) *
+          (attrValsLength + 1));
+      for (int j = 0; j < attrValsLength; j++) {
+        String::Utf8Value modValue(attrValsHandle->Get(Integer::New(j)));
+        ldapmods[i]->mod_values[j] = strdup(*modValue);
+      }
+      ldapmods[i]->mod_values[attrValsLength] = NULL;
+    }
+
+    ldapmods[numOfAttrs] = NULL;
+
+    if ((sres = c->Add(*dn, ldapmods)) < 0) {
+      c->Emit(serverdown, 0, NULL);
+    }
+
+    ldap_mods_free(ldapmods, 1);
 
     return scope.Close(Local<Value>::New(Integer::New(sres)));
   }

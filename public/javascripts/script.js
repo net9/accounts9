@@ -14,6 +14,11 @@
       }
     });
 
+    // Prevent double-submitting
+    $("form").submit(function () {
+      $(this).find("input[type=submit]").attr("disabled", "disabled");
+    });
+
     // "Full name" check
     $("#editinfo-fullname").each(function () {
       var optSurGiven = $("#ei-fn-surgiven")

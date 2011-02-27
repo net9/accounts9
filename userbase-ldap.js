@@ -17,13 +17,11 @@ var connect = function (options, callback) {
   var lconn = new ldap.Connection();
   lconn.open(config.server, function () {
 
-    lconn.authenticate(options.dn, options.secret, function (success) {
-      if (success) callback(null, lconn);
+    lconn.authenticate(options.dn, options.secret, function (err) {
+      if (!err) callback(null, lconn);
       else {
         lconn.close();
-        // Hell. The module isn't even specifying *what* went wrong.
-        // Rewrite later. XXX
-        callback(1);
+        callback(err);
       }
     });
 
@@ -42,7 +40,7 @@ exports.checkUser = function (username, callback) {
     if (err) callback(true);
     else lconn.search(config.user_base_dn, "uid=" + username, "*", function (result) {
       lconn.close();
-      callback(result.length !== 0);
+      callback(!result || result.length !== 0);
     });
   });
 };
@@ -67,7 +65,7 @@ var getByName = function (lconn, username, callback) {
         website: f("labeledURI"),
         address: f("registeredAddress"),
         bio: f("description"),
-        nextNameChangeDate: +f("businessCategory")    // Should be number
+        nextNameChangeDate: +f("businessCategory")    // Should be a number
       });
     }
   }, function (err) {
@@ -91,7 +89,7 @@ exports.authenticate = function (username, password, callback) {
     secret: password
   }, function (err, lconn) {
     if (err) {
-      callback(false, 'user-pass-no-match');
+      callback(false, err);
     } else {
       getByName(lconn, username, callback);
     }
@@ -111,8 +109,27 @@ var genPassword = function (rawpass) {
 };
 
 exports.create = function (userinfo, callback) {
-  // Not implemented yet
-  callback(false, 'not-implemented-yet');
+  connect(function (err, lconn) {
+    if (err) callback(false, err);
+    else {
+      var mods = [
+        { type: 'uid', vals: [ userinfo.username ] },
+        { type: 'sn', vals: [ userinfo.username ] },
+        { type: 'cn', vals: [ userinfo.username ] },
+        { type: 'objectClass', vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson' ] },
+        { type: 'mail', vals: [ userinfo.email ] },
+        { type: 'userPassword', vals: [ genPassword(userinfo.password) ] }
+      ];
+
+      lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
+        if (!err) getByName(lconn, userinfo.username, callback);
+        else {
+          lconn.close();
+          callback(false, err);
+        }
+      });
+    }
+  });
 };
 
 exports.update = function (userinfo, callback) {
@@ -135,11 +152,11 @@ exports.update = function (userinfo, callback) {
         mods.push({ type: 'userPassword', vals: [ genPassword(userinfo.password) ] });
       }
 
-      lconn.modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (success) {
-        if (success) getByName(lconn, userinfo.username, callback);
+      lconn.modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
+        if (!err) getByName(lconn, userinfo.username, callback);
         else {
           lconn.close();
-          callback(false, 'modify');
+          callback(false, err);
         }
       });
     }
@@ -151,22 +168,22 @@ exports.rename = function (oldname, newname, callback) {
     if (err) callback(false, err);
     else {
       // Do the renaming.
-      lconn.rename('uid=' + oldname + ',' + config.user_base_dn, 'uid=' + newname, function (success) {
-        if (success) {
+      lconn.rename('uid=' + oldname + ',' + config.user_base_dn, 'uid=' + newname, function (err) {
+        if (!err) {
           // Now update the name change date. For 30 days you can't touch it!
           lconn.modify('uid=' + newname + ',' + config.user_base_dn, [
             { type: 'businessCategory', vals: [ Date.now() + 2592000000 ] }
-          ], function (success) {
+          ], function (err) {
             // Finally return the result.
-            if (success) getByName(lconn, newname, callback);
+            if (!err) getByName(lconn, newname, callback);
             else {
               lconn.close();
-              callback(false, 'modify');
+              callback(false, err);
             }
           });
         } else {
           lconn.close();
-          callback(false, 'rename');
+          callback(false, err);
         }
       });
     }
