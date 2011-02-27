@@ -65,7 +65,8 @@ var getByName = function (lconn, username, callback) {
         website: f("labeledURI"),
         address: f("registeredAddress"),
         bio: f("description"),
-        nextNameChangeDate: +f("businessCategory")    // Should be a number
+        birthdate: f("birthdate"),
+        nextNameChangeDate: +f("usernameNextChange")    // Should be a number
       });
     }
   }, function (err) {
@@ -125,7 +126,8 @@ exports.create = function (userinfo, callback) {
           { type: 'sn', vals: [ userinfo.username ] },
           { type: 'cn', vals: [ userinfo.username ] },
           { type: 'objectClass',
-            vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount' ] },
+            vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson',
+                    'posixAccount', 'shadowAccount', 'net9Person' ] },
           { type: 'mail', vals: [ userinfo.email ] },
           { type: 'userPassword', vals: [ genPassword(userinfo.password) ] },
           { type: 'gidNumber', vals: [ 4999 ] },
@@ -133,9 +135,24 @@ exports.create = function (userinfo, callback) {
           { type: 'homeDirectory', vals: [ '/home/' + userinfo.username ] }
         ];
 
+        // Add the user.
         lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
-          if (!err) getByName(lconn, userinfo.username, callback);
-          else {
+          if (!err) {
+
+            // By default, add to the group 'native'.
+            lconn.modify('cn=native,' + config.group_base_dn, [
+              { op: 'add', type: 'memberUid', vals: [ userinfo.username ] }
+            ], function (err) {
+
+              if (!err) getByName(lconn, userinfo.username, callback);
+              else {
+                lconn.close();
+                callback(false, err);
+              }
+
+            });
+
+          } else {
             lconn.close();
             callback(false, err);
           }
@@ -158,7 +175,8 @@ exports.update = function (userinfo, callback) {
         { type: 'mobile', vals: [ userinfo.mobile ] },
         { type: 'labeledURI', vals: [ userinfo.website ] },
         { type: 'registeredAddress', vals: [ userinfo.address ] },
-        { type: 'description', vals: [ userinfo.bio ] }
+        { type: 'description', vals: [ userinfo.bio ] },
+        { type: 'birthdate', vals: [ userinfo.birthdate ] }
       ];
 
       if (userinfo.password) {
@@ -185,7 +203,8 @@ exports.rename = function (oldname, newname, callback) {
         if (!err) {
           // Now update the name change date. For 30 days you can't touch it!
           lconn.modify('uid=' + newname + ',' + config.user_base_dn, [
-            { type: 'businessCategory', vals: [ Date.now() + 2592000000 ] }
+            { type: 'usernameLastChange', vals: [ Date.now() ] },
+            { type: 'usernameNextChange', vals: [ Date.now() + 2592000000 ] }
           ], function (err) {
             // Finally return the result.
             if (!err) getByName(lconn, newname, callback);

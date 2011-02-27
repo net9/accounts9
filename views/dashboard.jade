@@ -26,6 +26,10 @@
       tr
         th= msg('Address')
         td= userinfo.address
+    - if (userinfo.birthdate)
+      tr
+        th= msg('birth-date')
+        td= msg('birthdate-format', userinfo.birthdate.slice(0, 4), userinfo.birthdate.slice(4, 6), userinfo.birthdate.slice(6, 8))
     - if (userinfo.bio)
       tr
         th= msg('Bio')

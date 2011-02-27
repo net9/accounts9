@@ -89,7 +89,7 @@ module.exports = function (app) {
   });
 
   app.post('/editinfo', function (req, res) {
-    var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website',
+    var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website', 'birthdate',
         'mobile', 'givenname', 'surname', 'address', 'nickname', 'nextNameChangeDate']);
 
     if (req.body.fullname === 'surgiven') newInfo.fullname = newInfo.surname + newInfo.givenname;

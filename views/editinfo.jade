@@ -71,6 +71,12 @@ form(method="POST", action="/editinfo")
         input#editinfo-address(type="text", name="address", value=userinfo.address)
     tr
       th
+        label(for="editinfo-birthdate")= msg('birth-date')
+        .tip#editinfo-birthdate-tips!= msg('editinfo-birthdate-tips')
+      td
+        input#editinfo-birthdate(type="text", name="birthdate", value=userinfo.birthdate)
+    tr
+      th
         label(for="editinfo-bio")= msg('Bio')
       td
         textarea(id="editinfo-bio", name="bio")= userinfo.bio
