@@ -4,7 +4,7 @@ form(method="POST", action="/editinfo")
       th= msg('Username')
       td
         = userinfo.username
-        div
+        div.hidden
           - if (userinfo.nextNameChangeDate > Date.now())
             != msg('next-name-change', new Date(userinfo.nextNameChangeDate))
           - else
