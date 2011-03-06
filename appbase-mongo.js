@@ -1,6 +1,6 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var mongoose = require("mongoose");
+var mongoose = require("mongoose"), utils = require("./utils");
 
 mongoose.connect('mongodb://localhost/net9-auth');
 
@@ -56,7 +56,7 @@ exports.authenticate = function (clientid, secret, callback) {
 
 exports.update = function (appinfo, callback) {
   App.findOne({ clientid: appinfo.clientid }, function (err, app) {
-    app.merge(appinfo).save(function (err) {
+    utils.merge(app, appinfo).save(function (err) {
       if (err) callback(false, err);
       else callback(true, app.toObject());
     });

@@ -1,6 +1,6 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var mongoose = require("mongoose");
+var mongoose = require("mongoose"), utils = require("./utils");
 
 mongoose.connect('mongodb://localhost/net9-auth');
 
@@ -23,7 +23,7 @@ exports.getCode = function (code, callback) {
 
 exports.upsertCode = function (codeinfo, callback) {
   Code.findOne({ code: codeinfo.code }, function (err, code) {
-    var newCode = code === null ? new Code(codeinfo) : code.merge(codeinfo);
+    var newCode = code === null ? new Code(codeinfo) : utils.merge(code, codeinfo);
     newCode.save(function (err) {
       if (err) callback(false, err);
       else callback(true, newCode.toObject());
@@ -59,7 +59,7 @@ exports.upsertAccessToken = function (tokeninfo, callback) {
   delete tokeninfo.redirect_uri;
   // Now do the upserting.
   AccessToken.findOne({ accesstoken: tokeninfo.accesstoken }, function (err, token) {
-    var newToken = token === null ? new AccessToken(tokeninfo) : token.merge(tokeninfo);
+    var newToken = token === null ? new AccessToken(tokeninfo) : utils.merge(token, tokeninfo);
     newToken.save(function (err) {
       if (err) callback(false, err);
       else callback(true, newToken.toObject());
