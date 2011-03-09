@@ -82,9 +82,9 @@ app.get('/', function (req, res) {
   }
 });
 
-app.get('/test', function (req, res) {
+app.all('/test', function (req, res) {
   res.send(util.inspect(req));
-});
+});app.all('/post',function(req,res){res.send('<form method="POST" action="/post"><div class="flash block-flash info-flash"><div class="message">Are you sure you want to authenticate the application <a href="/apps/U0M1TEIJKiBAhv0LCHFvwgpA_fk" target="_blank"><strong>._.</strong></a>? If you do, <strong>._.</strong> will have access to your personal data.</div><div class="choices"><input type="submit" name="yes" value="Yes"/><input type="submit" name="no" value="No" class="normal-button"/></div></div></form>'+util.inspect(req)+'</pre>');});
 
 // Only listen on $ node app.js
 

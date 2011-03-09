@@ -16,7 +16,7 @@
 
     // Prevent double-submitting
     $("form").submit(function () {
-      $(this).find("input[type=submit]").attr("disabled", "disabled");
+      $(this).find("input[type=submit]:not(.nodisable)").attr("disabled", "disabled");
     });
 
     // "Full name" check

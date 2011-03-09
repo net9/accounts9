@@ -79,6 +79,8 @@ module.exports = function (app) {
           else res.redirect(oauthinfo.redirect_uri + '?code=' + code + oauthinfo.state);
         });
       } else {
+        console.log(require("util").inspect(req.body));
+        console.log(require("util").inspect(req.param("yes")));
         res.redirect(oauthinfo.redirect_uri + '?error=access_denied' + oauthinfo.state);
       }
     }
