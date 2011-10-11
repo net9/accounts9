@@ -8,7 +8,7 @@ html
     #container
       #header
         #menu
-          - if (this.session.userinfo)
+          - if (session.userinfo)
             != msg('logged-in-as', this.session.userinfo.username)
             a#logout(href="/logout")= msg('Logout')
         a#logo(href="/")
@@ -16,7 +16,7 @@ html
           img(src="/images/accounts200.png", width="200", height="150")
       #content
         h1= title
-        != partial('flash', getFlashArray(this.flash()))
+        != partial('partials/flash', flashArray)
         #body!= body
         .clear
       #footer!= msg('footer-text')

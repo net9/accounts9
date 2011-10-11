@@ -14,16 +14,16 @@ var app = module.exports = express.createServer();
 app.configure(function () {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.bodyDecoder());
+  app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieDecoder());
+  app.use(express.cookieParser());
   app.use(express.session({ secret: 'joe-king-pilot-for-hire' }));
   app.use(express.compiler({ src: __dirname + '/public', enable: ['less'] }));
   app.use(app.router);
   app.use(express.router(require('./approuter')));
   app.use(express.router(require('./userrouter')));
   app.use(express.router(require('./apirouter')));
-  app.use(express.staticProvider(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function () {
@@ -42,7 +42,16 @@ app.helpers({
     if (title) return messages.get('page-title', title);
     else return messages.get('index-page-title');
   },
-  getFlashArray: function (flash) {
+  inspect: function (obj) {
+    return util.inspect(obj);
+  }
+});
+
+app.dynamicHelpers({
+  session: function (req, res){
+    return req.session;
+  },
+  flashArray: function (req, res) {
     // Turn this:
     //   { 'info': ['info1', 'info2'], 'error': ['error1'] }
     // into this:
@@ -50,6 +59,7 @@ app.helpers({
     //   , { type: 'info', message: 'info2' }
     //   , { type: 'error', message: 'error1' }]
     // for ease with view partials rendering.
+    var flash = req.flash();
     var flashes = [];
     for (var key in flash) {
       flash[key].forEach(function (msg) {
@@ -57,10 +67,8 @@ app.helpers({
       });
     }
     return flashes;
-  },
-  inspect: function (obj) {
-    return util.inspect(obj);
   }
+  
 });
 
 // Routes
