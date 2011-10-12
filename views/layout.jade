@@ -9,7 +9,7 @@ html
       #header
         #menu
           - if (session.userinfo)
-            != msg('logged-in-as', this.session.userinfo.username)
+            != msg('logged-in-as', session.userinfo.username)
             a#logout(href="/logout")= msg('Logout')
         a#logo(href="/")
           img(src="/images/logo200.png", width="200", height="150")
