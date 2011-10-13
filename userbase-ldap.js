@@ -46,12 +46,14 @@ exports.checkUser = function (username, callback) {
 };
 
 var getByName = function (lconn, username, callback) {
-  lconn.search(config.user_base_dn, "uid=" + username, "*", function (result) {
+  console.log(username);
+  lconn.search(config.user_base_dn, "(uid=" + username + ")", function (err, result) {
     lconn.close();
-    if (result.length === 0) callback(false, 'no-such-user');
+    if (result == null)
+      callback(false, 'no-such-user');
     else {
       var f = function (field) {
-        return result[0][field] ? result[0][field][0] : '';
+        return result[field] ? result[field] : '';
       };
       callback(true, {
         username: f("uid"),
