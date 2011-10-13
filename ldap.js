@@ -22,18 +22,29 @@ exports.Connection = function() {
     client.bind(dn, secret, callback);
   };
   
-  this.search = function(base, filter, callback) {
+  this.search = function (base, filter, callback) {
     client.search(base, {filter: filter, scope: 'sub'}, function(err, result){
       if (err)
         callback(err);
       else {
+        var entries = [];
         result.on('searchEntry', function(entry){
-          callback(null, entry.object);
+          entries.push(entry.object);
+        });
+        result.on('error', function(err) {
+          callback(err);
+        });
+        result.on('end', function(entry){
+          callback(null, entries);
         });
       }
     });
   }
 
+  this.add = function (dn, attrs, callback) {
+    client.add(dn, attrs, callback);
+  };
+  
   self.modify = function (dn, mods, callback) {
     requestcount++;
 
@@ -54,15 +65,6 @@ exports.Connection = function() {
     requests[msgid] = r;
   };
 
-  self.add = function (dn, attrs, callback) {
-    requestcount++;
-
-    var r = new Request(callback, null);
-    var msgid = r.doAction(function () {
-      return binding.add(dn, attrs);
-    });
-    requests[msgid] = r;
-  };
 
 
   self.searchAuthenticate = function(base, filter, password, CB) {

@@ -33,27 +33,32 @@ var connect = function (options, callback) {
 };
 
 exports.checkUser = function (username, callback) {
-  if (username === '') { callback(true); return; }
+  if (username === '') {
+    callback(true);
+    return;
+  }
   connect(function (err, lconn) {
     // If an error occurred during the connection, just temporarily
     // say that the username is occupied. XXX
-    if (err) callback(true);
-    else lconn.search(config.user_base_dn, "uid=" + username, "*", function (result) {
-      lconn.close();
-      callback(!result || result.length !== 0);
-    });
+    if (err)
+      callback(true);
+    else {
+      lconn.search(config.user_base_dn, "(uid=" + username + ")", function (err, result) {
+        lconn.close();
+        callback(!result || result.length !== 0);
+      });
+    }
   });
 };
 
 var getByName = function (lconn, username, callback) {
-  console.log(username);
   lconn.search(config.user_base_dn, "(uid=" + username + ")", function (err, result) {
     lconn.close();
-    if (result == null)
+    if (result == null || result.length == 0)
       callback(false, 'no-such-user');
     else {
       var f = function (field) {
-        return result[field] ? result[field] : '';
+        return result[0][field] ? result[0][field] : '';
       };
       callback(true, {
         username: f("uid"),
@@ -116,29 +121,31 @@ exports.create = function (userinfo, callback) {
     if (err) callback(false, err);
     else {
       // First find a suitable uidNumber for our little guest.
-      lconn.search(config.user_base_dn, "objectClass=posixAccount", "uidNumber", function (result) {
+      lconn.search(config.user_base_dn, "(objectClass=posixAccount)", function (err, result) {
         // The new uidNumber should be one greater than the current greatest.
         var newUid = result.reduce(function (house, guest) {
           return house > +guest.uidNumber[0] ? house : +guest.uidNumber[0];
         }, 0) + 1;
+        if (newUid <= 2000)
+         newUid = 2001;
 
-        // Now prepare the mods.
-        var mods = [
-          { type: 'uid', vals: [ userinfo.username ] },
-          { type: 'sn', vals: [ userinfo.username ] },
-          { type: 'cn', vals: [ userinfo.username ] },
-          { type: 'objectClass',
-            vals: [ 'person', 'top', 'inetOrgPerson', 'organizationalPerson',
-                    'posixAccount', 'shadowAccount', 'net9Person' ] },
-          { type: 'mail', vals: [ userinfo.email ] },
-          { type: 'userPassword', vals: [ genPassword(userinfo.password) ] },
-          { type: 'gidNumber', vals: [ 4999 ] },
-          { type: 'uidNumber', vals: [ newUid ] },
-          { type: 'homeDirectory', vals: [ '/home/' + userinfo.username ] }
-        ];
+        // Now prepare the attrs.
+        var attrs = {
+          uid: userinfo.username,
+          sn: userinfo.username,
+          cn: userinfo.username,
+          //objectClass: ['person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'net9Person' ],
+          objectClass: ['person', 'inetOrgPerson', 'organizationalPerson', 'posixAccount'],
+          mail: userinfo.email,
+          userPassword: genPassword(userinfo.password),
+          gidNumber: 4999,
+          uidNumber: newUid,
+          homeDirectory: '/home/' + userinfo.username
+        };
 
         // Add the user.
-        lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
+        lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, attrs, function (err) {
+                  console.log(err.message);
           if (!err) {
 
             // By default, add to the group 'native'.
