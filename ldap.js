@@ -1,9 +1,7 @@
 var ldap = require("ldapjs");
 
 exports.Connection = function() {
-  
-  var client;
-  var self = this;
+  var client = null;
   
   this.open = function(server_uri, callback){
     client = ldap.createClient({
@@ -12,17 +10,25 @@ exports.Connection = function() {
     
     if (callback)
       callback();
-  }
+  };
   
   this.close = function() {
-    client.unbind();
-  }
+	if (client != null)
+	  client.unbind();
+  };
   
   this.authenticate = function (dn, secret, callback) {
-    client.bind(dn, secret, callback);
+	if (client != null)
+	  client.bind(dn, secret, callback);
+	else
+	  callback('ldap-client-not-opened');
   };
   
   this.search = function (base, filter, callback) {
+	if (client == null) {
+	  callback('ldap-client-not-opened');
+	  return;
+	}
     client.search(base, {filter: filter, scope: 'sub'}, function(err, result){
       if (err)
         callback(err);
@@ -39,46 +45,38 @@ exports.Connection = function() {
         });
       }
     });
-  }
+  };
 
   this.add = function (dn, attrs, callback) {
+	if (client == null) {
+	  callback('ldap-client-not-opened');
+	  return;
+	}
     client.add(dn, attrs, callback);
   };
   
-  self.modify = function (dn, mods, callback) {
-    requestcount++;
-
-    var r = new Request(callback, null);
-    var msgid = r.doAction(function () {
-      return binding.modify(dn, mods);
-    });
-    requests[msgid] = r;
+  this.del = function (dn, controls, callback) {
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
+    client.del(dn, controls, callback);
+  };
+  
+  this.modify = function (dn, mods, callback) {
+	if (client == null) {
+	  callback('ldap-client-not-opened');
+	  return;
+	}
+	change = new ldap.Change(mods);
+    client.modify(dn, change, callback);
   };
 
-  self.rename = function (dn, newrdn, callback) {
-    requestcount++;
-
-    var r = new Request(callback, null);
-    var msgid = r.doAction(function () {
-      return binding.rename(dn, newrdn, "", true);
-    });
-    requests[msgid] = r;
+  this.rename = function (dn, newrdn, controls, callback) {
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
+    client.modifyDN(dn, newrdn, controls, callback);
   };
-
-
-
-  self.searchAuthenticate = function(base, filter, password, CB) {
-      self.search(base, filter, "", function(res) {
-          // TODO: see if there's only one result, and exit if not
-          if (res.length != 1) {
-              CB(0);
-          } else {
-              // we have the result. Use the DN to auth.
-              self.authenticate(res[0].dn, password, function(success, dn) {
-                  CB(success, res[0].dn);
-              });
-          }
-      });
-  }
-
-}
+};
