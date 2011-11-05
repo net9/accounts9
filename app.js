@@ -21,7 +21,7 @@ app.configure(function () {
   app.use(express.compiler({ src: __dirname + '/public', enable: ['less'] }));
   app.use(app.router);
   app.use(express.router(require('./approuter')));
-  app.use(express.router(require('./userrouter')));
+  app.use(express.router(require('./user/router')));
   app.use(express.router(require('./apirouter')));
   app.use(express.static(__dirname + '/public'));
 });

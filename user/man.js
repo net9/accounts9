@@ -1,6 +1,6 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var userbase = require('./userbase-ldap');
+var userbase = require('./db');
 
 exports.checkUser = function (username, callback) {
   userbase.checkUser(username, function (occupied) {

@@ -1,8 +1,8 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
 var assert = require("assert");
-var ldap = require("./ldap"), config = require("./config").ldap;
-var crypto = require("crypto"), utils = require("./utils");
+var ldap = require("./ldap"), config = require("../config").ldap;
+var crypto = require("crypto"), utils = require("../utils");
 
 // Connect to LDAP server, authenticate with master/given user, and return to
 // the callback with the LDAP connection (or errors if present).
