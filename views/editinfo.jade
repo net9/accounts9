@@ -43,11 +43,22 @@ form(method="POST", action="/editinfo")
       td
         select#editinfo-fullname(name="fullname")
           - var surgiven = userinfo.surname + userinfo.givenname
-          option#ei-fn-surgiven(value="surgiven", selected: userinfo.fullname === surgiven)= surgiven
+          - if (userinfo.fullname === surgiven)
+            option#ei-fn-surgiven(value="surgiven", selected)= surgiven
+          - else
+            option#ei-fn-surgiven(value="surgiven")= surgiven
+            
           - var given_sur = userinfo.givenname + " " + userinfo.surname
-          option#ei-fn-given-sur(value="given-sur", selected: userinfo.fullname === given_sur)= given_sur
+          - if (userinfo.fullname === given_sur)
+            option#ei-fn-given-sur(value="given-sur", selected)= given_sur
+          - else
+            option#ei-fn-given-sur(value="given-sur")= given_sur
+            
           - var sur_given = userinfo.surname + " " + userinfo.givenname
-          option#ei-fn-sur-given(value="sur-given", selected: userinfo.fullname === sur_given)= sur_given
+          - if (userinfo.fullname === sur_given)
+            option#ei-fn-sur-given(value="sur-given", selected)= sur_given
+          - else
+            option#ei-fn-sur-given(value="sur-given")= sur_given
     tr
       th
         label(for="editinfo-email")= msg('Email')
