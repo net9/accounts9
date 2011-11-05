@@ -75,6 +75,8 @@ exports.Connection = function() {
 	    type: 'replace',
 	    modification: {}
 	  };
+	  if (mods[k] == '')
+	    mods[k] = [];
 	  change_one.modification[k] = mods[k];
 	  
 	  change.push(new Change(change_one));

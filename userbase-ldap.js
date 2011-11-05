@@ -126,10 +126,11 @@ exports.create = function (userinfo, callback) {
       lconn.search(config.user_base_dn, "(objectClass=posixAccount)", function (err, result) {
         // The new uidNumber should be one greater than the current greatest.
         var newUid = result.reduce(function (house, guest) {
-          return house > +guest.uidNumber[0] ? house : +guest.uidNumber[0];
+          uid = parseInt(guest.uidNumber);
+          return house < uid ? uid : house;
         }, 0) + 1;
-        if (newUid <= 2000)
-          newUid = 2001;
+        if (newUid <= config.min_uid)
+          newUid = config.min_uid + 1;
         userinfo.uidNumber = newUid;
 
         // Now prepare the attrs.
@@ -140,9 +141,9 @@ exports.create = function (userinfo, callback) {
           objectClass: ['person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'net9Person' ],
           mail: userinfo.email,
           userPassword: genPassword(userinfo.password),
-          gidNumber: 4000,
+          gidNumber: config.default_gid,
           uidNumber: userinfo.uidNumber,
-          homeDirectory: '/home/' + userinfo.username
+          homeDirectory: config.home_directory + userinfo.username
         };
 
         // Add the user.
@@ -153,7 +154,7 @@ exports.create = function (userinfo, callback) {
         	mods = {
         	  memberUid: userinfo.uidNumber
         	};
-            lconn.attr_add('cn=Users,' + config.group_base_dn, mods, function (err) {
+            lconn.attr_add('cn=' + config.default_group + ',' + config.group_base_dn, mods, function (err) {
               if (!err)
                 getByName(lconn, userinfo.username, callback);
               else {
