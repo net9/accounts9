@@ -1,5 +1,6 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
+var assert = require("assert");
 var ldap = require("./ldap"), config = require("./config").ldap;
 var crypto = require("crypto"), utils = require("./utils");
 
@@ -60,6 +61,7 @@ var getByName = function (lconn, username, callback) {
       var f = function (field) {
         return result[0][field] ? result[0][field] : '';
       };
+
       callback(true, {
         username: f("uid"),
         uid: f("uidNumber"),
@@ -127,40 +129,42 @@ exports.create = function (userinfo, callback) {
           return house > +guest.uidNumber[0] ? house : +guest.uidNumber[0];
         }, 0) + 1;
         if (newUid <= 2000)
-         newUid = 2001;
+          newUid = 2001;
+        userinfo.uidNumber = newUid;
 
         // Now prepare the attrs.
         var attrs = {
           uid: userinfo.username,
           sn: userinfo.username,
           cn: userinfo.username,
-          //objectClass: ['person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'net9Person' ],
-          objectClass: ['person', 'inetOrgPerson', 'organizationalPerson', 'posixAccount'],
+          objectClass: ['person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'net9Person' ],
           mail: userinfo.email,
           userPassword: genPassword(userinfo.password),
-          gidNumber: 4999,
-          uidNumber: newUid,
+          gidNumber: 4000,
+          uidNumber: userinfo.uidNumber,
           homeDirectory: '/home/' + userinfo.username
         };
 
         // Add the user.
-        lconn.add('uid=' + userinfo.username + ',' + config.user_base_dn, attrs, function (err) {
-                  console.log(err.message);
+        var user_dn = 'uid=' + userinfo.username + ',' + config.user_base_dn;
+        lconn.add(user_dn, attrs, function (err) {
           if (!err) {
-
             // By default, add to the group 'native'.
-            lconn.modify('cn=native,' + config.group_base_dn, [
-              { op: 'add', type: 'memberUid', vals: [ userinfo.username ] }
-            ], function (err) {
-
-              if (!err) getByName(lconn, userinfo.username, callback);
+        	mods = {
+        	  memberUid: userinfo.uidNumber
+        	};
+            lconn.attr_add('cn=Users,' + config.group_base_dn, mods, function (err) {
+              if (!err)
+                getByName(lconn, userinfo.username, callback);
               else {
-                lconn.close();
+                //Rollback
+                lconn.del(user_dn, function (err) {
+                  lconn.close();
+                  assert.ifError(err);
+                });
                 callback(false, err);
               }
-
             });
-
           } else {
             lconn.close();
             callback(false, err);
@@ -173,27 +177,29 @@ exports.create = function (userinfo, callback) {
 
 exports.update = function (userinfo, callback) {
   connect(function (err, lconn) {
-    if (err) callback(false, err);
+    if (err)
+      callback(false, err);
     else {
-      var mods = [
-        { type: 'displayName', vals: [ userinfo.nickname ] },
-        { type: 'sn', vals: [ userinfo.surname ] },
-        { type: 'givenName', vals: [ userinfo.givenname ] },
-        { type: 'cn', vals: [ userinfo.fullname ] },
-        { type: 'mail', vals: [ userinfo.email ] },
-        { type: 'mobile', vals: [ userinfo.mobile ] },
-        { type: 'labeledURI', vals: [ userinfo.website ] },
-        { type: 'registeredAddress', vals: [ userinfo.address ] },
-        { type: 'description', vals: [ userinfo.bio ] },
-        { type: 'birthdate', vals: [ userinfo.birthdate ] }
-      ];
+      var mods = {
+        displayName:          userinfo.nickname,
+        sn:                   userinfo.surname,
+        givenName:            userinfo.givenname,
+        cn:                   userinfo.fullname,
+        mobile:               userinfo.mobile,
+        labeledURI:           userinfo.website,
+        registeredAddress:    userinfo.address,
+        mail:                 userinfo.email,
+        description:          userinfo.bio,
+        birthdate:            userinfo.birthdate,
+      };
 
       if (userinfo.password) {
-        mods.push({ type: 'userPassword', vals: [ genPassword(userinfo.password) ] });
+        mods.modification.userPassword = genPassword(userinfo.password);
       }
 
-      lconn.modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
-        if (!err) getByName(lconn, userinfo.username, callback);
+      lconn.attr_modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
+        if (!err)
+          getByName(lconn, userinfo.username, callback);
         else {
           lconn.close();
           callback(false, err);
@@ -205,7 +211,8 @@ exports.update = function (userinfo, callback) {
 
 exports.rename = function (oldname, newname, callback) {
   connect(function (err, lconn) {
-    if (err) callback(false, err);
+    if (err)
+      callback(false, err);
     else {
       // Do the renaming.
       lconn.rename('uid=' + oldname + ',' + config.user_base_dn, 'uid=' + newname, function (err) {
@@ -216,7 +223,8 @@ exports.rename = function (oldname, newname, callback) {
             { type: 'usernameNextChange', vals: [ Date.now() + 2592000000 ] }
           ], function (err) {
             // Finally return the result.
-            if (!err) getByName(lconn, newname, callback);
+            if (!err)
+              getByName(lconn, newname, callback);
             else {
               lconn.close();
               callback(false, err);

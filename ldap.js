@@ -1,11 +1,11 @@
 var ldap = require("ldapjs");
+var Change = ldap.Change;
 
 exports.Connection = function() {
   var client = null;
-  
   this.open = function(server_uri, callback){
     client = ldap.createClient({
-      url: server_uri
+      url: server_uri,
     });
     
     if (callback)
@@ -63,15 +63,46 @@ exports.Connection = function() {
     client.del(dn, controls, callback);
   };
   
-  this.modify = function (dn, mods, callback) {
+  this.attr_modify = function (dn, mods, callback) {
 	if (client == null) {
 	  callback('ldap-client-not-opened');
 	  return;
 	}
-	change = new ldap.Change(mods);
+	
+	var change = [];
+	Object.keys(mods).forEach(function(k) {
+	  change_one = {
+	    type: 'replace',
+	    modification: {}
+	  };
+	  change_one.modification[k] = mods[k];
+	  
+	  change.push(new Change(change_one));
+	});
+	
     client.modify(dn, change, callback);
   };
 
+  this.attr_add = function (dn, mods, callback) {
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
+    
+    var change = [];
+    Object.keys(mods).forEach(function(k) {
+      change_one = {
+        type: 'add',
+        modification: {}
+      };
+      change_one.modification[k] = mods[k];
+      
+      change.push(new Change(change_one));
+    });
+    
+    client.modify(dn, change, callback);
+  };
+  
   this.rename = function (dn, newrdn, controls, callback) {
     if (client == null) {
       callback('ldap-client-not-opened');
