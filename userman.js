@@ -22,30 +22,42 @@ exports.register = function (userinfo, callback) {
 
     // When everything looks good, insert the record.
     userbase.create(userinfo, function (success, userOrErr) {
-      if (success) callback({ success: true, userinfo: userOrErr });
-      else callback({ success: false, userinfo: userinfo, error: userOrErr });
+      if (success) {
+        callback({ success: true, userinfo: userOrErr });
+      } else {
+        callback({ success: false, userinfo: userinfo, error: userOrErr });
+      }
     });
   });
 };
 
 exports.getByName = function (username, callback) {
   userbase.getByName(username, function (success, userOrErr) {
-    if (success) callback({ success: true, userinfo: userOrErr });
-    else callback({ success: false, username: username, error: userOrErr });
+    if (success) {
+      callback({ success: true, userinfo: userOrErr });
+    } else {
+      callback({ success: false, username: username, error: userOrErr });
+    }
   });
 };
 
 exports.authenticate = function (userinfo, callback) {
   userbase.authenticate(userinfo.username, userinfo.password, function (success, userOrErr) {
-    if (success) callback({ success: true, userinfo: userOrErr });
-    else callback({ success: false, userinfo: userinfo, error: userOrErr });
+    if (success) {
+      callback({ success: true, userinfo: userOrErr });
+    } else {
+      callback({ success: false, userinfo: userinfo, error: userOrErr });
+    }
   });
 };
 
 var updateInfo = function (newinfo, callback) {
   userbase.update(newinfo, function (success, userOrErr) {
-    if (success) callback({ success: true, userinfo: userOrErr });
-    else callback({ success: false, error: userOrErr });
+    if (success) {
+      callback({ success: true, userinfo: userOrErr });
+    } else {
+      callback({ success: false, error: userOrErr });
+    }
   });
 };
 
@@ -68,20 +80,26 @@ exports.editInfo = function (newinfo, callback) {
 exports.rename = function (nameChange, callback) {
   // First authenticate. We don't want strange things to happen...
   userbase.authenticate(nameChange.oldname, nameChange.password, function (success, userOrErr) {
-    if (!success) callback({ success: false, error: userOrErr });
+    if (!success) {
+      callback({ success: false, error: userOrErr });
     // Now double-check: Are you *really* allowed to rename yourself?
-    else if (userOrErr.nextNameChangeDate > Date.now()) {
+    } else if (userOrErr.nextNameChangeDate > Date.now()) {
       callback({ success: false, error: 'change-name-later|' + new Date(userOrErr.nextNameChangeDate) });
     } else {
       // Is the target name occupied?
       userbase.checkUser(nameChange.newname, function (occupied) {
-        if (occupied) callback({ success: false, error: 'Already exists' });
-        else userbase.rename(nameChange.oldname, nameChange.newname, function (success, userOrErr) {
-          if (success) callback({ success: true, userinfo: userOrErr });
-          else callback({ success: false, error: userOrErr });
-        });
+        if (occupied) {
+          callback({ success: false, error: 'Already exists' });
+        } else {
+          userbase.rename(nameChange.oldname, nameChange.newname, function (success, userOrErr) {
+            if (success) {
+              callback({ success: true, userinfo: userOrErr });
+            } else {
+              callback({ success: false, error: userOrErr });
+            }
+          });
+        }
       });
     }
   });
 };
-

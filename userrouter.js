@@ -71,8 +71,11 @@ module.exports = function (app) {
   });
 
   app.all('/editinfo', function (req, res, next) {
-    if (req.session.userinfo) next();
-    else res.redirect('/');
+    if (req.session.userinfo) {
+      next();
+    } else {
+      res.redirect('/');
+    }
   });
 
   app.get('/editinfo', function (req, res) {
@@ -92,9 +95,13 @@ module.exports = function (app) {
     var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website', 'birthdate',
         'mobile', 'givenname', 'surname', 'address', 'nickname', 'nextNameChangeDate']);
 
-    if (req.body.fullname === 'surgiven') newInfo.fullname = newInfo.surname + newInfo.givenname;
-    else if (req.body.fullname === 'sur-given') newInfo.fullname = newInfo.surname + ' ' + newInfo.givenname;
-    else newInfo.fullname = newInfo.givenname + ' ' + newInfo.surname;
+    if (req.body.fullname === 'surgiven') {
+      newInfo.fullname = newInfo.surname + newInfo.givenname;
+    } else if (req.body.fullname === 'sur-given') {
+      newInfo.fullname = newInfo.surname + ' ' + newInfo.givenname;
+    } else {
+      newInfo.fullname = newInfo.givenname + ' ' + newInfo.surname;
+    }
     newInfo.username = req.session.userinfo.username;
 
     userman.editInfo(newInfo, function (result) {
@@ -118,8 +125,9 @@ module.exports = function (app) {
 
   app.all('/changename', function (req, res, next) {
     // As usual, you have to be logged in to change your username.
-    if (!req.session.userinfo) res.redirect('/');
-    else {
+    if (!req.session.userinfo) {
+      res.redirect('/');
+    } else {
       // Are you allowed to change it this frequently?
       if (req.session.userinfo.nextNameChangeDate > Date.now()) {
         // No you're not.
@@ -164,6 +172,4 @@ module.exports = function (app) {
       }
     });
   });
-
 };
-

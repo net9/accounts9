@@ -44,7 +44,7 @@ app.helpers({
   },
   inspect: function (obj) {
     return util.inspect(obj);
-  }
+  },
 });
 
 app.dynamicHelpers({
@@ -67,8 +67,7 @@ app.dynamicHelpers({
       });
     }
     return flashes;
-  }
-  
+  },
 });
 
 // Routes
@@ -87,7 +86,7 @@ app.get('/', function (req, res) {
     });
   } else {
     res.redirect('/login');
-  }
+  };
 });
 
 app.all('/test', function (req, res) {
@@ -98,7 +97,7 @@ app.all('/test', function (req, res) {
 
 if (!module.parent) {
   app.listen(3000);
-  console.log("Express server listening on port %d", app.address().port)
+  console.log("Express server listening on port %d", app.address().port);
 }
 
 /* vim: set ts=2 sw=2 nocin si: */

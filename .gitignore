@@ -2,6 +2,8 @@
 *.swp
 public/stylesheets/*.css
 config.js
-build
-.lock-wscript
-
+.DS_Store
+node_modules
+.settings
+.project
+*.xcode*

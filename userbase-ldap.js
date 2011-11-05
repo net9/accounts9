@@ -19,8 +19,9 @@ var connect = function (options, callback) {
   lconn.open(config.server, function () {
 
     lconn.authenticate(options.dn, options.secret, function (err) {
-      if (!err) callback(null, lconn);
-      else {
+      if (!err) {
+        callback(null, lconn);
+      } else {
         lconn.close();
         callback(err);
       }
@@ -41,9 +42,9 @@ exports.checkUser = function (username, callback) {
   connect(function (err, lconn) {
     // If an error occurred during the connection, just temporarily
     // say that the username is occupied. XXX
-    if (err)
+    if (err) {
       callback(true);
-    else {
+    } else {
       lconn.search(config.user_base_dn, "(uid=" + username + ")", function (err, result) {
         lconn.close();
         callback(!result || result.length !== 0);
@@ -55,13 +56,12 @@ exports.checkUser = function (username, callback) {
 var getByName = function (lconn, username, callback) {
   lconn.search(config.user_base_dn, "(uid=" + username + ")", function (err, result) {
     lconn.close();
-    if (result == null || result.length == 0)
+    if (result == null || result.length == 0) {
       callback(false, 'no-such-user');
-    else {
+    } else {
       var f = function (field) {
         return result[0][field] ? result[0][field] : '';
       };
-
       callback(true, {
         username: f("uid"),
         uid: f("uidNumber"),
@@ -86,8 +86,11 @@ var getByName = function (lconn, username, callback) {
 
 exports.getByName = function (username, callback) {
   connect(function (err, lconn) {
-    if (err) callback(false, err);
-    else getByName(lconn, username, callback);
+    if (err) {
+      callback(false, err);
+    } else {
+      getByName(lconn, username, callback);
+    }
   });
 };
 
@@ -150,7 +153,7 @@ exports.create = function (userinfo, callback) {
         var user_dn = 'uid=' + userinfo.username + ',' + config.user_base_dn;
         lconn.add(user_dn, attrs, function (err) {
           if (!err) {
-            // By default, add to the group 'native'.
+            // Add user to the default group.
         	mods = {
         	  memberUid: userinfo.uidNumber
         	};
@@ -158,7 +161,7 @@ exports.create = function (userinfo, callback) {
               if (!err)
                 getByName(lconn, userinfo.username, callback);
               else {
-                //Rollback
+                //Roll back when error occurred
                 lconn.del(user_dn, function (err) {
                   lconn.close();
                   assert.ifError(err);
@@ -210,6 +213,7 @@ exports.update = function (userinfo, callback) {
   });
 };
 
+//TODO implement rename better
 exports.rename = function (oldname, newname, callback) {
   connect(function (err, lconn) {
     if (err)
@@ -239,4 +243,3 @@ exports.rename = function (oldname, newname, callback) {
     }
   });
 };
-
