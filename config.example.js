@@ -6,11 +6,14 @@
 
 module.exports = {
   ldap: {
-    server: "ldap://ldap.example.org",
-    master_dn: "cn=Manager,dc=example,dc=org",
-    master_secret: "secret",
-    user_base_dn: "ou=People,dc=example,dc=org",
-    group_base_dn: "ou=Group,dc=example,dc=org"
+    server: "ldap://ldap.net9.org",
+    master_dn: "cn=Manager,dc=net9,dc=org",
+    master_secret: "password",
+    user_base_dn: "ou=People,dc=net9,dc=org",
+    group_base_dn: "ou=Group,dc=net9,dc=org",
+    min_uid: 2000,
+    home_directory: '/home/',
+    default_gid: 4000,
+    default_group: 'Users',
   }
 };
-
