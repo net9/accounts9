@@ -42,7 +42,7 @@
   h2= msg('my-apps')
   - if (apps.success)
     - if (apps.apps.length)
-      ul.operable-list!= partial('appitem', apps.apps)
+      ul.operable-list!= partial('partials/appitem', apps.apps)
     - else
       div= msg('no-apps-yet')
   - else
