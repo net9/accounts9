@@ -6,7 +6,7 @@
 
 var express = require('express'),
     util = require('util'),
-    messages = require('./messages');
+    messages = require('./messages/getter');
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -39,8 +39,11 @@ app.configure('production', function () {
 app.helpers({
   msg: messages.get.bind(messages),
   pageTitle: function (title) {
-    if (title) return messages.get('page-title', title);
-    else return messages.get('index-page-title');
+    if (title) {
+      return messages.get('page-title', title);
+    } else {
+      return messages.get('index-page-title');
+    }
   },
   inspect: function (obj) {
     return util.inspect(obj);
@@ -101,4 +104,3 @@ if (!module.parent) {
 }
 
 /* vim: set ts=2 sw=2 nocin si: */
-

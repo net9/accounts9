@@ -1,6 +1,4 @@
-/* vim: set sw=2 ts=2 nocin si: */
-
-var messages = {
+exports.messages = {
   'page-title': '$1 - net9 Auth',
   'index-page-title': 'net9 Auth',
   'logged-in-as': 'Logged in as <strong>$1</strong> | ',
@@ -69,18 +67,3 @@ var messages = {
   'app-auth-message': 'Are you sure you want to authenticate the application <a href="/apps/$1" target="_blank"><strong>$2</strong></a>? If you do, <strong>$2</strong> will have access to your personal data.',
   'footer-text': '<p>This website you\'re viewing is made possible by countless developers from all over the world. Hail them.</p><p>THU.CS&T.SAST.Network</p>'
 };
-
-// Cache the argument regexps for performance. I genuinely hope arguments number 6+ won't be used.
-// If someone uses them, God help him/her split the message into smaller parts.
-var args = [/\$0/g, /\$1/g, /\$2/g, /\$3/g, /\$4/g, /\$5/g, /\$6/g];
-
-exports.get = function (id) {
-  //console.log("getting message " + id + " with " + arguments[1]);
-  var msg = messages[id.toLowerCase()];
-  if (!msg) return id;  // Fallback to the message name
-  for (var i = 1; i < arguments.length; i++) {
-    msg = msg.replace(args[i], arguments[i]);
-  }
-  return msg;
-};
-    

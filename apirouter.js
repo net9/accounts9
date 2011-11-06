@@ -3,7 +3,7 @@
 var appman = require('./appman'),
     oauthman = require('./oauthman'),
     userman = require('./user/man'),
-    messages = require('./messages');
+    messages = require('./messages/getter');
 
 module.exports = function (app) {
 
