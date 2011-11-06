@@ -29,14 +29,14 @@ form(method="POST", action="/editinfo")
         input#editinfo-new-password(type="password", name="newpass", value=userinfo.newpass || '')
     tr
       th
-        label(for="editinfo-surname")= msg('Surname')
-      td
-        input#editinfo-surname(type="text", name="surname", value=userinfo.surname)
-    tr
-      th
         label(for="editinfo-givenname")= msg('given-name')
       td
         input#editinfo-givenname(type="text", name="givenname", value=userinfo.givenname)
+    tr
+      th
+        label(for="editinfo-surname")= msg('sur-name')
+      td
+        input#editinfo-surname(type="text", name="surname", value=userinfo.surname)
     tr
       th
         label(for="editinfo-fullname")= msg('full-name')
