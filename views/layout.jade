@@ -3,6 +3,7 @@ html
   head
     title= pageTitle(title)
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='shortcut icon', href='/favicon.ico')
     script(type="text/javascript", src="/javascripts/jquery.min.js")
   body
     #container
@@ -12,8 +13,8 @@ html
             != msg('logged-in-as', session.userinfo.username)
             a#logout(href="/logout")= msg('Logout')
         a#logo(href="/")
-          img(src="/images/logo200.png", width="200", height="150")
-          img(src="/images/accounts200.png", width="200", height="150")
+          img(src="/images/net9.svg", width="130", height="130")
+          img(src="/images/accounts.svg", width="300", height="100")
       #content
         h1= title
         != partial('partials/flash', flashArray)
