@@ -3,10 +3,10 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.4.7"
-    , "jade": "0.16.2"
-    , "less": "1.1.4"
-    , "mongoose": "2.3.1"
-    , "ldapjs": "0.2.6"
+      "express": "2.5.1"
+    , "jade": "0.19.0"
+    , "less": "1.1.5"
+    , "mongoose": "2.4.1"
+    , "ldapjs": "0.3.4"
   }
 }
