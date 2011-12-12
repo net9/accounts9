@@ -31,5 +31,6 @@ exports.messages = {
   'birthdate-format': '$1-$2-$3',
   'bio': '介绍',
   'info-editinfo-success': '成功修改个人信息。',
-  'footer-text': '<p>本站基于来自全世界的开发者贡献的技术构建，向他们致敬！</p><p>清华酒井科协网络部</p>'
+  'footer-text': '<p>本站基于来自全世界的开发者贡献的技术构建，向他们致敬！</p><p>清华酒井科协网络部</p>',
+  'authorized-apps': '已认证的应用'
 };

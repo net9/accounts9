@@ -7,17 +7,7 @@ form(method="POST", action="/apps/" + appinfo.clientid + "/edit")
       th
         label(for="appedit-name")= msg('app-name')
       td
-        input(type="text", id="appedit-name", name="name", value=appinfo.name)
-    tr
-      th
-        label(for="appedit-oldsecret")= msg('old-app-secret')
-      td
-        input(type="password", id="appedit-oldsecret", name="oldsecret", value=appinfo.oldsecret || '')
-    tr
-      th
-        label(for="appedit-newsecret")= msg('new-app-secret')
-      td
-        input(type="password", id="appedit-newsecret", name="newsecret", value=appinfo.newsecret || '')
+        input(type="text", id="appedit-name", name="name", value=appinfo.name)    
     tr
       th
         label(for="appedit-desc")= msg('app-desc')

@@ -2,10 +2,12 @@
 
 var appbase = require('./appbase-mongo.js'),
     crypto = require('crypto');
-
+var sys = require('sys');
 exports.getAllByUser = function (username, callback) {
-  appbase.getAllByUser(username, function (success, appsOrErr) {
-    if (success) callback({ success: true, apps: appsOrErr });
+  appbase.getAllByUser(username, function (success, appsOrErr,authappsOrErr) {
+    sys.debug('len:'+authappsOrErr.length)
+
+    if (success) callback({ success: true, apps: appsOrErr, authorizedapps:authappsOrErr});
     else callback({ success: false, error: appsOrErr });
   });
 };
@@ -25,6 +27,14 @@ exports.generateClientID = function (username, appname) {
   return digest.slice(0, -1).replace(/\+/g, '-').replace(/\//g, '_');
 };
 
+function randomStr(l) {
+  var x="123456789poiuytrewqasdfghjklmnbvcxzQWERTYUIPLKJHGFDSAZXCVBNM";
+  var tmp="";
+  for(var i=0;i< l;i++) {
+  tmp += x.charAt(Math.ceil(Math.random()*100000000)%x.length);
+  }
+  return tmp;
+}
 exports.register = function (username, appinfo, callback) {
   // First make sure that no app by the same name exists.
   appbase.checkByName(appinfo.name, function (occupied) {
@@ -35,7 +45,7 @@ exports.register = function (username, appinfo, callback) {
         desc: appinfo.desc,
         owners: [username],
         clientid: exports.generateClientID(username, appinfo.name),
-        secret: appinfo.secret
+        secret: randomStr(20)
       }, function (success, appOrErr) {
         if (success) callback({ success: true, appinfo: appOrErr });
         else callback({ success: false, appinfo: appinfo, error: appOrErr });
@@ -66,23 +76,24 @@ exports.authenticate = function (appinfo, callback) {
 };
 
 exports.updateInfo = function (appinfo, callback) {
-  appbase.authenticate(appinfo.clientid, appinfo.oldsecret, function (success, appOrErr) {
-    if (success) {
       appbase.update({
         clientid: appinfo.clientid,
         name: appinfo.name,
-        secret: appinfo.newsecret,
         desc: appinfo.desc
       }, function (success, appOrErr) {
         if (success) callback({ success: true, appinfo: appOrErr });
         else callback({ success: false, error: appOrErr });
       });
-    } else {
-      callback({
-        success: false,
-        error: appOrErr === 'wrong-secret' ? 'wrong-old-secret' : appOrErr
-      });
-    }
-  });
 };
 
+//
+exports.checkAuthorized = function(userid,appid,callback){
+  appbase.checkAuthorized(userid,appid,callback)
+}
+exports.markAuthorized = function(userid,appid) {
+  appbase.markAuthorized(userid,appid)
+}
+
+exports.removeAuthorized = function(userid,appid){
+  appbase.removeAuthorized(userid,appid)
+}
