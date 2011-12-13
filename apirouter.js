@@ -4,6 +4,11 @@ var appman = require('./appman'),
     oauthman = require('./oauthman'),
     userman = require('./user/man'),
     messages = require('./messages/getter');
+var sys = require('sys');
+
+function process_authorize(req,res){
+
+}
 
 module.exports = function (app) {
 
@@ -43,13 +48,38 @@ module.exports = function (app) {
               appinfo: result.appinfo
             };
             if (req.session.userinfo) {
-              res.render('appauth', {
-                locals: {
-                  title: messages.get("authenticating", result.appinfo.name),
-                  appinfo: result.appinfo,
-                  scopes: scope.split(' ')
+              appman.checkAuthorized(req.session.userinfo.username,req.query.client_id,function(isAuthorized){
+                if(isAuthorized){
+                  sys.debug("has authorized")
+                  //simplely copy code; bad!
+                  oauthman.generateCode({
+                  username: req.session.userinfo.username,
+                  scope: scope,
+                  redirect_uri: redirect_uri,
+                  clientid: req.query.client_id
+                  }, function (code) {
+                    if (code === null) res.send(500);          
+                    else{                      
+                      res.redirect(redirect_uri + '?code=' + code + state);
+                    }
+                  });
+                } else {
+                  res.render('appauth', {
+                    locals: {
+                      title: messages.get("authenticating", result.appinfo.name),
+                      appinfo: result.appinfo,
+                      scopes: scope.split(' ')
+                    }
+                  });
                 }
-              });
+              })        
+              /*res.render('appauth', {
+                    locals: {
+                      title: messages.get("authenticating", result.appinfo.name),
+                      appinfo: result.appinfo,
+                      scopes: scope.split(' ')
+                    }
+                  });               */
             } else {
               res.redirect('/login?returnto=' + require('querystring').escape(req.url));
             }
@@ -75,8 +105,11 @@ module.exports = function (app) {
           redirect_uri: oauthinfo.redirect_uri,
           clientid: req.query.client_id
         }, function (code) {
-          if (code === null) res.send(500);
-          else res.redirect(oauthinfo.redirect_uri + '?code=' + code + oauthinfo.state);
+          if (code === null) res.send(500);          
+          else{
+            appman.markAuthorized(req.session.userinfo.username,req.query.client_id)
+            res.redirect(oauthinfo.redirect_uri + '?code=' + code + oauthinfo.state);
+          }
         });
       } else {
         console.log(require("util").inspect(req.body));

@@ -83,7 +83,7 @@ app.get('/', function (req, res) {
         locals: {
           title: messages.get('my-dashboard'),
           userinfo: req.session.userinfo,
-          apps: apps
+          apps: apps,
         }
       });
     });
