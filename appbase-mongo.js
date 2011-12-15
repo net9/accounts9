@@ -25,6 +25,10 @@ exports.getAllByUser = function (username, callback) {
     UserAppRelation.find({ username:username },function (err,auth_app_arr_raw){
       var auth_app_arr = new Array()
       if(!err){
+        if(auth_app_arr_raw.length==0){
+          callback(true,app_arr_raw.map(function (app) { return app.toObject(); }),[])
+          return;
+        }
         for(var i=0;i<auth_app_arr_raw.length;++i){
           item=auth_app_arr_raw[i]
           sys.debug(username+' '+item.clientid)
@@ -37,6 +41,7 @@ exports.getAllByUser = function (username, callback) {
             }
         })
         }
+       
       }   
   })})
 };
@@ -88,7 +93,7 @@ exports.update = function (appinfo, callback) {
 exports.checkAuthorized = function(userid,appid,callback){
   UserAppRelation.findOne({userid:userid,appid:appid},function(err,item){
     sys.debug("check "+userid+" "+appid)
-    if(err) return callback(false);
+    if(err || item==null) return callback(false);
     else return callback(true)
   })
 }
