@@ -1,7 +1,7 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
 var mongoose = require("mongoose"), utils = require("./utils");
-var sys = require('sys');
+var util = require('util');
 mongoose.connect('mongodb://localhost/net9-auth');
 
 mongoose.model('App', new mongoose.Schema({
@@ -31,10 +31,10 @@ exports.getAllByUser = function (username, callback) {
         }
         for(var i=0;i<auth_app_arr_raw.length;++i){
           item=auth_app_arr_raw[i]
-          sys.debug(username+' '+item.clientid)
+          util.debug(username+' '+item.clientid)
           App.findOne( {clientid:item.clientid},function (err,auth_app){
             if(!err && auth_app!=null) {
-              sys.debug("sync:"+i)
+              util.debug("sync:"+i)
               auth_app_arr.push(auth_app)
               if(auth_app_arr.length == auth_app_arr_raw.length)
                 callback(true,app_arr_raw.map(function (app) { return app.toObject(); }),auth_app_arr)
@@ -92,18 +92,18 @@ exports.update = function (appinfo, callback) {
 
 exports.checkAuthorized = function(userid,appid,callback){
   UserAppRelation.findOne({userid:userid,appid:appid},function(err,item){
-    sys.debug("check "+userid+" "+appid)
+    util.debug("check "+userid+" "+appid)
     if(err || item==null) return callback(false);
     else return callback(true)
   })
 }
 exports.markAuthorized = function(userid,appid) {
   relation = new  UserAppRelation({username:userid,clientid:appid});
-  sys.debug("saving uid:"+userid+" aid:"+appid)
+  util.debug("saving uid:"+userid+" aid:"+appid)
   relation.save(function(err){
-    sys.debug("saved")
+    util.debug("saved")
     if(err){
-      sys.debug(err)
+      util.debug(err)
     }
   })
 }

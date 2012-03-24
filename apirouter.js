@@ -4,7 +4,7 @@ var appman = require('./appman'),
     oauthman = require('./oauthman'),
     userman = require('./user/man'),
     messages = require('./messages/getter');
-var sys = require('sys');
+var util = require('util');
 
 function process_authorize(req,res){
 
@@ -50,7 +50,7 @@ module.exports = function (app) {
             if (req.session.userinfo) {
               appman.checkAuthorized(req.session.userinfo.username,req.query.client_id,function(isAuthorized){
                 if(isAuthorized){
-                  sys.debug("has authorized")
+                  util.debug("has authorized")
                   //simplely copy code; bad!
                   oauthman.generateCode({
                   username: req.session.userinfo.username,

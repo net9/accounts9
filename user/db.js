@@ -154,9 +154,9 @@ exports.create = function (userinfo, callback) {
         lconn.add(user_dn, attrs, function (err) {
           if (!err) {
             // Add user to the default group.
-        	mods = {
-        	  memberUid: userinfo.uidNumber
-        	};
+          	mods = {
+          	  memberUid: userinfo.uidNumber
+          	};
             lconn.attr_add('cn=' + config.default_group + ',' + config.group_base_dn, mods, function (err) {
               if (!err)
                 getByName(lconn, userinfo.username, callback);

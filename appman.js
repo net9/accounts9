@@ -2,10 +2,10 @@
 
 var appbase = require('./appbase-mongo.js'),
     crypto = require('crypto');
-var sys = require('sys');
+var util = require('util');
 exports.getAllByUser = function (username, callback) {
   appbase.getAllByUser(username, function (success, appsOrErr,authappsOrErr) {
-    sys.debug('len:'+authappsOrErr.length)
+    util.debug('len:'+authappsOrErr.length)
 
     if (success) callback({ success: true, apps: appsOrErr, authorizedapps:authappsOrErr});
     else callback({ success: false, error: appsOrErr });
