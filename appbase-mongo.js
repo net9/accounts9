@@ -91,7 +91,7 @@ exports.update = function (appinfo, callback) {
 };
 
 exports.checkAuthorized = function(userid,appid,callback){
-  UserAppRelation.findOne({userid:userid,appid:appid},function(err,item){
+  UserAppRelation.findOne({username:userid,clientid:appid},function(err,item){
     util.debug("check "+userid+" "+appid)
     if(err || item==null) return callback(false);
     else return callback(true)

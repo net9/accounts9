@@ -64,6 +64,7 @@ module.exports = function (app) {
                     }
                   });
                 } else {
+									util.debug("hasn't authorized")
                   res.render('appauth', {
                     locals: {
                       title: messages.get("authenticating", result.appinfo.name),
