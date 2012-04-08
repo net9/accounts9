@@ -55,7 +55,7 @@ exports.getAllByUser = function (username, callback) {
             return callback(err, apps);
           }
           if (auth_app != null) {
-            util.debug('sync:' + i);
+            util.debug('sync:' + index);
             authApps.push(auth_app);
           }
           if (index == authAppRaw.length - 1) {
