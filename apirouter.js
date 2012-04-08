@@ -136,7 +136,7 @@ module.exports = function (app) {
         else {
           // Third step: Make sure that the client ID, redirect URI and the code match.
           oauthman.getCode(code, function (result) {
-            if (!result.success || vresult.codeinfo.clientid !== clientid) {
+            if (!result.success || result.codeinfo.clientid !== clientid) {
               res.send({ error: 'invalid_grant' }, 400);
             } else {
               // Fourth step: Generate the access token from what we have.
