@@ -1,7 +1,13 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var mongoose = require("mongoose"), utils = require("./utils");
+var mongoose = require('mongoose');
+var utils = require('./utils');
 var util = require('util');
+
+mongoose.connected = false;
+mongoose.connection.on('open', function() {
+  mongoose.connected = true;
+});
 mongoose.connect('mongodb://localhost/net9-auth');
 
 mongoose.model('App', new mongoose.Schema({
@@ -18,30 +24,39 @@ mongoose.model('UserAppRelation',new mongoose.Schema({
 }));
  
 var App = mongoose.model('App');
-var UserAppRelation = mongoose.model('UserAppRelation')
+var UserAppRelation = mongoose.model('UserAppRelation');
 
+/*
+- callback(err, apps, authapps)
+*/
 exports.getAllByUser = function (username, callback) {
+  if (!mongoose.connected) {
+    return callback('mongodb-not-connected');
+  }
   App.find({ owners: username }, function (err, app_arr_raw) {
-    UserAppRelation.find({ username:username },function (err,auth_app_arr_raw){
-      var auth_app_arr = new Array()
-      if(!err){
-        if(auth_app_arr_raw.length==0){
-          callback(true,app_arr_raw.map(function (app) { return app.toObject(); }),[])
+    UserAppRelation.find({ username:username }, function (err,auth_app_arr_raw) {
+      var auth_app_arr = [];
+      if (!err) {
+        if (auth_app_arr_raw.length == 0) {
+          callback(null, app_arr_raw.map(function (app) {return app.toObject(); }), [])
           return;
         }
-        for(var i=0;i<auth_app_arr_raw.length;++i){
-          item=auth_app_arr_raw[i]
-          util.debug(username+' '+item.clientid)
-          App.findOne( {clientid:item.clientid},function (err,auth_app){
-            if(!err && auth_app!=null) {
-              util.debug("sync:"+i)
-              auth_app_arr.push(auth_app)
-              if(auth_app_arr.length == auth_app_arr_raw.length)
-                callback(true,app_arr_raw.map(function (app) { return app.toObject(); }),auth_app_arr)
+        
+        for (var i=0; i<auth_app_arr_raw.length; i++) {
+          var item = auth_app_arr_raw[i];
+          util.debug(username + ' ' + item.clientid);
+          App.findOne({clientid: item.clientid}, function (err, auth_app) {
+            if(!err && auth_app != null) {
+              util.debug('sync:'+i);
+              auth_app_arr.push(auth_app);
+              if (auth_app_arr.length == auth_app_arr_raw.length) {
+                callback(null, app_arr_raw.map(function (app) { return app.toObject(); }), auth_app_arr);
+              }
             }
-        })
+          });
         }
-       
+      } else {
+        callback(err);
       }   
   })})
 };
@@ -92,16 +107,16 @@ exports.update = function (appinfo, callback) {
 
 exports.checkAuthorized = function(userid,appid,callback){
   UserAppRelation.findOne({username:userid,clientid:appid},function(err,item){
-    util.debug("check "+userid+" "+appid)
+    util.debug('check '+userid+' '+appid)
     if(err || item==null) return callback(false);
     else return callback(true)
   })
 }
 exports.markAuthorized = function(userid,appid) {
   relation = new  UserAppRelation({username:userid,clientid:appid});
-  util.debug("saving uid:"+userid+" aid:"+appid)
+  util.debug('saving uid:'+userid+' aid:'+appid)
   relation.save(function(err){
-    util.debug("saved")
+    util.debug('saved')
     if(err){
       util.debug(err)
     }

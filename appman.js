@@ -1,14 +1,15 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var appbase = require('./appbase-mongo.js'),
-    crypto = require('crypto');
-var util = require('util');
-exports.getAllByUser = function (username, callback) {
-  appbase.getAllByUser(username, function (success, appsOrErr,authappsOrErr) {
-    util.debug('len:'+authappsOrErr.length)
+var appbase = require('./appbase-mongo.js');
+var crypto = require('crypto');
 
-    if (success) callback({ success: true, apps: appsOrErr, authorizedapps:authappsOrErr});
-    else callback({ success: false, error: appsOrErr });
+exports.getAllByUser = function (username, callback) {
+  appbase.getAllByUser(username, function (err, apps, authapps) {
+    if (!err) {
+      callback({ success: true, apps: apps, authorizedapps: authapps});
+    } else {
+      callback({ success: false, error: err });
+    }
   });
 };
 
