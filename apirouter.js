@@ -123,12 +123,11 @@ module.exports = function (app) {
   app.all('/api/access_token', function (req, res) {
     var clientid = req.param("client_id"),
         secret = req.param("client_secret"),
-        redirect_uri = req.param("redirect_uri"),
         code = req.param("code");
     // TODO: Add scope support.
     // TODO: Add refresh token support.
     // First step: Make sure everything needed is provided.
-    if (!clientid || !secret || !redirect_uri || !code) {
+    if (!clientid || !secret || !code) {
       res.send({ error: 'invalid_request' }, 400);
     } else {
       // Second step: Make sure the client ID and secret match.
@@ -137,8 +136,7 @@ module.exports = function (app) {
         else {
           // Third step: Make sure that the client ID, redirect URI and the code match.
           oauthman.getCode(code, function (result) {
-            if (!result.success || result.codeinfo.redirect_uri !== redirect_uri ||
-                result.codeinfo.clientid !== clientid) {
+            if (!result.success || vresult.codeinfo.clientid !== clientid) {
               res.send({ error: 'invalid_grant' }, 400);
             } else {
               // Fourth step: Generate the access token from what we have.
