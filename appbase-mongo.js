@@ -34,31 +34,37 @@ exports.getAllByUser = function (username, callback) {
     return callback('mongodb-not-connected');
   }
   App.find({ owners: username }, function (err, app_arr_raw) {
-    UserAppRelation.find({ username:username }, function (err,auth_app_arr_raw) {
-      var auth_app_arr = [];
-      if (!err) {
-        if (auth_app_arr_raw.length == 0) {
-          callback(null, app_arr_raw.map(function (app) {return app.toObject(); }), [])
-          return;
-        }
-        
-        for (var i=0; i<auth_app_arr_raw.length; i++) {
-          var item = auth_app_arr_raw[i];
-          util.debug(username + ' ' + item.clientid);
-          App.findOne({clientid: item.clientid}, function (err, auth_app) {
-            if(!err && auth_app != null) {
-              util.debug('sync:'+i);
-              auth_app_arr.push(auth_app);
-              if (auth_app_arr.length == auth_app_arr_raw.length) {
-                callback(null, app_arr_raw.map(function (app) { return app.toObject(); }), auth_app_arr);
-              }
-            }
-          });
-        }
-      } else {
-        callback(err);
-      }   
-  })})
+    if (err) {
+      return callback(err);
+    }
+    var apps = app_arr_raw.map(function(app) {
+      return app.toObject();
+    });
+    // Get authed apps
+    UserAppRelation.find({ username:username }, function (err, authAppRaw) {
+      if (err) {
+        return callback(err, apps);
+      }
+      var authApps = [];
+      if (authAppRaw.length == 0) {
+        return callback(null, apps, authApps);
+      }
+      authAppRaw.forEach(function(item, index) {
+        App.findOne({clientid: item.clientid}, function(err, auth_app) {
+          if (err) {
+            return callback(err, apps);
+          }
+          if (auth_app != null) {
+            util.debug('sync:' + i);
+            authApps.push(auth_app);
+          }
+          if (index == authAppRaw.length - 1) {
+            callback(null, apps, authApps);
+          }
+        });
+      });
+    });
+  });
 };
 
 exports.checkByName = function (appname, callback) {
