@@ -1,8 +1,0 @@
-form(method="POST", action='/apps/' + appinfo.clientid + '/remove')
-  input(type="hidden", name="confirm", value="yes")
-  .flash.block-flash.danger-flash
-    div.message!= msg('removing-app-confirm', appinfo.name)
-    div.choices
-      input.warning-button(type="submit", value=msg('yes-wanna-continue'))
-      a.button(href='/apps/' + appinfo.clientid)= msg('no-wanna-back-out')
-

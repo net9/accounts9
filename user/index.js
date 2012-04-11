@@ -1,8 +1,6 @@
-/* vim: set ts=2 sw=2 nocin si: */
-
-var userman = require('./man'),
-    messages = require('../messages'),
-    utils = require('../utils');
+var userman = require('./man');
+var messages = require('../messages');
+var utils = require('../utils');
 
 module.exports = function (app) {
 
@@ -95,20 +93,14 @@ module.exports = function (app) {
     var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website', 'birthdate',
         'mobile', 'givenname', 'surname', 'address', 'nickname', 'nextNameChangeDate']);
 
-    if (req.body.fullname === 'surgiven') {
-      newInfo.fullname = newInfo.surname + newInfo.givenname;
-    } else if (req.body.fullname === 'sur-given') {
-      newInfo.fullname = newInfo.surname + ' ' + newInfo.givenname;
-    } else {
-      newInfo.fullname = newInfo.givenname + ' ' + newInfo.surname;
-    }
+    newInfo.fullname = newInfo.surname + newInfo.givenname;
     newInfo.username = req.session.userinfo.username;
 
     userman.editInfo(newInfo, function (result) {
       if (result.success) {
         // If the editing succeeds, update the user info stored in the session.
         req.session.userinfo = result.userinfo;
-        req.flash('info', 'editinfo-success');
+        req.flash('info', messages.get('editinfo-success'));
         res.redirect('/');
       } else {
         // On error, give back what was given to us. This fills the password fields.

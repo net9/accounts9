@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title><%= title %> - Accounts9</title>
+    <link rel='stylesheet' href='/css/bootstrap.css' />
+    <link rel='shortcut icon' href='/favicon.ico' />
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+  </head>
+  <body>
+  
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">Accounts9</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <% if (!session.userinfo) { %>
+                <li class="active"><a href="/login"><%- msg('Login') %></a></li>
+                <li><a href="/register"><%- msg('Register') %></a></li>
+              <% } else { %>
+                <li class="active"><a href="/u/<%= session.userinfo.username %>"><%= session.userinfo.username %></a></li>
+                <li><a href="/logout"><%- msg('Logout') %></a></li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container" class="container">
+      <% if (info) { %>
+        <div class="alert alert-success">
+          <%= info %>
+        </div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error">
+          <%= error %>
+        </div>
+      <% } %>
+      <%- body %>
+      <hr />
+      <footer>
+        <p><a href="http://net9.org/" target="_blank">THU.DCST.SAST.DNET</a> 2012</p>
+        <p><%- msg('footer-text') %></p>
+      </footer>
+    </div>
+  </body>
+  <script src="/js/jquery.js"></script>
+  <script src="/js/bootstrap.js"></script>
+</html>

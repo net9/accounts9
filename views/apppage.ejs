@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="span6">
+    <h2><%= title %></h2>
+    <table class="table">
+      <tr>
+        <th><%= msg('client-id') %></th>
+        <td><%= appinfo.clientid %></td>
+      </tr>
+      <tr>
+        <th><%= msg('client-secret') %></th>
+        <td><%= appinfo.secret %></td>
+      </tr>
+      <tr>
+        <th><%= msg('app-desc') %></th>
+        <td><%= appinfo.desc %></td>
+      </tr>
+      <tr>
+        <th><%= msg('app-owners') %></th>
+        <td>
+          <ul>
+            <%- partial('partials/appowner', appinfo.owners) %>
+          </ul>
+        </td>
+      </tr>
+      <% if (amOwner) { %>
+        <tr>
+          <th></th>
+          <td>
+            <a href="/apps/<%= appinfo.clientid %>/edit" class="btn btn-primary">
+              <i class="icon-edit icon-white"></i>
+              <%= msg('edit-app-info') %>
+            </a>
+            <a href="/apps/<%= appinfo.clientid %>/remove" class="btn btn-danger">
+              <i class="icon-remove icon-white"></i>
+              <%= msg('remove-app') %>
+            </a>
+          </td>
+        </tr>
+      <% } %>
+    </table>
+  </div>
+</div>

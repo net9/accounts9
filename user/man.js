@@ -1,5 +1,3 @@
-/* vim: set sw=2 ts=2 nocin si: */
-
 var userbase = require('./db');
 
 exports.checkUser = function (username, callback) {

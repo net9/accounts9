@@ -1,0 +1,22 @@
+<form class="form-horizontal" method="post">
+  <fieldset>
+    <legend><%- msg('Login') %></legend>
+    <div class="control-group">
+      <label class="control-label" for="app-name"><%- msg('app-name') %></label>
+      <div class="controls">
+        <input type="text" class="input-xlarge" id="app-name" name="name">
+        <p class="help-block"><%- msg('appreg-name-tips') %></p>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="app-desc"><%- msg('app-desc') %></label>
+      <div class="controls">
+        <input type="text" class="input-xlarge" id="app-desc" name="desc">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
+      <a href="/" class="btn"><%- msg('Cancel') %></a>
+    </div>
+  </fieldset>
+</form>

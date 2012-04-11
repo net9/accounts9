@@ -1,0 +1,23 @@
+<form class="form-horizontal" method="post">
+  <fieldset>
+    <legend><%- msg('Login') %></legend>
+    <div class="control-group">
+      <label class="control-label" for="username"><%- msg('Username') %></label>
+      <div class="controls">
+        <input type="text" class="input-xlarge" id="username" name="username">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="password"><%- msg('Password') %></label>
+      <div class="controls">
+        <input type="password" class="input-xlarge" id="password" name="password">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><%- msg('Login') %></button>
+    </div>
+  </fieldset>
+<% if (returnto) { %>
+  <input type="hidden" name="returnto" value="<%= returnto %>">
+<% } %>
+</form>

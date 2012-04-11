@@ -16,7 +16,7 @@ var app = module.exports = express.createServer();
 
 app.configure(function () {
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+  app.set('view engine', 'ejs');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -62,23 +62,6 @@ app.dynamicHelpers({
   session: function (req, res){
     return req.session;
   },
-  flashArray: function (req, res) {
-    // Turn this:
-    //   { 'info': ['info1', 'info2'], 'error': ['error1'] }
-    // into this:
-    //   [ { type: 'info', message: 'info1' }
-    //   , { type: 'info', message: 'info2' }
-    //   , { type: 'error', message: 'error1' }]
-    // for ease with view partials rendering.
-    var flash = req.flash();
-    var flashes = [];
-    for (var key in flash) {
-      flash[key].forEach(function (msg) {
-        flashes.push({ type: key, message: msg });
-      });
-    }
-    return flashes;
-  },
   error: function(req, res) {
     var err = req.flash('error');
     if (err.length)
@@ -86,8 +69,8 @@ app.dynamicHelpers({
     else
       return null;
   },
-  success: function(req, res) {
-    var succ = req.flash('success');
+  info: function(req, res) {
+    var succ = req.flash('info');
     if (succ.length)
       return succ;
     else

@@ -1,8 +1,8 @@
-/* vim: set sw=2 ts=2 nocin si: */
-
 var assert = require("assert");
-var ldap = require("./ldap"), config = require("../config").ldap;
-var crypto = require("crypto"), utils = require("../utils");
+var ldap = require("./ldap");
+var config = require("../config").ldap;
+var crypto = require("crypto");
+var utils = require("../utils");
 
 // Connect to LDAP server, authenticate with master/given user, and return to
 // the callback with the LDAP connection (or errors if present).
@@ -200,7 +200,7 @@ exports.update = function (userinfo, callback) {
       if (userinfo.password) {
         mods.modification.userPassword = genPassword(userinfo.password);
       }
-
+      
       lconn.attr_modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
         if (!err)
           getByName(lconn, userinfo.username, callback);

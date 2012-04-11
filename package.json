@@ -4,7 +4,7 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.9"
-    , "jade": "0.19.0"
+    , "ejs": "0.7.1"
     , "mongoose": "2.5.13"
     , "connect-mongo": "0.1.7"
     , "ldapjs": "0.4.8"
