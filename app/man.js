@@ -1,6 +1,6 @@
 /* vim: set sw=2 ts=2 nocin si: */
 
-var appbase = require('./appbase-mongo.js');
+var appbase = require('./base.js');
 var crypto = require('crypto');
 
 exports.getAllByUser = function (username, callback) {

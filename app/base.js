@@ -1,7 +1,7 @@
-var config = require('./config');
-var mongoose = require('mongoose');
-var utils = require('./utils');
+var config = require('../config');
+var utils = require('../utils');
 var util = require('util');
+var mongoose = require('mongoose');
 
 mongoose.connected = false;
 mongoose.connection.on('open', function() {

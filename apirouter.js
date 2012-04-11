@@ -1,6 +1,6 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
-var appman = require('./appman'),
+var appman = require('./app/man'),
     oauthman = require('./oauthman'),
     userman = require('./user/man'),
     messages = require('./messages/getter');
