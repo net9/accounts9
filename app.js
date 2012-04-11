@@ -5,7 +5,7 @@
  */
 
 var util = require('util');
-var messages = require('./messages/getter');
+var messages = require('./messages');
 var config = require('./config');
 var express = require('express');
 var MongoStore = require('connect-mongo');
@@ -28,9 +28,9 @@ app.configure(function () {
     })
   }));
   app.use(app.router);
-  app.use(express.router(require('./app/router')));
-  app.use(express.router(require('./user/router')));
-  app.use(express.router(require('./apirouter')));
+  app.use(express.router(require('./app/')));
+  app.use(express.router(require('./user')));
+  app.use(express.router(require('./oauth')));
   app.use(express.static(__dirname + '/public'));
 });
 

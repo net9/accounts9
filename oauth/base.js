@@ -1,8 +1,8 @@
-/* vim: set sw=2 ts=2 nocin si: */
+var config = require('../config');
+var utils = require('../utils');
+var mongoose = require('mongoose');
 
-var mongoose = require("mongoose"), utils = require("./utils");
-
-mongoose.connect('mongodb://localhost/net9-auth');
+mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name);
 
 mongoose.model('OAuthCode', new mongoose.Schema({
   code:         { type: String, index: true },

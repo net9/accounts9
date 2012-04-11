@@ -1,7 +1,7 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
 var appman = require('./man');
-var messages = require('../messages/getter');
+var messages = require('../messages');
 
 module.exports = function (app) {
 

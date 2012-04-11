@@ -1,7 +1,7 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
-var oauthbase = require('./oauthbase-mongo.js'),
-    crypto = require('crypto');
+var oauthbase = require('./base.js');
+var crypto = require('crypto');
 
 // The expiration timeout of access grant codes and access tokens,
 // respectively, in milliseconds.

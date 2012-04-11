@@ -1,9 +1,9 @@
 /* vim: set ts=2 sw=2 nocin si: */
 
-var appman = require('./app/man'),
-    oauthman = require('./oauthman'),
-    userman = require('./user/man'),
-    messages = require('./messages/getter');
+var appman = require('../app/man'),
+    oauthman = require('./man'),
+    userman = require('../user/man'),
+    messages = require('../messages');
 var util = require('util');
 
 function process_authorize(req,res){
