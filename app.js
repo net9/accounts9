@@ -27,7 +27,7 @@ app.configure(function () {
       host: config.db.host,
     })
   }));
-  app.use(app.router);
+  app.use(express.router(require('./routes')));
   app.use(express.router(require('./app/')));
   app.use(express.router(require('./user')));
   app.use(express.router(require('./oauth')));
@@ -93,25 +93,6 @@ app.dynamicHelpers({
     else
       return null;
   },
-});
-
-// Routes
-
-app.get('/', function (req, res) {
-  if (req.session.userinfo) {
-    // When logged in, display a dashboard of information.
-    require('./app/man').getAllByUser(req.session.userinfo.username, function (apps) {
-      res.render('dashboard', {
-        locals: {
-          title: messages.get('my-dashboard'),
-          userinfo: req.session.userinfo,
-          apps: apps,
-        }
-      });
-    });
-  } else {
-    res.redirect('/login');
-  };
 });
 
 // Only listen on $ node app.js
