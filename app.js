@@ -4,9 +4,12 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-    util = require('util'),
-    messages = require('./messages/getter');
+var util = require('util');
+var messages = require('./messages/getter');
+var config = require('./config');
+var express = require('express');
+var MongoStore = require('connect-mongo');
+
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -17,8 +20,13 @@ app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'joe-king-pilot-for-hire' }));
-  app.use(express.compiler({ src: __dirname + '/public', enable: ['less'] }));
+  app.use(express.session({
+    secret: config.cookieSecret,
+    store: new MongoStore({
+      db: config.db.name,
+      host: config.db.host,
+    })
+  }));
   app.use(app.router);
   app.use(express.router(require('./approuter')));
   app.use(express.router(require('./user/router')));
@@ -71,6 +79,20 @@ app.dynamicHelpers({
     }
     return flashes;
   },
+  error: function(req, res) {
+    var err = req.flash('error');
+    if (err.length)
+      return err;
+    else
+      return null;
+  },
+  success: function(req, res) {
+    var succ = req.flash('success');
+    if (succ.length)
+      return succ;
+    else
+      return null;
+  },
 });
 
 // Routes
@@ -92,15 +114,9 @@ app.get('/', function (req, res) {
   };
 });
 
-app.all('/test', function (req, res) {
-  res.send(util.inspect(req));
-});app.all('/post',function(req,res){res.send('<form method="POST" action="/post"><div class="flash block-flash info-flash"><div class="message">Are you sure you want to authenticate the application <a href="/apps/U0M1TEIJKiBAhv0LCHFvwgpA_fk" target="_blank"><strong>._.</strong></a>? If you do, <strong>._.</strong> will have access to your personal data.</div><div class="choices"><input type="submit" name="yes" value="Yes"/><input type="submit" name="no" value="No" class="normal-button"/></div></div></form>'+util.inspect(req)+'</pre>');});
-
 // Only listen on $ node app.js
 
 if (!module.parent) {
   app.listen(3000);
   console.log("Express server listening on port %d", app.address().port);
 }
-
-/* vim: set ts=2 sw=2 nocin si: */

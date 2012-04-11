@@ -1,5 +1,4 @@
-/* vim: set sw=2 ts=2 nocin si: */
-
+var config = require('./config');
 var mongoose = require('mongoose');
 var utils = require('./utils');
 var util = require('util');
@@ -8,7 +7,7 @@ mongoose.connected = false;
 mongoose.connection.on('open', function() {
   mongoose.connected = true;
 });
-mongoose.connect('mongodb://localhost/net9-auth');
+mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name);
 
 mongoose.model('App', new mongoose.Schema({
   name:     { type: String, index: true },
