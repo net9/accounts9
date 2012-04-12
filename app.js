@@ -27,6 +27,7 @@ app.configure(function () {
       host: config.db.host,
     })
   }));
+  app.use(app.router);
   app.use(express.router(require('./routes')));
   app.use(express.router(require('./app/')));
   app.use(express.router(require('./user')));
@@ -40,7 +41,7 @@ app.configure('development', function () {
 });
 
 app.configure('production', function () {
-  app.use(express.errorHandler()); 
+  //app.use(express.errorHandler()); 
 });
 
 // Helper functions for view rendering
@@ -59,8 +60,8 @@ app.helpers({
 });
 
 app.dynamicHelpers({
-  session: function (req, res){
-    return req.session;
+  curUser: function (req, res){
+    return req.session.user;
   },
   error: function(req, res) {
     var err = req.flash('error');
@@ -78,8 +79,17 @@ app.dynamicHelpers({
   },
 });
 
-// Only listen on $ node app.js
+app.error(function (err, req, res, next) {
+  res.render('error', {
+    status: 500,
+    locals: {
+      title: messages.get('error'),
+      message: err
+    }
+  });
+});
 
+// Only listen on $ node app.js
 if (!module.parent) {
   app.listen(3000);
   console.log("Express server listening on port %d", app.address().port);

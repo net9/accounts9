@@ -1,8 +1,39 @@
 var userman = require('./man');
+var User = require('./model');
+var appman = require('../app/man');
 var messages = require('../messages');
 var utils = require('../utils');
+var url = require('url');
 
 module.exports = function (app) {
+
+  app.get('/u/:username', function (req, res, next) {
+    User.getByName(req.params.username, function (err, user) {
+      if (err) {
+        return next(new Error(err));
+      }
+      res.render('user', {
+        locals: {
+          title: user.title,
+          user: user
+        }
+      });
+    });
+  });
+
+  app.get('/dashboard', checkLogin);
+  app.get('/dashboard', function (req, res, next) {
+    var user = req.session.user;
+    appman.getAllByUser(user.name, function (apps) {
+      res.render('dashboard', {
+        locals: {
+          title: messages.get('my-dashboard'),
+          user: user,
+          apps: apps,
+        }
+      });
+    });
+  });
 
   app.get('/login', function (req, res) {
     res.render('login', {
@@ -14,40 +45,43 @@ module.exports = function (app) {
   });
 
   app.post('/login', function (req, res) {
-    userman.authenticate({
-      username: req.body.username,
-      password: req.body.password
-    }, function (result) {
-      if (result.success) {
-        req.session.userinfo = result.userinfo;
-        res.redirect(req.param('returnto') || '/');
-      } else {
-        req.flash('error', result.error);
+    User.authenticate(req.body.username, req.body.password, function (err, user) {
+      if (err) {
+        req.flash('error', err);
         res.render('login', {
           locals: {
             title: messages.get('Login'),
-            returnto: req.param('returnto'),
-            userinfo: result.userinfo
+            returnto: req.param('returnto')
           }
         });
+      } else {
+        req.session.user = user;
+        var redirectUrl = req.param('returnto');
+        if (!redirectUrl) {
+          redirectUrl = '/u/' + user.name;
+        }
+        res.redirect(redirectUrl);
       }
     });
   });
 
   app.get('/logout', function (req, res) {
-    var redirectURL = req.query.returnto || '/';
-    req.session.userinfo = null;
-    res.redirect(redirectURL);
+    req.session.user = null;
+    res.redirect(req.query.returnto || '/');
   });
 
   app.get('/register', function (req, res) {
-    res.render('register', { locals: { title: messages.get('Register') } });
+    res.render('register', {
+      locals: {
+        title: messages.get('Register')
+      }
+    });
   });
 
   app.post('/register', function (req, res) {
     userman.register(utils.subset(req.body, ["username", "password", "email"]), function (result) {
       if (result.success) {
-        req.session.userinfo = result.userinfo;
+        req.session.user = result.userinfo;
         req.flash('info', 'register-welcome|' + result.userinfo.username);
         res.redirect('/');
       } else {
@@ -63,18 +97,12 @@ module.exports = function (app) {
   });
 
   app.get('/checkuser', function (req, res) {
-    userman.checkUser(req.param('name'), function (result) {
-      res.send(result);
+    User.checkName(req.param('name'), function (err) {
+      res.json(err);
     });
   });
 
-  app.all('/editinfo', function (req, res, next) {
-    if (req.session.userinfo) {
-      next();
-    } else {
-      res.redirect('/');
-    }
-  });
+  app.all('/editinfo', checkLogin);
 
   app.get('/editinfo', function (req, res) {
     // When a user requests to edit his info, we provide him with his current
@@ -84,35 +112,58 @@ module.exports = function (app) {
     res.render('editinfo', {
       locals: {
         title: messages.get('edit-my-info'),
-        userinfo: req.session.userinfo
+        user: req.session.user
       }
     });
   });
 
   app.post('/editinfo', function (req, res) {
-    var newInfo = utils.subset(req.body, ['oldpass', 'newpass', 'bio', 'email', 'website', 'birthdate',
-        'mobile', 'givenname', 'surname', 'address', 'nickname', 'nextNameChangeDate']);
-
-    newInfo.fullname = newInfo.surname + newInfo.givenname;
-    newInfo.username = req.session.userinfo.username;
-
-    userman.editInfo(newInfo, function (result) {
-      if (result.success) {
-        // If the editing succeeds, update the user info stored in the session.
-        req.session.userinfo = result.userinfo;
-        req.flash('info', messages.get('editinfo-success'));
-        res.redirect('/');
-      } else {
-        // On error, give back what was given to us. This fills the password fields.
-        req.flash('error', result.error);
+    var user = new User(req.session.user);
+    user.nickname = req.body.nickname;
+    user.surname = req.body.surname;
+    user.givenname = req.body.givenname;
+    user.fullname = req.body.fullname;
+    user.email = req.body.email;
+    user.mobile = req.body.mobile;
+    user.website = req.body.website;
+    user.address = req.body.address;
+    user.bio = req.body.bio;
+    user.birthdate = req.body.birthdate;
+    user.fullname = user.surname + user.givenname;
+    if (req.body.newpass) {
+      user.oldpass = req.body.oldpass;
+      user.password = req.body.newpass;
+    }
+    
+    user.save(function (err) {
+      if (err) {
+        req.flash('error', err);
         res.render('editinfo', {
           locals: {
             title: messages.get('edit-my-info'),
-            userinfo: newInfo
+            user: user
           }
         });
+      } else {
+        req.session.user = user;
+        req.flash('info', messages.get('editinfo-success'));
+        res.redirect('/dashboard');
       }
     });
   });
 
 };
+
+function checkLogin(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    req.flash('error', 'not-loged-in');
+    res.redirect(url.format({
+      pathname: '/login',
+      query: {
+        returnto: req.url,
+      },
+    }));
+  }
+}

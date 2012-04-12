@@ -4,68 +4,80 @@
     <div class="control-group">
       <label class="control-label" for="username"><%- msg('Username') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="username" value="<%= userinfo.username %>" readonly="readonly">
+        <input type="text" class="input-medium" id="username" value="<%= user.name %>" readonly="readonly">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="nickname"><%- msg('Nickname') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="nickname" name="nickname" value="<%= userinfo.nickname %>">
+        <input type="text" class="input-medium" id="nickname" name="nickname" value="<%= user.nickname %>">
         <p class="help-block"><%- msg('editinfo-nickname-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="surname"><%- msg('sur-name') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="surname" name="surname" value="<%= userinfo.surname %>">
+        <input type="text" class="input-medium" id="surname" name="surname" value="<%= user.surname %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="givenname"><%- msg('given-name') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="givenname" name="givenname" value="<%= userinfo.givenname %>">
+        <input type="text" class="input-medium" id="givenname" name="givenname" value="<%= user.givenname %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="email"><%- msg('email') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="email" name="email" value="<%= userinfo.email %>">
+        <input type="text" class="input-medium" id="email" name="email" value="<%= user.email %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="mobile"><%- msg('mobile') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="mobile" name="mobile" value="<%= userinfo.mobile %>">
+        <input type="text" class="input-medium" id="mobile" name="mobile" value="<%= user.mobile %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="website"><%- msg('website') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="website" name="website" value="<%= userinfo.website %>">
+        <input type="text" class="input-medium" id="website" name="website" value="<%= user.website %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="address"><%- msg('address') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="address" name="address" value="<%= userinfo.address %>">
+        <input type="text" class="input-medium" id="address" name="address" value="<%= user.address %>">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="birthdate"><%- msg('birth-date') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="birthdate" name="birthdate" value="<%= userinfo.birthdate %>">
+        <input type="text" class="input-medium" id="birthdate" name="birthdate" value="<%= user.birthdate %>">
         <p class="help-block"><%- msg('editinfo-birthdate-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="bio"><%- msg('bio') %></label>
       <div class="controls">
-        <textarea class="input-xlarge" id="bio" name="bio" rows="3"><%= userinfo.bio %></textarea>
+        <textarea class="input-xlarge" id="bio" name="bio" rows="3"><%= user.bio %></textarea>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="oldpass"><%- msg('old-pass') %></label>
+      <div class="controls">
+        <input type="password" class="input-medium" id="oldpass" name="oldpass">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="newpass"><%- msg('new-pass') %></label>
+      <div class="controls">
+        <input type="password" class="input-medium" id="newpass" name="newpass">
       </div>
     </div>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
-      <a href="/" class="btn"><%- msg('Cancel') %></a>
+      <a href="/dashboard" class="btn"><%- msg('Cancel') %></a>
     </div>
   </fieldset>
 </form>

@@ -47,13 +47,13 @@ module.exports = function (app) {
               scope: scope,
               appinfo: result.appinfo
             };
-            if (req.session.userinfo) {
-              appman.checkAuthorized(req.session.userinfo.username,req.query.client_id,function(isAuthorized){
+            if (req.session.user) {
+              appman.checkAuthorized(req.session.user.username,req.query.client_id,function(isAuthorized){
                 if(isAuthorized){
                   util.debug("has authorized")
                   //simplely copy code; bad!
                   oauthman.generateCode({
-                  username: req.session.userinfo.username,
+                  username: req.session.user.username,
                   scope: scope,
                   redirect_uri: redirect_uri,
                   clientid: req.query.client_id
@@ -94,21 +94,21 @@ module.exports = function (app) {
   });
 
   app.post('/api/authorize', function (req, res) {
-    if (!req.session.oauthinfo[req.query.client_id] || !req.session.userinfo) res.redirect(req.url);
+    if (!req.session.oauthinfo[req.query.client_id] || !req.session.user) res.redirect(req.url);
     else {
       var oauthinfo = req.session.oauthinfo[req.query.client_id];
       delete req.session.oauthinfo[req.query.client_id];
       if (req.body.yes) {
         // Grant code and perform accordingly.
         oauthman.generateCode({
-          username: req.session.userinfo.username,
+          username: req.session.user.username,
           scope: oauthinfo.scope,
           redirect_uri: oauthinfo.redirect_uri,
           clientid: req.query.client_id
         }, function (code) {
           if (code === null) res.send(500);          
           else{
-            appman.markAuthorized(req.session.userinfo.username,req.query.client_id)
+            appman.markAuthorized(req.session.user.username,req.query.client_id)
             res.redirect(oauthinfo.redirect_uri + '?code=' + code + oauthinfo.state);
           }
         });

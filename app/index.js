@@ -4,7 +4,7 @@ var messages = require('../messages');
 module.exports = function (app) {
 
   app.all('/appreg', function (req, res, next) {
-    if (req.session.userinfo) next();
+    if (req.session.user) next();
     else res.redirect('/');
   });
 
@@ -13,7 +13,7 @@ module.exports = function (app) {
   });
 
   app.post('/appreg', function (req, res) {
-    appman.register(req.session.userinfo.username, {
+    appman.register(req.session.user.username, {
       name: req.body.name,
       secret: req.body.secret,
       desc: req.body.desc
@@ -37,8 +37,8 @@ module.exports = function (app) {
     appman.getByID(req.params.clientid, function (result) {
       if (result.success) {
         req.appinfo = result.appinfo;
-        req.amOwner = req.session.userinfo &&
-          result.appinfo.owners.indexOf(req.session.userinfo.username) !== -1;
+        req.amOwner = req.session.user &&
+          result.appinfo.owners.indexOf(req.session.user.username) !== -1;
         next();
       } else {
         if (result.error === 'app-not-found') res.send(404);

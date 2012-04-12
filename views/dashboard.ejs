@@ -2,52 +2,56 @@
   <div class="span6">
     <h2><%= msg('my-info') %></h2>
     <table class="table">
-      <% if (userinfo.nickname) { %>
+      <tr>
+        <th><%= msg('name') %></th>
+        <td><%= user.name %></td>
+      </tr>
+      <% if (user.nickname) { %>
         <tr>
           <th><%= msg('Nickname') %></th>
-          <td><%= userinfo.nickname %></td>
+          <td><%= user.nickname %></td>
         </tr>
       <% } %>
-      <% if (userinfo.fullname) { %>
+      <% if (user.fullname) { %>
         <tr>
           <th><%= msg('full-name') %></th>
-          <td><%= userinfo.fullname %></td>
+          <td><%= user.fullname %></td>
         </tr>
       <% } %>
-      <% if (userinfo.email) { %>
+      <% if (user.email) { %>
         <tr>
           <th><%= msg('Email') %></th>
-          <td><a href="mailto:<%= userinfo.email %>"><%= userinfo.email %></a></td>
+          <td><a href="mailto:<%= user.email %>"><%= user.email %></a></td>
         </tr>
       <% } %>
-      <% if (userinfo.mobile) { %>
+      <% if (user.mobile) { %>
         <tr>
           <th><%= msg('Mobile') %></th>
-          <td><%= userinfo.mobile %></td>
+          <td><%= user.mobile %></td>
         </tr>
       <% } %>
-      <% if (userinfo.website) { %>
+      <% if (user.website) { %>
         <tr>
           <th><%= msg('Website') %></th>
-          <td><a href="<%= userinfo.website %>" target="_blank"><%= userinfo.website %></a></td>
+          <td><a href="<%= user.website %>" target="_blank"><%= user.website %></a></td>
         </tr>
       <% } %>
-      <% if (userinfo.address) { %>
+      <% if (user.address) { %>
         <tr>
           <th><%= msg('Address') %></th>
-          <td><%= userinfo.address %></td>
+          <td><%= user.address %></td>
         </tr>
       <% } %>
-      <% if (userinfo.birthdate) { %>
+      <% if (user.birthdate) { %>
         <tr>
           <th><%= msg('birth-date') %></th>
-          <td><%= msg('birthdate-format', userinfo.birthdate.slice(0, 4), userinfo.birthdate.slice(4, 6), userinfo.birthdate.slice(6, 8)) %></td>
+          <td><%= msg('birthdate-format', user.birthdate.slice(0, 4), user.birthdate.slice(4, 6), user.birthdate.slice(6, 8)) %></td>
         </tr>
       <% } %>
-      <% if (userinfo.bio) { %>
+      <% if (user.bio) { %>
         <tr>
           <th><%= msg('Bio') %></th>
-          <td><%= userinfo.bio %></td>
+          <td><%= user.bio %></td>
         </tr>
       <% } %>
       <tr>

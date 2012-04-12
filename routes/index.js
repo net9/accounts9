@@ -1,22 +1,23 @@
 var appman = require('../app/man');
 var messages = require('../messages');
+var util = require('util');
 
 module.exports = function (app) {
+
   app.get('/', function (req, res) {
-    if (req.session.userinfo) {
-      // When logged in, display a dashboard of information.
-      appman.getAllByUser(req.session.userinfo.username, function (apps) {
-        res.render('dashboard', {
-          locals: {
-            title: messages.get('my-dashboard'),
-            userinfo: req.session.userinfo,
-            apps: apps,
-          }
-        });
-      });
-    } else {
-      res.redirect('/login');
-    };
+    res.render('index', {
+      locals: {
+        title: messages.get('index')
+      }
+    });
+  });
+  
+  app.all('/debug', function(req, res) {
+    var User = require('../user/model');
+    User.getByName('byvoid1', function (err, user){
+      console.log(err);
+    });
+    res.send(util.inspect(req));
   });
 };
 

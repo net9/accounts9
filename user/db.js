@@ -63,7 +63,7 @@ var getByName = function (lconn, username, callback) {
         return result[0][field] ? result[0][field] : '';
       };
       callback(true, {
-        username: f("uid"),
+        name: f("uid"),
         uid: f("uidNumber"),
         nickname: f("displayName"),
         surname: f("sn"),
@@ -181,9 +181,9 @@ exports.create = function (userinfo, callback) {
 
 exports.update = function (userinfo, callback) {
   connect(function (err, lconn) {
-    if (err)
+    if (err) {
       callback(false, err);
-    else {
+    } else {
       var mods = {
         displayName:          userinfo.nickname,
         sn:                   userinfo.surname,
@@ -198,13 +198,13 @@ exports.update = function (userinfo, callback) {
       };
 
       if (userinfo.password) {
-        mods.modification.userPassword = genPassword(userinfo.password);
+        mods.userPassword = genPassword(userinfo.password);
       }
       
-      lconn.attr_modify('uid=' + userinfo.username + ',' + config.user_base_dn, mods, function (err) {
-        if (!err)
-          getByName(lconn, userinfo.username, callback);
-        else {
+      lconn.attr_modify('uid=' + userinfo.name + ',' + config.user_base_dn, mods, function (err) {
+        if (!err) {
+          getByName(lconn, userinfo.name, callback);
+        } else {
           lconn.close();
           callback(false, err);
         }

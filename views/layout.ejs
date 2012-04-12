@@ -26,11 +26,11 @@
           <a class="brand" href="/">Accounts9</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <% if (!session.userinfo) { %>
+              <% if (!curUser) { %>
                 <li class="active"><a href="/login"><%- msg('Login') %></a></li>
                 <li><a href="/register"><%- msg('Register') %></a></li>
               <% } else { %>
-                <li class="active"><a href="/u/<%= session.userinfo.username %>"><%= session.userinfo.username %></a></li>
+                <li class="active"><a href="/u/<%= curUser.name %>"><%= curUser.name %></a></li>
                 <li><a href="/logout"><%- msg('Logout') %></a></li>
               <% } %>
             </ul>
