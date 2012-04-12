@@ -3,10 +3,8 @@
     <legend><%= title %></legend>
     <div class="alert alert-error">
       <p><%- msg('removing-app-confirm', appinfo.name) %></p>
-      
-      <a href="/" class="btn"><%- msg('no-wanna-back-out') %></a>
+      <a href="/apps/<%= appinfo.clientid %>" class="btn"><%- msg('no-wanna-back-out') %></a>
       <button type="submit" class="btn btn-danger"><%- msg('yes-wanna-continue') %></button>
     </div>
-    <input type="hidden" name="confirm" value="yes" />
   </fieldset>
 </form>

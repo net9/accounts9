@@ -1,5 +1,3 @@
-/* vim: set ts=2 sw=2 nocin si: */
-
 var appman = require('./man');
 var messages = require('../messages');
 
@@ -59,36 +57,30 @@ module.exports = function (app) {
     });
   });
 
-  app.all('/apps/:clientid/remove', function (req, res) {
-    if (!req.amOwner) {
-      req.flash('error', 'unauthorized');
-      res.redirect('/apps/' + req.params.clientid);
-    } else if (req.method !== 'POST' || req.body.confirm !== 'yes') {
-      res.render('appremoveconfirm', {
-        locals: {
-          title: messages.get('removing-app', req.appinfo.name),
-          appinfo: req.appinfo
-        }
-      });
-    } else {
-      appman.deleteByID(req.params.clientid, function (result) {
-        if (result.success) {
-          req.flash('info', 'app-removal-success|' + req.params.clientid);
-          res.redirect('/');
-        } else {
-          req.flash('error', 'unknown');
-          res.redirect('/apps/' + req.params.clientid);
-        }
-      });
-    }
+  app.all('/apps/:clientid/remove', checkAppOwner);
+  
+  app.get('/apps/:clientid/remove', function(req, res) {
+    res.render('appremoveconfirm', {
+      locals: {
+        title: messages.get('removing-app', req.appinfo.name),
+        appinfo: req.appinfo
+      }
+    });
   });
 
-  app.all('/apps/:clientid/edit', function (req, res, next) {
-    if (!req.amOwner) {
-      req.flash('error', 'unauthorized');
-      res.redirect('/apps/' + req.params.clientid);
-    } else next();
+  app.post('/apps/:clientid/remove', function(req, res) {
+    appman.deleteByID(req.params.clientid, function(result) {
+      if (result.success) {
+        req.flash('info', 'app-removal-success|' + req.params.clientid);
+        res.redirect('/');
+      } else {
+        req.flash('error', 'unknown');
+        res.redirect('/apps/' + req.params.clientid);
+      }
+    });
   });
+
+  app.all('/apps/:clientid/edit', checkAppOwner);
 
   app.get('/apps/:clientid/edit', function (req, res) {
     res.render('appedit', {
@@ -125,3 +117,11 @@ module.exports = function (app) {
 
 };
 
+function checkAppOwner(req, res, next) {
+  if (!req.amOwner) {
+    req.flash('error', 'unauthorized');
+    res.redirect('/apps/' + req.params.clientid);
+  } else {
+    next();
+  }
+}
