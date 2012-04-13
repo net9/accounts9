@@ -247,6 +247,22 @@ Group.prototype.remove = function remove (callback) {
 };
 
 /*
+ * Add a user to this group
+ *
+ * callback(err)
+ *
+ */
+Group.prototype.addUser = function addUser (username, callback) {
+  for (key in this.users) {
+    if (this.users[key] == username) {
+      return callback('already-in-this-group');
+    }
+  }
+  this.users.push(username);
+  this.save(callback);
+};
+
+/*
  * Remove a user from this group
  * [private]
  *

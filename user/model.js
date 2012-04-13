@@ -270,7 +270,14 @@ User.prototype.addToDefaultGroup = function addToDefaultGroup (callback) {
   var self = this;
   Group.getByName('root', function (err, root) {
     if (!err) {
-      self.addToGroup(root, callback);
+      // Add to group
+      self.addToGroup(root, function (err) {
+        if (err) {
+          return callback(err);
+        }
+        // group add reverse
+        root.addUser(self.name, callback);
+      });
     } else if (err == 'no-such-group') {
       // Initialize default groups
       Group.initialize(self, function (err, root, authorized) {
