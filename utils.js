@@ -1,3 +1,4 @@
+var url = require('url');
 
 // Creates a new subset that is a subset of the given object.
 exports.subset = function (src, attrs) {
@@ -24,3 +25,17 @@ exports.mergeProps = function (dest, src) {
     dest[key] = src[key];
   }
 };
+
+exports.checkLogin = function(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    req.flash('error', 'not-loged-in');
+    res.redirect(url.format({
+      pathname: '/login',
+      query: {
+        returnto: req.url,
+      },
+    }));
+  }
+}

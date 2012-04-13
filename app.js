@@ -29,9 +29,10 @@ app.configure(function () {
   }));
   app.use(app.router);
   app.use(express.router(require('./routes')));
-  app.use(express.router(require('./app/')));
-  app.use(express.router(require('./user')));
   app.use(express.router(require('./oauth')));
+  app.use(express.router(require('./user')));
+  app.use(express.router(require('./app/')));
+  app.use(express.router(require('./group')));
   app.use(express.static(__dirname + '/public'));
 });
 
@@ -41,7 +42,7 @@ app.configure('development', function () {
 });
 
 app.configure('production', function () {
-  //app.use(express.errorHandler()); 
+  app.use(express.errorHandler()); 
 });
 
 // Helper functions for view rendering
@@ -79,6 +80,7 @@ app.dynamicHelpers({
   },
 });
 
+/*
 app.error(function (err, req, res, next) {
   res.render('error', {
     status: 500,
@@ -88,6 +90,7 @@ app.error(function (err, req, res, next) {
     }
   });
 });
+*/
 
 // Only listen on $ node app.js
 if (!module.parent) {

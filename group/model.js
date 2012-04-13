@@ -64,7 +64,6 @@ Group._getGroup = function _getGroup (name, callback) {
   });
 };
 
-
 /*
  * Get all groups
  *
@@ -81,9 +80,42 @@ Group.getAll = function getAll (callback) {
       return callback(err);
     }
     groups = groups.map(function (group) {
-      return group.toObject();
+      return new Group(group);
     });
     callback(null, groups);
+  });
+};
+
+/*
+ * Get all groups with structured representation
+ *
+ * callback(err, root)
+ *
+ */
+Group.getAllStructured = function getAllStructured (callback) {
+  Group.getAll(function (err, groups) {
+    if (err) {
+      return callback(err);
+    }
+    
+    var groupsMap = {};
+    groups.forEach(function (group) {
+      groupsMap[group.name] = group;
+    });
+    
+    function makeTree (node) {
+      node = groupsMap[node];
+      assert(node);
+      var children = [];
+      for (var i = 0; i < node.children.length; i++) {
+        children.push(makeTree(node.children[i]));
+      }
+      node.children = children;
+      return node;
+    }
+    
+    var root = makeTree('root');
+    callback(null, root);
   });
 };
 
