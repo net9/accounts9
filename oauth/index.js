@@ -2,8 +2,8 @@
 
 var appman = require('../app/man'),
     oauthman = require('./man'),
-    userman = require('../user/man'),
     messages = require('../messages');
+var User = require('../user/model');
 var util = require('util');
 
 function process_authorize(req,res){
@@ -172,8 +172,12 @@ module.exports = function (app) {
   });
 
   app.get('/api/userinfo', function (req, res) {
-    userman.getByName(req.tokeninfo.username, function (result) {
-      res.send(result);
+    User.getByName(req.tokeninfo.username, function (err, user) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(user);
+      }
     });
   });
 

@@ -123,8 +123,9 @@ var genPassword = function (rawpass) {
 
 exports.create = function (userinfo, callback) {
   connect(function (err, lconn) {
-    if (err) callback(false, err);
-    else {
+    if (err) {
+      callback(false, err);
+    } else {
       // First find a suitable uidNumber for our little guest.
       lconn.search(config.user_base_dn, "(objectClass=posixAccount)", function (err, result) {
         // The new uidNumber should be one greater than the current greatest.
@@ -138,19 +139,19 @@ exports.create = function (userinfo, callback) {
 
         // Now prepare the attrs.
         var attrs = {
-          uid: userinfo.username,
-          sn: userinfo.username,
-          cn: userinfo.username,
+          uid: userinfo.name,
+          sn: userinfo.name,
+          cn: userinfo.name,
           objectClass: ['person', 'top', 'inetOrgPerson', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'net9Person' ],
           mail: userinfo.email,
           userPassword: genPassword(userinfo.password),
           gidNumber: config.default_gid,
           uidNumber: userinfo.uidNumber,
-          homeDirectory: config.home_directory + userinfo.username
+          homeDirectory: config.home_directory + userinfo.name
         };
 
         // Add the user.
-        var user_dn = 'uid=' + userinfo.username + ',' + config.user_base_dn;
+        var user_dn = 'uid=' + userinfo.name + ',' + config.user_base_dn;
         lconn.add(user_dn, attrs, function (err) {
           if (!err) {
             // Add user to the default group.
@@ -159,7 +160,7 @@ exports.create = function (userinfo, callback) {
           	};
             lconn.attr_add('cn=' + config.default_group + ',' + config.group_base_dn, mods, function (err) {
               if (!err)
-                getByName(lconn, userinfo.username, callback);
+                getByName(lconn, userinfo.name, callback);
               else {
                 //Roll back when error occurred
                 lconn.del(user_dn, function (err) {

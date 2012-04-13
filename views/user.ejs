@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="span6">
+    <h2><%= msg('my-info') %></h2>
+    <table class="table">
+      <% if (user.nickname) { %>
+        <tr>
+          <th><%= msg('Nickname') %></th>
+          <td><%= user.nickname %></td>
+        </tr>
+      <% } %>
+      <% if (user.fullname) { %>
+        <tr>
+          <th><%= msg('full-name') %></th>
+          <td><%= user.fullname %></td>
+        </tr>
+      <% } %>
+      <% if (user.email) { %>
+        <tr>
+          <th><%= msg('Email') %></th>
+          <td><a href="mailto:<%= user.email %>"><%= user.email %></a></td>
+        </tr>
+      <% } %>
+      <% if (user.mobile) { %>
+        <tr>
+          <th><%= msg('Mobile') %></th>
+          <td><%= user.mobile %></td>
+        </tr>
+      <% } %>
+      <% if (user.website) { %>
+        <tr>
+          <th><%= msg('Website') %></th>
+          <td><a href="<%= user.website %>" target="_blank"><%= user.website %></a></td>
+        </tr>
+      <% } %>
+      <% if (user.address) { %>
+        <tr>
+          <th><%= msg('Address') %></th>
+          <td><%= user.address %></td>
+        </tr>
+      <% } %>
+      <% if (user.birthdate) { %>
+        <tr>
+          <th><%= msg('birth-date') %></th>
+          <td><%= msg('birthdate-format', user.birthdate.slice(0, 4), user.birthdate.slice(4, 6), user.birthdate.slice(6, 8)) %></td>
+        </tr>
+      <% } %>
+      <% if (user.bio) { %>
+        <tr>
+          <th><%= msg('Bio') %></th>
+          <td><%= user.bio %></td>
+        </tr>
+      <% } %>
+      <% if (curUser && curUser.name == user.name) { %>
+        <tr>
+          <th></th>
+          <td>
+            <a href="/dashboard" class="btn btn-primary">
+              <i class="icon-edit icon-white"></i>
+              <%= msg('edit-page') %>
+            </a>
+          </td>
+        </tr>
+      <% } %>
+    </table>
+  </div>
+</div>

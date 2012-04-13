@@ -1,4 +1,3 @@
-var userman = require('./man');
 var User = require('./model');
 var appman = require('../app/man');
 var messages = require('../messages');
@@ -70,28 +69,24 @@ module.exports = function (app) {
     res.redirect(req.query.returnto || '/');
   });
 
-  app.get('/register', function (req, res) {
-    res.render('register', {
-      locals: {
-        title: messages.get('Register')
+  app.post('/register', function (req, res, next) {
+    var user = utils.subset(req.body, ['name', 'password', 'password-repeat', 'email']);
+    User.create(user, function (err, user) {
+      if (!err) {
+        req.session.user = user;
+        req.flash('info', 'register-welcome|' + user.name);
+        res.redirect('/editinfo');
+      } else {
+        req.flash('error', err);
+        next();
       }
     });
   });
 
-  app.post('/register', function (req, res) {
-    userman.register(utils.subset(req.body, ["username", "password", "email"]), function (result) {
-      if (result.success) {
-        req.session.user = result.userinfo;
-        req.flash('info', 'register-welcome|' + result.userinfo.username);
-        res.redirect('/');
-      } else {
-        req.flash('error', result.error);
-        res.render('register', {
-          locals: {
-            title: messages.get('Register'),
-            userinfo: result.userinfo
-          }
-        });
+  app.all('/register', function (req, res) {
+    res.render('register', {
+      locals: {
+        title: messages.get('Register')
       }
     });
   });
