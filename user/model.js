@@ -218,6 +218,7 @@ User.prototype._getMongodbUserAttr = function _getMongodbUserAttr(callback) {
 User.prototype._update = function _update(callback) {
   var that = this;
   userbase.update(this, function (success, userOrErr) {
+    that.password = that.oldpass = undefined;
     if (success) {
       that._getMongodbUser(function (err, mongodbUser) {
         if (err) {
@@ -234,3 +235,21 @@ User.prototype._update = function _update(callback) {
     }
   });
 }
+
+/*
+ * Add user to a group
+ *
+ * group: The group which user will add to
+ * callback(err)
+ *
+ */
+User.prototype.addToGroup = function addToGroup (group, callback) {
+  this.groups = this.groups || [];
+  for (key in this.groups) {
+    if (this.groups[key] == group.name) {
+      return callback('already-in-this-group');
+    }
+  }
+  this.groups.push(group.name);
+  this.save(callback);
+};
