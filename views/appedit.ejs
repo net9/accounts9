@@ -2,16 +2,22 @@
   <fieldset>
     <legend><%= title %></legend>
     <div class="control-group">
+      <label class="control-label" for="clientid"><%- msg('client-id') %></label>
+      <div class="controls">
+        <input type="text" class="input-xlarge" id="clientid" readonly="readonly" value="<%= appinfo.clientid %>">
+      </div>
+    </div>
+    <div class="control-group">
       <label class="control-label" for="app-name"><%- msg('app-name') %></label>
       <div class="controls">
-        <input type="text" class="input-xlarge" id="app-name" name="name">
+        <input type="text" class="input-xlarge" id="app-name" name="name" value="<%= appinfo.name %>">
         <p class="help-block"><%- msg('appreg-name-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="app-desc"><%- msg('app-desc') %></label>
       <div class="controls">
-        <input type="text" class="input-xlarge" id="app-desc" name="desc">
+        <input type="text" class="input-xlarge" id="app-desc" name="desc" value="<%= appinfo.desc %>">
       </div>
     </div>
     <div class="form-actions">
