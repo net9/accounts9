@@ -19,3 +19,8 @@ exports.merge = function (house, guest) {
   return house;
 };
 
+exports.mergeProps = function (dest, src) {
+  for (key in src) {
+    dest[key] = src[key];
+  }
+};

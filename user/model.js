@@ -28,7 +28,7 @@ function User(user) {
 module.exports = User;
 
 mongoose.model('User', new mongoose.Schema({
-  name: { type: String, index: true },
+  name: { type: String, index: true, unique: true },
   groups: [String],
   applyingGroups: [String],
   authorizedApps: [String],
