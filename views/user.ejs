@@ -1,5 +1,13 @@
 <div class="row">
   <div class="span6">
+    <% if (curUser && curUser.name == user.name) { %>
+      <p>
+        <a href="/dashboard" class="btn btn-primary">
+          <i class="icon-edit icon-white"></i>
+          <%= msg('dashboard') %>
+        </a>
+      </p>
+    <% } %>
     <h2><%= msg('my-info') %></h2>
     <table class="table">
       <% if (user.nickname) { %>
@@ -48,17 +56,6 @@
         <tr>
           <th><%= msg('Bio') %></th>
           <td><%= user.bio %></td>
-        </tr>
-      <% } %>
-      <% if (curUser && curUser.name == user.name) { %>
-        <tr>
-          <th></th>
-          <td>
-            <a href="/dashboard" class="btn btn-primary">
-              <i class="icon-edit icon-white"></i>
-              <%= msg('edit-page') %>
-            </a>
-          </td>
         </tr>
       <% } %>
     </table>

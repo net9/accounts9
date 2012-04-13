@@ -111,10 +111,11 @@ exports.update = function (appinfo, callback) {
 };
 
 exports.checkAuthorized = function(userid,appid,callback){
-  UserAppRelation.findOne({username:userid,clientid:appid},function(err,item){
-    util.debug('check '+userid+' '+appid)
-    if(err || item==null) return callback(false);
-    else return callback(true)
+  UserAppRelation.findOne({username:userid,clientid:appid}, function (err, item) {
+    if (err || item == null) {
+      return callback(false);
+    }
+    callback(true);
   })
 }
 exports.markAuthorized = function(userid,appid) {

@@ -1,7 +1,0 @@
-form(method="POST", action="/api/authorize?client_id=" + appinfo.clientid)
-  .flash.block-flash.info-flash
-    div.message!= msg('app-auth-message', appinfo.clientid, appinfo.name)
-    div.choices
-      input.nodisable(type="submit", name="yes", value=msg('Yes'))
-      input.normal-button.nodisable(type="submit", name="no", value=msg('No'))
-

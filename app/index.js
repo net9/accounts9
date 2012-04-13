@@ -13,7 +13,7 @@ module.exports = function (app) {
   });
 
   app.post('/appreg', function (req, res) {
-    appman.register(req.session.user.username, {
+    appman.register(req.session.user.name, {
       name: req.body.name,
       secret: req.body.secret,
       desc: req.body.desc
@@ -38,7 +38,7 @@ module.exports = function (app) {
       if (result.success) {
         req.appinfo = result.appinfo;
         req.amOwner = req.session.user &&
-          result.appinfo.owners.indexOf(req.session.user.username) !== -1;
+          result.appinfo.owners.indexOf(req.session.user.name) !== -1;
         next();
       } else {
         if (result.error === 'app-not-found') res.send(404);
