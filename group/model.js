@@ -1,5 +1,6 @@
 var mongoose = require('../lib/mongoose');
 var utils = require('../utils');
+var User = require('../user/model');
 var assert = require('assert');
 
 function Group(group) {
@@ -64,22 +65,6 @@ Group._getGroup = function _getGroup (name, callback) {
 };
 
 /*
- * Delete one group by name
- *
- * callback(err)
- *
- */
-Group.deleteByName = function deleteByName (name, callback) {
-  // TODO: delete user group info
-  Group._getGroup(name, function (err, group) {
-    if (err) {
-      return callback(err);
-    }
-    group.remove(callback);
-  });
-};
-
-/*
  * Create a new group
  *
  * callback(err, group)
@@ -131,7 +116,9 @@ Group.createRoot = function createRoot (user, callback) {
     if (err) {
       return callback(err);
     }
-    user.addToGroup(group, callback);
+    user.addToGroup(group, function (err) {
+      callback(err, group);
+    });
   });
 };
 
@@ -159,5 +146,48 @@ Group.prototype.save = function save (callback) {
  *
  */
 Group.prototype.remove = function remove (callback) {
-  Group.deleteByName(this.name, callback);
+  var self = this;
+  Group._getGroup(this.name, function (err, group) {
+    if (err) {
+      return callback(err);
+    }
+    
+    // Remove each user from this group
+    self.users.forEach(function (username) {
+      // Get user by name
+      User.getByName(username, function (err, user) {
+        if (err) {
+          assert(false);
+        }
+        user.removeFromGroup(self, {groupNotRemove: true}, function (err) {
+          if (err) {
+            assert(false);
+          }
+        });
+      });
+    });
+    
+    // Remove group object from MongoDB
+    Group.model.prototype.remove.call(group, callback);
+  });
+};
+
+/*
+ * Remove a user from this group
+ * [private]
+ *
+ * Call User.prototype.removeFromGroup instead of this method.
+ *
+ * callback(err)
+ *
+ */
+Group.prototype._removeUser = function _removeUser (username, callback) {
+  for (key in this.users) {
+    if (this.users[key] == username) {
+      delete this.users[key];
+      this.save(callback);   
+      return;
+    }
+  }
+  callback('not-in-this-group');
 };

@@ -253,3 +253,41 @@ User.prototype.addToGroup = function addToGroup (group, callback) {
   this.groups.push(group.name);
   this.save(callback);
 };
+
+/*
+ * Remove from a group
+ *
+ * group: The group which user will remove from
+ * options: groupNotRemove
+ * callback(err)
+ *
+ */
+User.prototype.removeFromGroup = function removeFromGroup (group, options, callback) {
+  if (!callback) {
+    callback = options;
+    options = {};
+  }
+
+  var self = this;
+  this.groups = this.groups || [];
+  for (key in this.groups) {
+    if (this.groups[key] == group.name) {
+      // User remove group
+      this.groups = this.groups.slice(0, key).concat(this.groups.slice(key + 1));
+      
+      if (options.groupNotRemove) {
+        self.save(callback);
+      } else {
+        // Group remove user
+        group._removeUser(this.name, function (err) {
+          if (err) {
+            return callback(err);
+          }
+          self.save(callback);
+        });
+      }
+      return;
+    }
+  }
+  callback('not-in-this-group');
+};
