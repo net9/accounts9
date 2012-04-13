@@ -1,4 +1,5 @@
 var userbase = require('./db');
+var Group = require('../group/model');
 var mongoose = require('../lib/mongoose');
 var utils = require('../utils');
 var assert = require('assert');
@@ -125,7 +126,12 @@ User.create = function create(user, callback) {
           ['name', 'groups', 'applyingGroups', 'authorizedApps']
         ));
         mongodbUser.save(function (err) {
-          callback(err, user);
+          if (err) {
+            return callback(err);
+          }
+          user.addToDefaultGroup(function (err) {
+            callback(err, user);
+          });
         });
       } else {
         callback(userOrErr);
@@ -253,6 +259,29 @@ User.prototype.addToGroup = function addToGroup (group, callback) {
   this.groups.push(group.name);
   this.save(callback);
 };
+
+/*
+ * Add user to default group
+ *
+ * callback(err)
+ *
+ */
+User.prototype.addToDefaultGroup = function addToDefaultGroup (callback) {
+  var self = this;
+  Group.getByName('root', function (err, root) {
+    if (!err) {
+      self.addToGroup(root, callback);
+    } else if (err == 'no-such-group') {
+      // Initialize default groups
+      Group.initialize(self, function (err, root, authorized) {
+        callback(err);
+      });
+    } else {
+      callback(err);
+    }
+  });
+};
+
 
 /*
  * Remove from a group

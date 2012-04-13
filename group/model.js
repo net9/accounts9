@@ -64,6 +64,29 @@ Group._getGroup = function _getGroup (name, callback) {
   });
 };
 
+
+/*
+ * Get all groups
+ *
+ * callback(err, groups)
+ *
+ */
+Group.getAll = function getAll (callback) {
+  if (!mongoose.connected) {
+    return callback('mongodb-not-connected');
+  }
+  // Look up into MongoDB
+  Group.model.find({}, function (err, groups) {
+    if (err) {
+      return callback(err);
+    }
+    groups = groups.map(function (group) {
+      return group.toObject();
+    });
+    callback(null, groups);
+  });
+};
+
 /*
  * Create a new group
  *
@@ -97,27 +120,46 @@ Group.create = function create (group, callback) {
 };
 
 /*
- * Create the root group
+ * Create default groups (root, authorized)
  *
  * user: The admin user
- * callback(err, group)
+ * callback(err, root, authorized)
  *
  */
-Group.createRoot = function createRoot (user, callback) {
+Group.initialize = function initialize (user, callback) {
+  // Create root
   var group = {
     name: 'root',
     title: 'root',
-    users: [user.name],
+    users: [],
     admins: [user.name],
     parent: null,
-    children: [],
+    children: ['authorized'],
   };
-  Group.create(group, function (err, group) {
+  Group.create(group, function (err, root) {
     if (err) {
       return callback(err);
     }
-    user.addToGroup(group, function (err) {
-      callback(err, group);
+    // Create authorized
+    var group = {
+      name: 'authorized',
+      title: 'authorized',
+      users: [user.name],
+      admins: [],
+      parent: 'root',
+      children: [],
+    };
+    Group.create(group, function (err, authorized) {
+      if (err) {
+        return callback(err);
+      }
+      // Add user to authorized
+      user.addToGroup(authorized, function (err) {
+        if (err) {
+          return callback(err);
+        }
+        callback(err, root, authorized);
+      });
     });
   });
 };
