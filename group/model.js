@@ -112,6 +112,30 @@ Group.create = function create (group, callback) {
 };
 
 /*
+ * Create the root group
+ *
+ * user: The admin user
+ * callback(err, group)
+ *
+ */
+Group.createRoot = function createRoot (user, callback) {
+  var group = {
+    name: 'root',
+    title: 'root',
+    users: [user.name],
+    admins: [user.name],
+    parent: null,
+    children: [],
+  };
+  Group.create(group, function (err, group) {
+    if (err) {
+      return callback(err);
+    }
+    user.addToGroup(group, callback);
+  });
+};
+
+/*
  * Save modifications
  *
  * callback(err)
