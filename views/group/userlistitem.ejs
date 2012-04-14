@@ -10,4 +10,11 @@
   <td><%= userlistitem.email %></td>
   <td><%= userlistitem.mobile %></td>
   <td><%= userlistitem.birthdate %></td>
+  <% if (group.users.showAction) { %>
+    <td>
+      <a href="" class="btn btn-danger btn-mini">
+        <i class="icon-trash icon-white"></i>
+      </a>
+    </td>
+  <% } %>
 </tr>

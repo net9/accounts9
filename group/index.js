@@ -32,6 +32,7 @@ module.exports = function (app) {
   app.get(groupPath, getDirectUsers);
   app.get(groupPath, function (req, res, next) {
     var group = req.group;
+    group.users.showAction = group.currentUserIsAdmin;
     res.render('group/group', {
       locals: {
         title: group.title,
@@ -107,7 +108,7 @@ module.exports = function (app) {
     var group = req.group;
     User.getByName(req.body.name, function (err, user) {
       if (err) {
-        return utils.errorRedirect(req, res, err, '/group/' + group.name);
+        return utils.errorRedirect(req, res, err, '/group/' + group.name + '/adduser');
       }
       user.addToGroup(group, function (err) {
         assert(!err);
@@ -116,6 +117,32 @@ module.exports = function (app) {
           req.flash('info', 'add-user-success');
           res.redirect('/group/' + group.name);
         });
+      });
+    });
+  });
+
+  var addAdminPath = groupPath + '/addadmin';
+  app.all(addAdminPath, utils.checkLogin);
+  app.all(addAdminPath, getGroup);
+  app.all(addAdminPath, checkCurrentUserIsAdmin);
+  app.get(addAdminPath, function (req, res, next) {
+    res.render('group/adduser', {
+      locals: {
+        title: messages.get('add-admin'),
+        group: req.group,
+      }
+    });
+  });
+  app.post(addAdminPath, function (req, res, next) {
+    var group = req.group;
+    User.getByName(req.body.name, function (err, user) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, '/group/' + group.name + '/addadmin');
+      }
+      group.addAdmin(user.name, function (err) {
+        assert(!err);
+        req.flash('info', 'add-admin-success');
+        res.redirect('/group/' + group.name);
       });
     });
   });

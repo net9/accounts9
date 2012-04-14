@@ -15,7 +15,10 @@
     <h2><%= group.title %></h2>
     <% if (group.currentUserIsAdmin) { %>
       <p>
-        <a href="/group/<%= group.name %>/edit" class="btn btn-primary">編輯組信息</a>
+        <a href="/group/<%= group.name %>/edit" class="btn btn-primary">
+          <i class="icon-edit icon-white"></i>
+          編輯組信息
+        </a>
       </p>
     <% } %>
     <table class="table">
@@ -34,8 +37,23 @@
       <tr>
         <th><%- msg('group-admins') %></th>
         <td>
-          <% for (var i in group.admins) { %>
-            <a href="/u/<%= group.admins[i].name %>"><%= group.admins[i].title %></a>
+          <ul>
+            <% for (var i in group.admins) { %>
+              <li>
+                <a href="/u/<%= group.admins[i].name %>"><%= group.admins[i].title %></a>
+                <a href="/group/<%= group.name %>/deladmin/<%= group.admins[i].name %>" class="btn btn-danger btn-mini">
+                    <i class="icon-trash icon-white"></i>
+                </a>
+              </li>
+            <% } %>
+          </ul>
+          <% if (group.currentUserIsAdmin) { %>
+            <p>
+              <a href="/group/<%= group.name %>/addadmin" class="btn btn-success">
+                <i class="icon-plus icon-white"></i>
+                添加管理員
+              </a>
+            </p>
           <% } %>
         </td>
       </tr>
@@ -59,7 +77,10 @@
           </p>
           <% if (group.currentUserIsAdmin) { %>
             <p>
-              <a href="/group/<%= group.name %>/addgroup" class="btn btn-primary">添加子組</a>
+              <a href="/group/<%= group.name %>/addgroup" class="btn btn-success">
+                <i class="icon-plus icon-white"></i>
+                添加子組
+              </a>
             </p>
           <% } %>
         </td>
@@ -70,8 +91,14 @@
     <h2>用戶列表</h2>
     <% if (group.currentUserIsAdmin) { %>
       <p>
-        <a href="/group/<%= group.name %>/adduser" class="btn">添加用戶</a>
-        <a href="/group/<%= group.name %>/allusers" class="btn">全部用戶</a>
+        <a href="/group/<%= group.name %>/adduser" class="btn btn-success">
+          <i class="icon-plus icon-white"></i>
+          添加用戶
+        </a>
+        <a href="/group/<%= group.name %>/allusers" class="btn btn-info">
+        <i class="icon-list-alt icon-white"></i>
+          全部用戶
+        </a>
       </p>
     <% } %>
     <%- partial('userlist') %>

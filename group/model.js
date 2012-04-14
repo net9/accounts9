@@ -486,3 +486,19 @@ Group.prototype.getAllUserNames = function getAllUserNames (callback) {
     callback(null, users);
   });
 };
+
+/*
+ * Add an admin to this group
+ *
+ * callback(err)
+ *
+ */
+Group.prototype.addAdmin = function addAdmin (username, callback) {
+  for (key in this.users) {
+    if (this.admins[key] == username) {
+      return callback('already-in-this-group');
+    }
+  }
+  this.admins.push(username);
+  this.save(callback);
+};
