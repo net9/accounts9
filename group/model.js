@@ -100,6 +100,7 @@ Group._getGroup = function _getGroup (name, callback) {
  * Get all groups
  *
  * callback(err, groups)
+ * groups: Array(Group)
  *
  */
 Group.getAll = function getAll (callback) {
@@ -348,7 +349,7 @@ Group.prototype.checkUser = function checkUser (username, options, callback) {
 
 
 /*
- * Get all the ancestors
+ * Get all ancestors
  *
  * callback(err, ancestors)
  * ancestors: Array(Group)
@@ -401,5 +402,45 @@ Group.prototype.checkAdmin = function checkAdmin (username, callback) {
       }
     }
     callback(null, false);
+  });
+};
+
+
+/*
+ * Get all descendants
+ *
+ * callback(err, groups)
+ * groups: Array(Group)
+ *
+ */
+Group.prototype.getDescendant = function getDescendant (callback) {
+  var self = this;
+  Group.getAllByNames(self.children, function (err, children) {
+    assert(!err);
+    if (children.length == 0) {
+      return callback(null, []);
+    }
+    var groupMap = {};
+    var done = 0;
+    // Get descendants of each child
+    children.forEach(function (childGroup) {
+      groupMap[childGroup.name] = childGroup;
+      childGroup.getDescendant(function (err, groups) {
+        assert(!err);
+        // Put every descendant of child into groupMap
+        for (var i in groups) {
+          groupMap[groups[i].name] = groups[i];
+        }
+        done ++;
+        if (done == children.length) {
+          // Extract groupMap
+          var groups = [];
+          for (key in groupMap) {
+            groups.push(groupMap[key]);
+          }
+          callback(null, groups);
+        }
+      });
+    });
   });
 };
