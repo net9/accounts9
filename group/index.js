@@ -1,4 +1,5 @@
 var Group = require('./model');
+var User = require('../user/model');
 var messages = require('../messages');
 var utils = require('../utils');
 var assert = require('assert');
@@ -98,6 +99,16 @@ module.exports = function (app) {
       group.children = children;
       next();
     }
+  });
+  
+  app.get(groupPath, function (req, res, next) {
+    // Get admin information
+    var group = req.group;
+    User.getByNames(group.admins, function (err, admins) {
+      assert(!err);
+      group.admins = admins;
+      next();
+    })
   });
 
   app.get(groupPath, function (req, res, next) {

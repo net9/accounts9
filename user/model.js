@@ -57,9 +57,10 @@ User.checkName = function checkName(username, callback) {
  * Get one user by username
  *
  * callback(err, user)
+ * user: User
  *
  */
-User.getByName = function getByName(username, callback) {
+User.getByName = function getByName (username, callback) {
   if (!mongoose.connected) {
     return callback('mongodb-not-connected');
   }
@@ -79,6 +80,36 @@ User.getByName = function getByName(username, callback) {
   });
 };
 
+/*
+ * Get a set of users by usernames
+ *
+ * callback(err, users)
+ * users: Array(User)
+ *
+ */
+User.getByNames = function getByNames (usernames, callback) {
+  var users = [];
+  var returned = false;
+  
+  if (usernames.length == 0) {
+    return callback(null, users);
+  }
+  usernames.forEach(function (username) {
+    if (returned) {
+      return;
+    }
+    User.getByName(username, function (err, user) {
+      if (err) {
+        returned = true;
+        return callback(err);
+      }
+      users.push(user);
+      if (users.length == usernames.length) {
+        callback(null, users);
+      }
+    });
+  });
+};
 
 /*
  * Authenticate and get
