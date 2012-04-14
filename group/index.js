@@ -90,6 +90,35 @@ module.exports = function (app) {
       }
     });
   });
+  
+  var addUserPath = groupPath + '/adduser';
+  app.all(addUserPath, utils.checkLogin);
+  app.all(addUserPath, getGroup);
+  app.all(addUserPath, checkCurrentUserIsAdmin);
+  app.get(addUserPath, function (req, res, next) {
+    res.render('group/adduser', {
+      locals: {
+        title: messages.get('add-user'),
+        group: req.group,
+      }
+    });
+  });
+  app.post(addUserPath, function (req, res, next) {
+    var group = req.group;
+    User.getByName(req.body.name, function (err, user) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, '/group/' + group.name);
+      }
+      user.addToGroup(group, function (err) {
+        assert(!err);
+        group.addUser(user.name, function (err) {
+          assert(!err);
+          req.flash('info', 'add-user-success');
+          res.redirect('/group/' + group.name);
+        });
+      });
+    });
+  });
 };
 
 function getGroup(req, res, next) {
