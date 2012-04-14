@@ -1,3 +1,13 @@
 <tr>
-  <td><%= userlistitem %></td>
+  <td><%= userlistitem.uid %></td>
+  <td>
+    <a href="/u/<%= userlistitem.name %>">
+      <%= userlistitem.name %>
+    </a>
+  </td>
+  <td><%= userlistitem.nickname %></td>
+  <td><%= userlistitem.fullname %></td>
+  <td><%= userlistitem.email %></td>
+  <td><%= userlistitem.mobile %></td>
+  <td><%= userlistitem.birthdate %></td>
 </tr>

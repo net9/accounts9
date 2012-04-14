@@ -102,6 +102,16 @@ module.exports = function (app) {
   });
 
   app.get(groupPath, function (req, res, next) {
+    // Get direct users information
+    var group = req.group;
+    User.getByNames(group.users, function (err, users) {
+      assert(!err);
+      group.users = users;
+      next();
+    })
+  });
+
+  app.get(groupPath, function (req, res, next) {
     var group = req.group;
     res.render('group', {
       locals: {
