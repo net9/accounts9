@@ -12,7 +12,7 @@ module.exports = function (app) {
       if (err) {
         return utils.errorRedirect(req, res, err, '/');
       }
-      res.render('groups', {
+      res.render('group/groups', {
         locals: {
           title: messages.get('groups'),
           groupRoot: groupRoot,
@@ -32,7 +32,7 @@ module.exports = function (app) {
   app.get(groupPath, getDirectUsers);
   app.get(groupPath, function (req, res, next) {
     var group = req.group;
-    res.render('group', {
+    res.render('group/group', {
       locals: {
         title: group.title,
         group: group
@@ -73,6 +73,21 @@ module.exports = function (app) {
         req.flash('info', 'add-group-success');
         res.redirect('/group/' + group.name);
       });
+    });
+  });
+  
+  var allUsersPath = groupPath + '/allusers';
+  app.get(allUsersPath, utils.checkLogin);
+  app.get(allUsersPath, getGroup);
+  app.get(allUsersPath, checkCurrentUserIsAdmin);
+  app.get(allUsersPath, getAllUsers);
+  app.get(allUsersPath, function (req, res, next) {
+    var group = req.group;
+    res.render('group/allusers', {
+      locals: {
+        title: group.title,
+        group: group
+      }
     });
   });
 };
@@ -151,7 +166,7 @@ function getGroupAdmins (req, res, next) {
     assert(!err);
     group.admins = admins;
     next();
-  })
+  });
 }
 
 function getDirectUsers (req, res, next) {
@@ -161,5 +176,18 @@ function getDirectUsers (req, res, next) {
     assert(!err);
     group.users = users;
     next();
-  })
+  });
+}
+
+function getAllUsers (req, res, next) {
+  // Get direct and indirect users information
+  var group = req.group;
+  group.getAllUserNames(function (err, users) {
+    assert(!err);
+    User.getByNames(users, function (err, users) {
+      assert(!err);
+      group.users = users;
+      next();
+    });
+  });
 }

@@ -409,7 +409,6 @@ Group.prototype.checkAdmin = function checkAdmin (username, callback) {
   });
 };
 
-
 /*
  * Get all descendants
  *
@@ -419,7 +418,7 @@ Group.prototype.checkAdmin = function checkAdmin (username, callback) {
  */
 Group.prototype.getDescendant = function getDescendant (callback) {
   var self = this;
-  Group.getAllByNames(self.children, function (err, children) {
+  Group.getByNames(self.children, function (err, children) {
     assert(!err);
     if (children.length == 0) {
       return callback(null, []);
@@ -463,4 +462,27 @@ Group.prototype.addChildGroup = function addChildGroup (name, callback) {
   }
   this.children.push(name);
   this.save(callback);
+};
+
+/*
+ * Get all users' names
+ *
+ * callback(err, users)
+ * groups: Array(string)
+ *
+ */
+Group.prototype.getAllUserNames = function getAllUserNames (callback) {
+  var self = this;
+  self.getDescendant(function (err, groups) {
+    if (err) {
+      return callback(err);
+    }
+    var users = [];
+    groups.push(self);
+    groups.forEach(function (group) {
+      users = users.concat(group.users);
+    });
+    users = utils.reduce(users);
+    callback(null, users);
+  });
 };

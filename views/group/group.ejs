@@ -67,23 +67,13 @@
     </table>
   </div>
   <div class="span9">
-    <h2><%- msg('group-users') %></h2>
+    <h2>用戶列表</h2>
     <% if (group.currentUserIsAdmin) { %>
       <p>
-        <a href="/group/<%= group.name %>/adduser" class="btn btn-primary">添加用戶</a>
+        <a href="/group/<%= group.name %>/adduser" class="btn">添加用戶</a>
+        <a href="/group/<%= group.name %>/allusers" class="btn">全部用戶</a>
       </p>
     <% } %>
-    <table class="table table-bordered table-condensed">
-      <tr>
-        <th><%= msg('uid') %></th>
-        <th><%= msg('username') %></th>
-        <th><%= msg('Nickname') %></th>
-        <th><%= msg('full-name') %></th>
-        <th><%= msg('Email') %></th>
-        <th><%= msg('mobile') %></th>
-        <th><%= msg('birth-date') %></th>
-      </tr>
-      <%- partial('partials/userlistitem', group.users) %>
-    </table>
+    <%- partial('userlist') %>
   </div>
 </div>

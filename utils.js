@@ -44,3 +44,27 @@ exports.errorRedirect = function (req, res, err, redirect) {
   req.flash('error', err);
   res.redirect(redirect);
 };
+
+exports.reduce = function (array) {
+  var map = {};
+  var reduced = [];
+  for (var i = 0; i < array.length; i++) {
+    map[array[i]] = array[i];
+  }
+  for (var key in map) {
+    reduced.push(map[key]);
+  }
+  return reduced;
+}
+
+exports.reduceByName = function (array) {
+  var map = {};
+  var reduced = [];
+  for (var i = 0; i < array.length; i++) {
+    map[array[i].name] = array[i];
+  }
+  for (var key in map) {
+    reduced.push(map[key]);
+  }
+  return reduced;
+}
