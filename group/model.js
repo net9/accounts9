@@ -281,3 +281,93 @@ Group.prototype._removeUser = function _removeUser (username, callback) {
   }
   callback('not-in-this-group');
 };
+
+/*
+ * Check whether a user belongs to this group
+ *
+ * callback(err, belongTo)
+ *
+ */
+Group.prototype.checkUser = function checkUser (username, options, callback) {
+  var self = this;
+  if (!callback) {
+    callback = options;
+    options = {};
+  }
+  
+  // Check directly belong to the group
+  if (options.direct) {
+    for (var i in this.users) {
+      if (this.users[i] == username) {
+        return callback(null, true);
+      }
+    }
+    return callback(null, false);
+  }
+  
+  // Check indirectly
+  User.getByName(username, function (err, user) {
+    if (err) {
+      return callback(err);
+    }
+    user.checkGroup(self.name, callback);
+  });
+};
+
+
+/*
+ * Get all the ancestors
+ *
+ * callback(err, ancestors)
+ * ancestors: Array(Group)
+ *
+ */
+Group.prototype.getAncestors = function getAncestors (callback) {
+  var self = this;
+  if (self.parent) {
+    Group.getByName(self.parent, function (err, group) {
+      group.getAncestors(function (err, ancesstors) {
+        if (err) {
+          return callback(err);
+        }
+        ancesstors.push(group);
+        callback(null, ancesstors);
+      });
+    });
+  } else {
+    callback(null, []);
+  }
+};
+
+/*
+ * Check whether a user is an direct or indirect admin of this group
+ *
+ * callback(err, belongTo)
+ * belongTo: boolean
+ *
+ */
+Group.prototype.checkAdmin = function checkAdmin (username, callback) {
+  var self = this;
+  var returned = false;
+  
+  self.getAncestors(function (err, ancestors) {
+    ancestors.push(self);
+    // Iterate every ancestor of current group
+    for (var i in ancestors) {
+      var group = ancestors[i];
+      // Check whether the user is one admin
+      for (var j in group.admins) {
+        var admin = group.admins[j];
+        if (admin == username) {
+          callback(null, true);
+          returned = true;
+          break;
+        }
+      }
+      if (returned) {
+        return;
+      }
+    }
+    callback(null, false);
+  });
+};

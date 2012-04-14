@@ -26,7 +26,7 @@ exports.mergeProps = function (dest, src) {
   }
 };
 
-exports.checkLogin = function(req, res, next) {
+exports.checkLogin = function (req, res, next) {
   if (req.session.user) {
     next();
   } else {
@@ -38,4 +38,9 @@ exports.checkLogin = function(req, res, next) {
       },
     }));
   }
-}
+};
+
+exports.errorRedirect = function (req, res, err, redirect) {
+  req.flash('error', err);
+  res.redirect(redirect);
+};

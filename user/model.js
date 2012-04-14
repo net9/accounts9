@@ -327,3 +327,72 @@ User.prototype.removeFromGroup = function removeFromGroup (group, options, callb
   }
   callback('not-in-this-group');
 };
+
+/*
+ * Check whether belongs to a group
+ *
+ * callback(err, belongTo)
+ *
+ */
+User.prototype.checkGroup = function checkGroup (groupname, options, callback) {
+  var self = this;
+  if (!callback) {
+    callback = options;
+    options = {};
+  }
+  
+  // Check whether directly belongs to the group
+  if (options.direct) {
+    Group.getByName(groupname, function (err, group) {
+      if (err) {
+        return callback(err);
+      }
+      group.checkUser(self.name, {direct: true}, callback);
+    });
+    return;
+  }
+  
+  // Check indirectly
+  self.getAllGroups(function (err, groups) {
+    for (var i in groups) {
+      if (groups[i].name == groupname) {
+        return callback(null, true);
+      }
+    }
+    return callback(null, false);
+  });
+};
+
+/*
+ * Get all groups directly and indirectly belongs to
+ *
+ * callback(err, groups)
+ * groups: Array(Group)
+ *
+ */
+User.prototype.getAllGroups = function getAllGroups (callback) {
+  var self = this;
+  var groupsMap = {};
+  var done = 0;
+  
+  self.groups.forEach(function (groupname) {
+    Group.getByName(groupname, function (err, group) {
+      assert(!err);
+      groupsMap[group.name] = group;
+      group.getAncestors(function (err, ancestors) {
+        assert(!err);
+        ancestors.forEach(function (group) {
+          groupsMap[group.name] = group;
+        });
+        done ++;
+        if (done == self.groups.length) {
+          var groups = [];
+          for (var key in groupsMap) {
+            groups.push(groupsMap[key]);
+          }
+          callback(null, groups);
+        }
+      });
+    });
+  });
+};
