@@ -84,21 +84,11 @@ module.exports = function (app) {
   app.get(groupPath, function (req, res, next) {
     // Get children information
     var group = req.group;
-    var children = [];
-    group.children.forEach(function (childGroupName) {
-      Group.getByName(childGroupName, function (err, childGroup) {
-        assert(!err);
-        children.push(childGroup);
-        if (children.length == group.children.length) {
-          group.children = children;
-          next();
-        }
-      });
-    });
-    if (group.children.length == 0) {
+    Group.getByNames(group.children, function (err, children) {
+      assert(!err);
       group.children = children;
       next();
-    }
+    });
   });
   
   app.get(groupPath, function (req, res, next) {

@@ -28,6 +28,7 @@ Group.model = mongoose.model('Group');
  * Get one group by name
  *
  * callback(err, group)
+ * group: Group
  *
  */
 Group.getByName = function getByName (name, callback) {
@@ -36,6 +37,37 @@ Group.getByName = function getByName (name, callback) {
       return callback(err);
     }
     callback(null, new Group(group));
+  });
+};
+
+/*
+ * Get a set of groups by names
+ *
+ * callback(err, groups)
+ * group: Array(Group)
+ *
+ */
+Group.getByNames = function getByNames (names, callback) {
+  var groups = [];
+  var returned = false;
+  
+  if (names.length == 0) {
+    return callback(null, groups);
+  }
+  names.forEach(function (name) {
+    if (returned) {
+      return;
+    }
+    Group.getByName(name, function (err, group) {
+      if (err) {
+        returned = true;
+        return callback(err);
+      }
+      groups.push(group);
+      if (groups.length == names.length) {
+        callback(null, groups);
+      }
+    });
   });
 };
 
