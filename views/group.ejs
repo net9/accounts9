@@ -1,6 +1,43 @@
 <div class="row">
-  <div class="span6">
-    <h2><%= msg('groups') %></h2>
-    <%= group %>
+  <div class="span4">
+    <h2><%= group.title %></h2>
+    <table class="table">
+      <tr>
+        <th><%- msg('group-name') %></th>
+        <td><%= group.name %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-title') %></th>
+        <td><%= group.title %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-admins') %></th>
+        <td><%= group.admins %></td>
+      </tr>
+      <% if (group.parent) { %>
+        <tr>
+          <th><%- msg('group-parent') %></th>
+          <td>
+            <a href="/group/<%= group.parent.name %>"><%= group.parent.title %></a>
+          </td>
+        </tr>
+      <% } %>
+      <% if (group.children.length > 0) { %>
+        <tr>
+          <th><%- msg('group-children') %></th>
+          <td>
+            <% for (var i in group.children) { %>
+              <a href="/group/<%= group.children[i].name %>"><%= group.children[i].title %></a>
+            <% } %>
+          </td>
+        </tr>
+      <% } %>
+    </table>
+  </div>
+  <div class="span8">
+    <h2><%- msg('group-users') %></h2>
+    <table class="table table-bordered">
+      <%- partial('partials/userlistitem', group.users) %>
+    </table>
   </div>
 </div>

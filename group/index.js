@@ -1,6 +1,7 @@
 var Group = require('./model');
 var messages = require('../messages');
 var utils = require('../utils');
+var assert = require('assert');
 
 module.exports = function (app) {
 
@@ -19,36 +20,93 @@ module.exports = function (app) {
     });
   });
 
-  app.get('/group/:groupname', utils.checkLogin);
-  app.get('/group/:groupname', function (req, res) {
+  var groupPath = '/group/:groupname';
+  app.get(groupPath, utils.checkLogin);
+  
+  app.get(groupPath, function (req, res, next) {
+    // Check existance and retrieve Group object
     Group.getByName(req.params.groupname, function (err, group) {
       if (err) {
-        return utils.errorRedirect(req, res, err, '/');
+        utils.errorRedirect(req, res, err, '/');
+      } else {
+        // Save group to request object
+        req.group = group;
+        next();
       }
-      // Check whether current user directly belong to the group
-      group.checkUser(req.session.user.name, {direct: true}, function (err, belongTo) {
-        if (err) {
-          return utils.errorRedirect(req, res, err, '/group');
-        }
+    });
+  });
+  
+  app.get(groupPath, function (req, res, next) {
+    // Check whether current user directly belongs to
+    var group = req.group;
+    group.checkUser(req.session.user.name, {direct: true}, function (err, belongTo) {
+      if (err) {
+        utils.errorRedirect(req, res, err, '/group');
+      } else {
         group.containCurrentUser = belongTo;
-        // Check whether current user is admin of the group
-        group.checkAdmin(req.session.user.name, function (err, isAdmin) {
-          if (err) {
-            return utils.errorRedirect(req, res, err, '/group');
-          }
-          group.currentUserIsAdmin = isAdmin;
-          // If not direct user and not admin, no permission
-          if (!belongTo && !isAdmin) {
-            return utils.errorRedirect(req, res, 'permission-denied-view-group', '/group');
-          }
-          res.render('group', {
-            locals: {
-              title: group.title,
-              group: group
-            }
-          });
-        });
+        next();
+      }
+    });
+  });
+  
+  app.get(groupPath, function (req, res, next) {
+    // Check whether current user is admin of this group
+    var group = req.group;
+    group.checkAdmin(req.session.user.name, function (err, isAdmin) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, '/group');
+      }
+      group.currentUserIsAdmin = isAdmin;
+      // If is not direct user and is not admin, no permission
+      if (!group.containCurrentUser && !isAdmin) {
+        utils.errorRedirect(req, res, 'permission-denied-view-group', '/group');
+      } else {
+        next();
+      }
+    });
+  });
+
+  app.get(groupPath, function (req, res, next) {
+    // Get parent information
+    var group = req.group;
+    if (group.parent) {
+      Group.getByName(group.parent, function (err, parentGroup) {
+        assert(!err);
+        group.parent = parentGroup;
+        next();
       });
+    } else {
+      next();
+    }
+  });
+
+  app.get(groupPath, function (req, res, next) {
+    // Get children information
+    var group = req.group;
+    var children = [];
+    group.children.forEach(function (childGroupName) {
+      Group.getByName(childGroupName, function (err, childGroup) {
+        assert(!err);
+        children.push(childGroup);
+        if (children.length == group.children.length) {
+          group.children = children;
+          next();
+        }
+      });
+    });
+    if (group.children.length == 0) {
+      group.children = children;
+      next();
+    }
+  });
+
+  app.get(groupPath, function (req, res, next) {
+    var group = req.group;
+    res.render('group', {
+      locals: {
+        title: group.title,
+        group: group
+      }
     });
   });
   
