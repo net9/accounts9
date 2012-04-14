@@ -12,7 +12,7 @@
   <td><%= userlistitem.birthdate %></td>
   <% if (group.users.showAction) { %>
     <td>
-      <a href="" class="btn btn-danger btn-mini">
+      <a href="/group/<%= group.name %>/deluser/<%= userlistitem.name %>" class="btn btn-danger btn-mini">
         <i class="icon-trash icon-white"></i>
       </a>
     </td>

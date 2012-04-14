@@ -301,17 +301,14 @@ Group.prototype.addUser = function addUser (username, callback) {
 
 /*
  * Remove a user from this group
- * [private]
- *
- * Call User.prototype.removeFromGroup instead of this method.
  *
  * callback(err)
  *
  */
-Group.prototype._removeUser = function _removeUser (username, callback) {
-  for (key in this.users) {
-    if (this.users[key] == username) {
-      delete this.users[key];
+Group.prototype.removeUser = function removeUser (userName, callback) {
+  for (var i = 0; i < this.users.length; i++) {
+    if (this.users[i] == userName) {
+      this.users = this.users.slice(0, i).concat(this.users.slice(i + 1));
       this.save(callback);   
       return;
     }
@@ -488,17 +485,34 @@ Group.prototype.getAllUserNames = function getAllUserNames (callback) {
 };
 
 /*
- * Add an admin to this group
+ * Add an admin
  *
  * callback(err)
  *
  */
-Group.prototype.addAdmin = function addAdmin (username, callback) {
-  for (key in this.users) {
-    if (this.admins[key] == username) {
+Group.prototype.addAdmin = function addAdmin (userName, callback) {
+  for (key in this.admins) {
+    if (this.admins[key] == userName) {
       return callback('already-in-this-group');
     }
   }
-  this.admins.push(username);
+  this.admins.push(userName);
   this.save(callback);
+};
+
+/*
+ * Remove an admin
+ *
+ * callback(err)
+ *
+ */
+Group.prototype.removeAdmin = function removeAdmin (userName, callback) {
+  for (var i = 0; i < this.admins.length; i++) {
+    if (this.admins[i] == userName) {
+      this.admins = this.admins.slice(0, i).concat(this.admins.slice(i + 1));
+      this.save(callback);   
+      return;
+    }
+  }
+  callback('not-in-this-group');
 };

@@ -107,16 +107,49 @@ module.exports = function (app) {
   app.post(addUserPath, function (req, res, next) {
     var group = req.group;
     User.getByName(req.body.name, function (err, user) {
+      var errUrl = '/group/' + group.name + '/adduser';
       if (err) {
-        return utils.errorRedirect(req, res, err, '/group/' + group.name + '/adduser');
+        return utils.errorRedirect(req, res, err, errUrl);
       }
       user.addToGroup(group, function (err) {
-        assert(!err);
+        if (err) {
+          return utils.errorRedirect(req, res, err, errUrl);
+        }
         group.addUser(user.name, function (err) {
           assert(!err);
           req.flash('info', 'add-user-success');
           res.redirect('/group/' + group.name);
         });
+      });
+    });
+  });
+
+  var delUserPath = groupPath + '/deluser/:username';
+  app.all(delUserPath, utils.checkLogin);
+  app.all(delUserPath, getGroup);
+  app.all(delUserPath, checkCurrentUserIsAdmin);
+  app.all(delUserPath, getUser);
+  app.get(delUserPath, function (req, res, next) {
+    var backUrl = '/group/' + req.group.name;
+    res.render('confirm', {
+      locals: {
+        title: messages.get('del-user'),
+        backUrl: backUrl,
+        confirm: messages.get('del-user-confirm', req.user.title),
+      }
+    });
+  });
+  app.post(delUserPath, function (req, res, next) {
+    var group = req.group;
+    var user = req.user;
+    user.removeFromGroup(group.name, function (err) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, '/group/' + group.name);
+      }
+      group.removeUser(user.name, function (err) {
+        assert(!err);
+        req.flash('info', 'del-user-success');
+        res.redirect('/group/' + group.name);
       });
     });
   });
@@ -136,14 +169,44 @@ module.exports = function (app) {
   app.post(addAdminPath, function (req, res, next) {
     var group = req.group;
     User.getByName(req.body.name, function (err, user) {
+      var errUrl = '/group/' + group.name + '/addadmin';
       if (err) {
-        return utils.errorRedirect(req, res, err, '/group/' + group.name + '/addadmin');
+        return utils.errorRedirect(req, res, err, errUrl);
       }
       group.addAdmin(user.name, function (err) {
-        assert(!err);
+        if (err) {
+          return utils.errorRedirect(req, res, err, errUrl);
+        }
         req.flash('info', 'add-admin-success');
         res.redirect('/group/' + group.name);
       });
+    });
+  });
+  
+  var delAdminPath = groupPath + '/deladmin/:username';
+  app.all(delAdminPath, utils.checkLogin);
+  app.all(delAdminPath, getGroup);
+  app.all(delAdminPath, checkCurrentUserIsAdmin);
+  app.all(delAdminPath, getUser);
+  app.get(delAdminPath, function (req, res, next) {
+    var backUrl = '/group/' + req.group.name;
+    res.render('confirm', {
+      locals: {
+        title: messages.get('del-admin'),
+        backUrl: backUrl,
+        confirm: messages.get('del-admin-confirm', req.user.title),
+      }
+    });
+  });
+  app.post(delAdminPath, function (req, res, next) {
+    var group = req.group;
+    var user = req.user;
+    group.removeAdmin(user.name, function (err) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, '/group/' + group.name);
+      }
+      req.flash('info', 'del-admin-success');
+      res.redirect('/group/' + group.name);
     });
   });
 };
@@ -245,5 +308,18 @@ function getAllUsers (req, res, next) {
       group.users = users;
       next();
     });
+  });
+}
+
+function getUser (req, res, next) {
+  // Check existance and retrieve User object
+  User.getByName(req.params.username, function (err, user) {
+    if (err) {
+      utils.errorRedirect(req, res, err, '/');
+    } else {
+      // Save user to request object
+      req.user = user;
+      next();
+    }
   });
 }
