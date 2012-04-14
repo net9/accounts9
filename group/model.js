@@ -6,6 +6,7 @@ var assert = require('assert');
 function Group(group) {
   this.name = group.name;
   this.title = group.title;
+  this.desc = group.desc;
   this.users = group.users;
   this.admins = group.admins;
   this.parent = group.parent;
@@ -17,6 +18,7 @@ module.exports = Group;
 mongoose.model('Group', new mongoose.Schema({
   name: { type: String, index: true, unique: true },
   title: String,
+  desc: String,
   users: [String],
   admins: [String],
   parent: String,
@@ -160,7 +162,7 @@ Group.getAllStructured = function getAllStructured (callback) {
  */
 Group.create = function create (group, callback) {
   // Validate required fields
-  if (!group.name || !group.title) {
+  if (!group.name || !group.title || !group.desc) {
     return callback('fields-required');
   }
   
@@ -195,7 +197,8 @@ Group.initialize = function initialize (user, callback) {
   // Create root
   var group = {
     name: 'root',
-    title: 'root',
+    title: 'Root',
+    desc: 'The root group',
     users: [],
     admins: [user.name],
     parent: null,
@@ -208,7 +211,8 @@ Group.initialize = function initialize (user, callback) {
     // Create authorized
     var group = {
       name: 'authorized',
-      title: 'authorized',
+      title: 'Authorized',
+      desc: 'Authorized users',
       users: [user.name],
       admins: [],
       parent: 'root',
@@ -443,4 +447,20 @@ Group.prototype.getDescendant = function getDescendant (callback) {
       });
     });
   });
+};
+
+/*
+ * Add a child group
+ *
+ * callback(err)
+ *
+ */
+Group.prototype.addChildGroup = function addChildGroup (name, callback) {
+  for (key in this.children) {
+    if (this.children[key] == name) {
+      return callback('already-in-this-group');
+    }
+  }
+  this.children.push(name);
+  this.save(callback);
 };

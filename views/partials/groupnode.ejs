@@ -1,6 +1,9 @@
 <h3>
   <a href="/group/<%= groupnode.name %>"><%= groupnode.title %></a>
 </h3>
+<p>
+  <%= groupnode.desc %>
+</p>
 
 <% if (groupnode.children.length > 0) { %>
   <div class="tabbable">

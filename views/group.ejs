@@ -1,6 +1,23 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/">首頁</a>
+    <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/group">用戶組</a>
+    <span class="divider">/</span>
+  </li>
+  <li class="active"><%= group.title %></li>
+</ul>
+
 <div class="row">
   <div class="span3">
     <h2><%= group.title %></h2>
+    <% if (group.currentUserIsAdmin) { %>
+      <p>
+        <a href="/group/<%= group.name %>/edit" class="btn btn-primary">編輯組信息</a>
+      </p>
+    <% } %>
     <table class="table">
       <tr>
         <th><%- msg('group-name') %></th>
@@ -9,6 +26,10 @@
       <tr>
         <th><%- msg('group-title') %></th>
         <td><%= group.title %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-desc') %></th>
+        <td><%= group.desc %></td>
       </tr>
       <tr>
         <th><%- msg('group-admins') %></th>
@@ -29,8 +50,17 @@
       <tr>
         <th><%- msg('group-children') %></th>
         <td>
-          <% for (var i in group.children) { %>
-            <a href="/group/<%= group.children[i].name %>"><%= group.children[i].title %></a>
+          <p>
+            <% for (var i in group.children) { %>
+              <a href="/group/<%= group.children[i].name %>">
+                <%= group.children[i].title %>
+              </a>
+            <% } %>
+          </p>
+          <% if (group.currentUserIsAdmin) { %>
+            <p>
+              <a href="/group/<%= group.name %>/addgroup" class="btn btn-primary">添加子組</a>
+            </p>
           <% } %>
         </td>
       </tr>
@@ -38,7 +68,11 @@
   </div>
   <div class="span9">
     <h2><%- msg('group-users') %></h2>
-    <p><a href="/group/<%= group.name %>/adduser" class="btn btn-primary">添加用戶</a></p>
+    <% if (group.currentUserIsAdmin) { %>
+      <p>
+        <a href="/group/<%= group.name %>/adduser" class="btn btn-primary">添加用戶</a>
+      </p>
+    <% } %>
     <table class="table table-bordered table-condensed">
       <tr>
         <th><%= msg('uid') %></th>
