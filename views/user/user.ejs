@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="span6">
+    <% if (curUser && curUser.name == user.name) { %>
+      <p>
+        <a href="/dashboard" class="btn btn-primary">
+          <i class="icon-edit icon-white"></i>
+          <%= msg('dashboard') %>
+        </a>
+      </p>
+    <% } %>
+    <%- partial('userinfo') %>
+  </div>
+</div>
