@@ -280,14 +280,14 @@ User.prototype._update = function _update(callback) {
  * callback(err)
  *
  */
-User.prototype.addToGroup = function addToGroup (group, callback) {
+User.prototype.addToGroup = function addToGroup (groupName, callback) {
   this.groups = this.groups || [];
   for (key in this.groups) {
-    if (this.groups[key] == group.name) {
+    if (this.groups[key] == groupName) {
       return callback('already-in-this-group');
     }
   }
-  this.groups.push(group.name);
+  this.groups.push(groupName);
   this.save(callback);
 };
 
@@ -302,7 +302,7 @@ User.prototype.addToDefaultGroup = function addToDefaultGroup (callback) {
   Group.getByName('root', function (err, root) {
     if (!err) {
       // Add to group
-      self.addToGroup(root, function (err) {
+      self.addToGroup(root.name, function (err) {
         if (err) {
           return callback(err);
         }

@@ -139,7 +139,7 @@ module.exports = function (app) {
     // Add user to the target group
     var user = req.user;
     var group = req.group;
-    user.addToGroup(group, function (err) {
+    user.addToGroup(group.name, function (err) {
       if (err) {
         return utils.errorRedirect(req, res, err, errUrl);
       }
@@ -182,10 +182,31 @@ module.exports = function (app) {
       }
       group.removeUser(user.name, function (err) {
         assert(!err);
-        req.flash('info', 'del-user-success');
-        res.redirect('/group/' + group.name);
+        next();
       });
     });
+  });
+  app.post(delUserPath, function (req, res, next) {
+    var user = req.user;
+    if (user.groups.length > 0) {
+      return next();
+    }
+    // When the user does not belong to any group, add it to root group
+    Group.getByName('root', function (err, rootGroup) {
+      assert(!err);
+      rootGroup.addUser(user.name, function (err) {
+        assert(!err);
+        user.addToGroup('root', function (err) {
+          assert(!err);
+          next();
+        });
+      });
+    });
+  });
+  app.post(delUserPath, function (req, res, next) {
+    var group = req.group;
+    req.flash('info', 'del-user-success');
+    res.redirect('/group/' + group.name);
   });
 
   var addAdminPath = groupPath + '/addadmin';

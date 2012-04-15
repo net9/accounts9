@@ -223,7 +223,7 @@ Group.initialize = function initialize (user, callback) {
         return callback(err);
       }
       // Add user to authorized
-      user.addToGroup(authorized, function (err) {
+      user.addToGroup(authorized.name, function (err) {
         if (err) {
           return callback(err);
         }
