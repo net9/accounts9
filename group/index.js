@@ -188,6 +188,7 @@ module.exports = function (app) {
   app.all(delAdminPath, utils.checkLogin);
   app.all(delAdminPath, getGroup);
   app.all(delAdminPath, checkCurrentUserIsAdmin);
+  app.all(delAdminPath, checkRootAdmin);
   app.all(delAdminPath, getUser);
   app.get(delAdminPath, function (req, res, next) {
     var backUrl = '/group/' + req.group.name;
@@ -202,6 +203,7 @@ module.exports = function (app) {
   app.post(delAdminPath, function (req, res, next) {
     var group = req.group;
     var user = req.user;
+    
     group.removeAdmin(user.name, function (err) {
       if (err) {
         return utils.errorRedirect(req, res, err, '/group/' + group.name);
@@ -325,10 +327,19 @@ function getUser (req, res, next) {
   });
 }
 
-function checkNotRootGroup(req, res, next) {
-  // Check if it is not root Group
+function checkNotRootGroup (req, res, next) {
+  // Check if it is not root group
   if (req.params.groupname == 'root') {
     var err = 'can-not-delete-user-from-root-group';
+    return utils.errorRedirect(req, res, err, '/group/root');
+  }
+  next();
+}
+
+function checkRootAdmin (req, res, next) {
+  // Forbid to delete the only admin of root group
+  if (req.group.name == 'root' && req.group.admins.length == 1) {
+    var err = 'can-not-delete-the-only-admin-from-root-group';
     return utils.errorRedirect(req, res, err, '/group/root');
   }
   next();
