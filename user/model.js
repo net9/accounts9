@@ -105,6 +105,7 @@ User.getByNames = function getByNames (usernames, callback) {
       }
       users.push(user);
       if (users.length == usernames.length) {
+        utils.sortBy(users, 'uid');
         callback(null, users);
       }
     });

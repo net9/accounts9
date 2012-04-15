@@ -55,7 +55,7 @@ exports.reduce = function (array) {
     reduced.push(map[key]);
   }
   return reduced;
-}
+};
 
 exports.reduceByName = function (array) {
   var map = {};
@@ -67,4 +67,15 @@ exports.reduceByName = function (array) {
     reduced.push(map[key]);
   }
   return reduced;
-}
+};
+
+exports.sortBy = function (array, key) {
+  array.sort(function (a, b) {
+    if (a[key] > b[key]) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+  return array;
+};

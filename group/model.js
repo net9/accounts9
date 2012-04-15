@@ -67,6 +67,7 @@ Group.getByNames = function getByNames (names, callback) {
       }
       groups.push(group);
       if (groups.length == names.length) {
+        utils.sortBy(groups, 'name');
         callback(null, groups);
       }
     });
