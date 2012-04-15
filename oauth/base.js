@@ -1,8 +1,5 @@
-var config = require('../config');
 var utils = require('../utils');
-var mongoose = require('mongoose');
-
-mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name);
+var mongoose = require('../lib/mongoose');
 
 mongoose.model('OAuthCode', new mongoose.Schema({
   code:         { type: String, index: true },

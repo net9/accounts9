@@ -1,13 +1,6 @@
-var config = require('../config');
 var utils = require('../utils');
 var util = require('util');
-var mongoose = require('mongoose');
-
-mongoose.connected = false;
-mongoose.connection.on('open', function() {
-  mongoose.connected = true;
-});
-mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name);
+var mongoose = require('../lib/mongoose');
 
 mongoose.model('App', new mongoose.Schema({
   name:     { type: String, index: true },

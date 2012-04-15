@@ -25,6 +25,7 @@ app.configure(function () {
     store: new MongoStore({
       db: config.db.name,
       host: config.db.host,
+      port: config.db.port,
     })
   }));
   app.use(app.router);
