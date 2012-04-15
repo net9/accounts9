@@ -1,0 +1,110 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/">首頁</a>
+    <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/group">用戶組</a>
+    <span class="divider">/</span>
+  </li>
+  <li class="active"><%= group.title %></li>
+</ul>
+
+<div class="row">
+  <div class="span3">
+    <h2><%= group.title %></h2>
+    <% if (group.currentUserIsAdmin) { %>
+      <p>
+        <a href="/group/<%= group.name %>/edit" class="btn btn-primary">
+          <i class="icon-edit icon-white"></i>
+          編輯組
+        </a>
+        <a href="/group/<%= group.name %>/del" class="btn btn-danger">
+          <i class="icon-trash icon-white"></i>
+          刪除組
+        </a>
+      </p>
+    <% } %>
+    <table class="table">
+      <tr>
+        <th><%- msg('group-name') %></th>
+        <td><%= group.name %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-title') %></th>
+        <td><%= group.title %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-desc') %></th>
+        <td><%= group.desc %></td>
+      </tr>
+      <tr>
+        <th><%- msg('group-admins') %></th>
+        <td>
+          <ul>
+            <% for (var i in group.admins) { %>
+              <li>
+                <a href="/u/<%= group.admins[i].name %>"><%= group.admins[i].title %></a>
+                <a href="/group/<%= group.name %>/deladmin/<%= group.admins[i].name %>" class="btn btn-danger btn-mini">
+                    <i class="icon-trash icon-white"></i>
+                </a>
+              </li>
+            <% } %>
+          </ul>
+          <% if (group.currentUserIsAdmin) { %>
+            <p>
+              <a href="/group/<%= group.name %>/addadmin" class="btn btn-success">
+                <i class="icon-plus icon-white"></i>
+                添加管理員
+              </a>
+            </p>
+          <% } %>
+        </td>
+      </tr>
+      <% if (group.parent) { %>
+        <tr>
+          <th><%- msg('group-parent') %></th>
+          <td>
+            <a href="/group/<%= group.parent.name %>"><%= group.parent.title %></a>
+          </td>
+        </tr>
+      <% } %>
+      <tr>
+        <th><%- msg('group-children') %></th>
+        <td>
+          <p>
+            <% for (var i in group.children) { %>
+              <a href="/group/<%= group.children[i].name %>">
+                <%= group.children[i].title %>
+              </a>
+            <% } %>
+          </p>
+          <% if (group.currentUserIsAdmin) { %>
+            <p>
+              <a href="/group/<%= group.name %>/addgroup" class="btn btn-success">
+                <i class="icon-plus icon-white"></i>
+                添加子組
+              </a>
+            </p>
+          <% } %>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="span9">
+    <h2>用戶列表</h2>
+    <% if (group.currentUserIsAdmin) { %>
+      <p>
+        <a href="/group/<%= group.name %>/adduser" class="btn btn-success">
+          <i class="icon-plus icon-white"></i>
+          添加用戶
+        </a>
+        <a href="/group/<%= group.name %>/allusers" class="btn btn-info">
+        <i class="icon-list-alt icon-white"></i>
+          全部用戶
+        </a>
+      </p>
+    <% } %>
+    <%- partial('userlist') %>
+  </div>
+</div>

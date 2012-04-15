@@ -1,4 +1,5 @@
 var User = require('./model');
+var Group = require('../group/model');
 var appman = require('../app/man');
 var messages = require('../messages');
 var utils = require('../utils');
@@ -6,31 +7,32 @@ var url = require('url');
 
 module.exports = function (app) {
 
-  app.get('/u/:username', function (req, res, next) {
-    User.getByName(req.params.username, function (err, user) {
-      if (err) {
-        return next(new Error(err));
+  var userPath = '/u/:username';
+  app.get(userPath, checkLogin);
+  app.get(userPath, getUser);
+  app.get(userPath, getUserDirectGroup);
+  app.get(userPath, function (req, res, next) {
+    var user = req.user;
+    res.render('user/user', {
+      locals: {
+        title: user.title,
+        user: user
       }
-      res.render('user', {
-        locals: {
-          title: user.title,
-          user: user
-        }
-      });
     });
   });
 
-  app.get('/dashboard', checkLogin);
-  app.get('/dashboard', function (req, res, next) {
-    var user = req.session.user;
-    appman.getAllByUser(user.name, function (apps) {
-      res.render('dashboard', {
-        locals: {
-          title: messages.get('my-dashboard'),
-          user: user,
-          apps: apps,
-        }
-      });
+  var dashboard = '/dashboard';
+  app.get(dashboard, checkLogin);
+  app.get(dashboard, getCurrentUser);
+  app.get(dashboard, getUserDirectGroup);
+  app.get(dashboard, getApps);
+  app.get(dashboard, function (req, res, next) {
+    res.render('user/dashboard', {
+      locals: {
+        title: messages.get('my-dashboard'),
+        user: req.user,
+        apps: req.apps,
+      }
     });
   });
 
@@ -161,4 +163,43 @@ function checkLogin(req, res, next) {
       },
     }));
   }
+}
+
+function getUser (req, res, next) {
+  User.getByName(req.params.username, function (err, user) {
+    if (err) {
+      return utils.errorRedirect(req, res, err, '/');
+    }
+    req.user = user;
+    next();
+  });
+}
+
+function getCurrentUser (req, res, next) {
+  User.getByName(req.session.user.name, function (err, user) {
+    if (err) {
+      return utils.errorRedirect(req, res, err, '/');
+    }
+    req.user = user;
+    next();
+  });
+}
+
+function getUserDirectGroup (req, res, next) {
+  var user = req.user;
+  Group.getByNames(user.groups, function (err, groups) {
+    if (err) {
+      return utils.errorRedirect(req, res, err, '/');
+    }
+    user.groups = groups;
+    next();
+  });
+}
+
+function getApps(req, res, next) {
+  var user = req.user;
+  appman.getAllByUser(user.name, function (apps) {
+    req.apps = apps;
+    next();
+  });
 }

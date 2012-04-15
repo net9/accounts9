@@ -1,0 +1,34 @@
+<h3>
+  <a href="/group/<%= groupnode.name %>"><%= groupnode.title %></a>
+</h3>
+<p>
+  <%= groupnode.desc %>
+</p>
+
+<% if (groupnode.children.length > 0) { %>
+  <div class="tabbable">
+    <ul class="nav nav-tabs">
+      <% for (var i in groupnode.children) { %>
+        <% if (i == 0) { %>
+          <li class="active">
+        <% } else { %>
+          <li>
+        <% } %>
+        <a href="#<%= groupnode.name + i %>" data-toggle="tab">
+          <%= groupnode.children[i].title %>
+        </a></li>
+      <% } %>
+    </ul>
+    <div class="tab-content">
+      <% for (var i in groupnode.children) { %>
+        <% if (i == 0) { %>
+          <div class="tab-pane active" id="<%= groupnode.name + i %>">
+        <% } else { %>
+          <div class="tab-pane" id="<%= groupnode.name + i %>">
+        <% } %>
+          <%- partial('groupnode', groupnode.children[i]) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+<% } %>

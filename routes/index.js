@@ -14,10 +14,16 @@ module.exports = function (app) {
   
   app.all('/debug', function(req, res) {
     var User = require('../user/model');
-    User.getByName('byvoid1', function (err, user){
-      console.log(err);
+    var Group = require('../group/model');
+    
+    User.getByName('test', function (err, user) {
+      Group.createRoot(user, function (err, group) {
+        //console.log(err, group);
+        //group.remove();
+      });
     });
-    res.send(util.inspect(req));
+
+    res.send();
   });
 };
 

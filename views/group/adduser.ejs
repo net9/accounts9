@@ -1,0 +1,21 @@
+<form class="form-horizontal" method="post">
+  <fieldset>
+    <legend><%= title %></legend>
+    <div class="control-group">
+      <label class="control-label" for="name"><%- msg('username') %></label>
+      <div class="controls">
+        <input type="text" class="input-medium" id="name" name="name">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="parent"><%- msg('group') %></label>
+      <div class="controls">
+        <input type="text" class="input-medium" id="parent" readonly="readonly" value="<%= group.name %>">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
+      <a href="/group/<%= group.name %>" class="btn"><%- msg('Cancel') %></a>
+    </div>
+  </fieldset>
+</form>

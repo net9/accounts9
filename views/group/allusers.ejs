@@ -1,0 +1,22 @@
+<ul class="breadcrumb">
+  <li>
+    <a href="/">首頁</a>
+    <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/group">用戶組</a>
+    <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="/group/<%= group.name %>"><%= group.title %></a>
+    <span class="divider">/</span>
+  </li>
+  <li class="active">所有用戶</li>
+</ul>
+
+<div class="row">
+  <div class="span12">
+    <h2>全部用戶</h2>
+    <%- partial('userlist') %>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<tr>
+  <td><%= userlistitem.uid %></td>
+  <td>
+    <a href="/u/<%= userlistitem.name %>">
+      <%= userlistitem.name %>
+    </a>
+  </td>
+  <td><%= userlistitem.nickname %></td>
+  <td><%= userlistitem.fullname %></td>
+  <td><%= userlistitem.email %></td>
+  <td><%= userlistitem.mobile %></td>
+  <td><%= userlistitem.birthdate %></td>
+  <% if (group.users.showAction) { %>
+    <td>
+      <a href="/group/<%= group.name %>/deluser/<%= userlistitem.name %>" class="btn btn-danger btn-mini">
+        <i class="icon-trash icon-white"></i>
+      </a>
+    </td>
+  <% } %>
+</tr>
