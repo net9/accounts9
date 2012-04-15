@@ -462,6 +462,25 @@ Group.prototype.addChildGroup = function addChildGroup (name, callback) {
 };
 
 /*
+ * Remove a child group
+ *
+ * callback(err)
+ *
+ */
+Group.prototype.removeChildGroup = function removeChildGroup (groupName, callback) {
+  for (var i = 0; i < this.children.length; i++) {
+    if (this.children[i] == groupName) {
+      this.children = this.children.slice(0, i).concat(this.children.slice(i + 1));
+      this.save(callback);
+      return;
+    }
+  }
+  callback('not-in-this-group');
+};
+
+
+
+/*
  * Get all users' names
  *
  * callback(err, users)

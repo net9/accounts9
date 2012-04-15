@@ -320,7 +320,6 @@ User.prototype.addToDefaultGroup = function addToDefaultGroup (callback) {
   });
 };
 
-
 /*
  * Remove from a group
  *

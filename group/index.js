@@ -46,10 +46,11 @@ module.exports = function (app) {
   app.all(addGroupPath, getGroup);
   app.all(addGroupPath, checkCurrentUserIsAdmin);
   app.get(addGroupPath, function (req, res, next) {
-    res.render('group/add', {
+    res.render('group/edit', {
       locals: {
         title: messages.get('add-group'),
-        parentGroup: req.group
+        parentGroup: req.group.name,
+        group: null,
       }
     });
   });
@@ -76,7 +77,63 @@ module.exports = function (app) {
       });
     });
   });
-  
+
+  var editGroupPath = groupPath + '/edit';
+  app.all(editGroupPath, utils.checkLogin);
+  app.all(editGroupPath, getGroup);
+  app.all(editGroupPath, checkCurrentUserIsAdmin);
+  app.get(editGroupPath, function (req, res, next) {
+    res.render('group/edit', {
+      locals: {
+        title: messages.get('edit-group'),
+        parentGroup: req.group.parent,
+        group: req.group,
+      }
+    });
+  });
+  app.post(editGroupPath, function (req, res, next) {
+    var group = req.group;
+    var newParent = req.body.parent;
+    if (group.parent != newParent) {
+      // Move group
+      var originalParent = group.parent;
+      group.parent = newParent;
+      Group.getByName(newParent, function (err, newParent) {
+        if (err) {
+          return utils.errorRedirect(req, res, err, parentGroupPath);
+        }
+        // FIXME: fibbid to add to descendant's
+        // Add to new parent's children
+        newParent.addChildGroup(group.name, function (err) {
+          assert(!err);
+          Group.getByName(originalParent, function (err, originalParent) {
+            assert(!err);
+            // Remove from original parent's children
+            originalParent.removeChildGroup(group.name, function (err) {
+              assert(!err);
+              next();
+            });
+          });
+        });
+      });
+    } else {
+      next();
+    }
+  });
+  app.post(editGroupPath, function (req, res, next) {
+    var group = req.group;
+    group.title = req.body.title;
+    group.desc = req.body.desc;
+    group.save(function (err) {
+      assert(!err);
+      next();
+    });
+  });
+  app.post(editGroupPath, function (req, res, next) {
+    req.flash('info', 'edit-group-success');
+    res.redirect('/group/' + req.group.name);
+  });
+
   var allUsersPath = groupPath + '/allusers';
   app.get(allUsersPath, utils.checkLogin);
   app.get(allUsersPath, getGroup);
