@@ -4,6 +4,7 @@ var appman = require('../app/man');
 var messages = require('../messages');
 var utils = require('../utils');
 var url = require('url');
+var assert = require('assert');
 
 module.exports = function (app) {
 
@@ -114,24 +115,30 @@ module.exports = function (app) {
     });
   });
 
-  app.post('/editinfo', function (req, res) {
-    var user = new User(req.session.user);
-    user.nickname = req.body.nickname;
-    user.surname = req.body.surname;
-    user.givenname = req.body.givenname;
-    user.fullname = req.body.fullname;
-    user.email = req.body.email;
-    user.mobile = req.body.mobile;
-    user.website = req.body.website;
-    user.address = req.body.address;
-    user.bio = req.body.bio;
-    user.birthdate = req.body.birthdate;
-    user.fullname = user.surname + user.givenname;
-    if (req.body.newpass) {
-      user.oldpass = req.body.oldpass;
-      user.password = req.body.newpass;
-    }
-    
+  app.post('/editinfo', function (req, res, next) {
+    User.getByName(req.session.user.name, function (err, user) {
+      assert(!err);
+      req.user = user;
+      user.nickname = req.body.nickname;
+      user.surname = req.body.surname;
+      user.givenname = req.body.givenname;
+      user.fullname = req.body.fullname;
+      user.email = req.body.email;
+      user.mobile = req.body.mobile;
+      user.website = req.body.website;
+      user.address = req.body.address;
+      user.bio = req.body.bio;
+      user.birthdate = req.body.birthdate;
+      user.fullname = user.surname + user.givenname;
+      if (req.body.newpass) {
+        user.oldpass = req.body.oldpass;
+        user.password = req.body.newpass;
+      }
+      next();
+    });
+  });
+  app.post('/editinfo', function (req, res, next) {
+    var user = req.user;
     user.save(function (err) {
       if (err) {
         req.flash('error', err);
