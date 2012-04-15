@@ -30,7 +30,7 @@ module.exports = function (app) {
   app.get(dashboard, function (req, res, next) {
     res.render('user/dashboard', {
       locals: {
-        title: messages.get('my-dashboard'),
+        title: messages.get('dashboard'),
         user: req.user,
         apps: req.apps,
       }

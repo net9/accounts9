@@ -11,7 +11,15 @@ module.exports = function (app) {
       }
     });
   });
-  
+
+  app.get('/about', function (req, res) {
+    res.render('about', {
+      locals: {
+        title: messages.get('about')
+      }
+    });
+  });
+
   app.all('/debug', function(req, res) {
     var User = require('../user/model');
     var Group = require('../group/model');

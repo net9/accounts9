@@ -48,7 +48,7 @@
     </tr>
   <% } %>
   <tr>
-    <th>所屬組</th>
+    <th><%= msg('belong-groups') %></th>
     <td>
       <% for (var i in user.groups) { %>
         <a href="/group/<%= user.groups[i].name %>">
