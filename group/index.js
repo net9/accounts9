@@ -94,6 +94,7 @@ module.exports = function (app) {
   
   var addUserPath = groupPath + '/adduser';
   app.all(addUserPath, utils.checkLogin);
+  app.all(addUserPath, forbidAddUserToRootGroup);
   app.all(addUserPath, getGroup);
   app.all(addUserPath, checkCurrentUserIsAdmin);
   app.get(addUserPath, function (req, res, next) {
@@ -111,18 +112,50 @@ module.exports = function (app) {
       if (err) {
         return utils.errorRedirect(req, res, err, errUrl);
       }
-      user.addToGroup(group, function (err) {
-        if (err) {
-          return utils.errorRedirect(req, res, err, errUrl);
-        }
-        group.addUser(user.name, function (err) {
+      req.user = user;
+      next();
+    });
+  });
+  app.post(addUserPath, function (req, res, next) {
+    // Check whether belongs to root group, if so, delete it
+    var user = req.user;
+    if (user.groups.length == 1 && user.groups[0] == 'root') {
+      // Delete user from root group
+      Group.getByName('root', function (err, rootGroup) {
+        assert(!err);
+        rootGroup.removeUser(user.name, function (err) {
           assert(!err);
-          req.flash('info', 'add-user-success');
-          res.redirect('/group/' + group.name);
+          user.removeFromGroup('root', function (err) {
+            assert(!err);
+            next();
+          });
         });
+      });
+    } else {
+      next();
+    }
+  });
+  app.post(addUserPath, function (req, res, next) {
+    // Add user to the target group
+    var user = req.user;
+    var group = req.group;
+    user.addToGroup(group, function (err) {
+      if (err) {
+        return utils.errorRedirect(req, res, err, errUrl);
+      }
+      group.addUser(user.name, function (err) {
+        assert(!err);
+        next();
       });
     });
   });
+  
+  app.post(addUserPath, function (req, res, next) {
+    var group = req.group;
+    req.flash('info', 'add-user-success');
+    res.redirect('/group/' + group.name);
+  });
+  
 
   var delUserPath = groupPath + '/deluser/:username';
   app.all(delUserPath, utils.checkLogin);
@@ -331,6 +364,15 @@ function checkNotRootGroup (req, res, next) {
   // Check if it is not root group
   if (req.params.groupname == 'root') {
     var err = 'can-not-delete-user-from-root-group';
+    return utils.errorRedirect(req, res, err, '/group/root');
+  }
+  next();
+}
+
+function forbidAddUserToRootGroup (req, res, next) {
+  // forbid to add user to root group
+  if (req.params.groupname == 'root') {
+    var err = 'can-not-add-user-to-root-group';
     return utils.errorRedirect(req, res, err, '/group/root');
   }
   next();
