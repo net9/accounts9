@@ -3,6 +3,7 @@ var Group = require('../group/model');
 var mongoose = require('../lib/mongoose');
 var utils = require('../utils');
 var assert = require('assert');
+var crypto = require("crypto");
 
 function User(user) {
   this.name = user.name;
@@ -405,4 +406,21 @@ User.prototype.getAllGroups = function getAllGroups (callback) {
       });
     });
   });
+};
+
+/*
+ * Get gravatar url
+ *
+ *
+ */
+User.prototype.gravatar = function gravatar (size) {
+  if (!size) {
+    size = 100;
+  }
+  var hash = crypto.createHash('md5');
+  hash.update(this.email);
+  hash = hash.digest('hex');
+  var url = 'http://www.gravatar.com/avatar/' + hash
+    + '?d=mm&r=x&s=' + size;
+  return url;
 };

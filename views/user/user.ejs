@@ -1,5 +1,12 @@
 <div class="row">
   <div class="span6">
+    <p>
+      <h1>
+        <img src="<%= user.gravatar(80) %>" class="thumbnail" style="display:inline" alt="Gravatar" />
+        <%= user.nickname %>
+      </h1>
+    </p>
+    <%- partial('userinfo') %>
     <% if (curUser && curUser.name == user.name) { %>
       <p>
         <a href="/dashboard" class="btn btn-primary">
@@ -8,6 +15,5 @@
         </a>
       </p>
     <% } %>
-    <%- partial('userinfo') %>
   </div>
 </div>
