@@ -126,6 +126,7 @@ module.exports = function (app) {
 
   var delUserPath = groupPath + '/deluser/:username';
   app.all(delUserPath, utils.checkLogin);
+  app.all(delUserPath, checkNotRootGroup);
   app.all(delUserPath, getGroup);
   app.all(delUserPath, checkCurrentUserIsAdmin);
   app.all(delUserPath, getUser);
@@ -322,4 +323,13 @@ function getUser (req, res, next) {
       next();
     }
   });
+}
+
+function checkNotRootGroup(req, res, next) {
+  // Check if it is not root Group
+  if (req.params.groupname == 'root') {
+    var err = 'can-not-delete-user-from-root-group';
+    return utils.errorRedirect(req, res, err, '/group/root');
+  }
+  next();
 }
