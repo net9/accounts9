@@ -445,6 +445,29 @@ Group.prototype.getDescendant = function getDescendant (callback) {
   });
 };
 
+
+/*
+ * Judge whether groupName is a descendant of this group
+ *
+ * callback(err, isDescendant)
+ * groups: boolean
+ *
+ */
+Group.prototype.isDescendant = function isDescendant (groupName, callback) {
+  var self = this;
+  self.getDescendant(function (err, groups) {
+    if (err) {
+      return callback(err);
+    }
+    for (var i in groups) {
+      if (groups[i].name == groupName) {
+        return callback(null, true);
+      }
+    }
+    callback(null, false);
+  });
+};
+
 /*
  * Add a child group
  *

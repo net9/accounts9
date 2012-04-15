@@ -94,24 +94,37 @@ module.exports = function (app) {
   app.post(editGroupPath, function (req, res, next) {
     var group = req.group;
     var newParent = req.body.parent;
+    var groupEditPath = '/group/' + group.name + '/edit';
     if (group.parent != newParent) {
+      // Forbid setting parent to itself
+      if (newParent == group.name) {
+        err = 'can-not-set-parent-to-itself';
+        return utils.errorRedirect(req, res, err, groupEditPath);
+      }
       // Move group
       var originalParent = group.parent;
       group.parent = newParent;
       Group.getByName(newParent, function (err, newParent) {
         if (err) {
-          return utils.errorRedirect(req, res, err, parentGroupPath);
+          return utils.errorRedirect(req, res, err, groupEditPath);
         }
-        // FIXME: fibbid to add to descendant's
-        // Add to new parent's children
-        newParent.addChildGroup(group.name, function (err) {
+        // Forbid setting parent to its descendant
+        group.isDescendant(newParent.name, function (err, isDescendant) {
           assert(!err);
-          Group.getByName(originalParent, function (err, originalParent) {
+          if (isDescendant) {
+            err = 'can-not-set-parent-to-descendant';
+            return utils.errorRedirect(req, res, err, groupEditPath);
+          }
+          // Add to new parent's children
+          newParent.addChildGroup(group.name, function (err) {
             assert(!err);
-            // Remove from original parent's children
-            originalParent.removeChildGroup(group.name, function (err) {
+            Group.getByName(originalParent, function (err, originalParent) {
               assert(!err);
-              next();
+              // Remove from original parent's children
+              originalParent.removeChildGroup(group.name, function (err) {
+                assert(!err);
+                next();
+              });
             });
           });
         });
