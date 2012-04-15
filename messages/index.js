@@ -1,5 +1,6 @@
 var en = require('./en');
 var zh = require('./zh');
+var util = require('util');
 
 var priority = [zh.messages, en.messages];
 
@@ -11,16 +12,24 @@ exports.get = function (id) {
   if (!id) {
     return '';
   }
-  var msg = id;
-  for (key in priority) {
-    var msg_t = priority[key][msg.toLowerCase()];
-    if (msg_t) {
-      msg = msg_t;
-      break;
+  if (!util.isArray(id)) {
+    id = [id];
+  }
+  
+  var msgs = [];
+  for (var i in id) {
+    var msg = id[i];
+    for (key in priority) {
+      var msg_t = priority[key][msg.toLowerCase()];
+      if (msg_t) {
+        msg = msg_t;
+        break;
+      }
     }
+    for (var i = 1; i < arguments.length; i++) {
+      msg = msg.replace(args[i - 1], arguments[i]);
+    }
+    msgs.push(msg);
   }
-  for (var i = 1; i < arguments.length; i++) {
-    msg = msg.replace(args[i - 1], arguments[i]);
-  }
-  return msg;
+  return msgs;
 };

@@ -42,6 +42,7 @@
       <label class="control-label" for="website"><%- msg('website') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="website" name="website" value="<%= user.website %>">
+        <p class="help-block"><%- msg('editinfo-website-tips') %></p>
       </div>
     </div>
     <div class="control-group">
@@ -61,18 +62,20 @@
       <label class="control-label" for="bio"><%- msg('bio') %></label>
       <div class="controls">
         <textarea class="input-xlarge" id="bio" name="bio" rows="3"><%= user.bio %></textarea>
+        <p class="help-block"><%- msg('editinfo-bio-tips') %></p>
       </div>
     </div>
     <div class="control-group">
-      <label class="control-label" for="oldpass"><%- msg('old-pass') %></label>
+      <label class="control-label" for="oldpass"><%- msg('old-password') %></label>
       <div class="controls">
         <input type="password" class="input-medium" id="oldpass" name="oldpass">
       </div>
     </div>
     <div class="control-group">
-      <label class="control-label" for="newpass"><%- msg('new-pass') %></label>
+      <label class="control-label" for="newpass"><%- msg('new-password') %></label>
       <div class="controls">
         <input type="password" class="input-medium" id="newpass" name="newpass">
+        <p class="help-block"><%- msg('editinfo-password-tips') %></p>
       </div>
     </div>
     <div class="form-actions">

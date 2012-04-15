@@ -95,7 +95,7 @@ module.exports = function (app) {
     var group = req.group;
     var newParent = req.body.parent;
     var groupEditPath = '/group/' + group.name + '/edit';
-    if (group.parent != newParent) {
+    if (newParent && group.parent != newParent) {
       // Forbid setting parent to itself
       if (newParent == group.name) {
         err = 'can-not-set-parent-to-itself';

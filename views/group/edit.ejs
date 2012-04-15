@@ -27,7 +27,11 @@
       <div class="controls">
         <input type="text" class="input-medium" id="parent" name="parent"
         <% if (group) { %>
-          value="<%= group.parent %>"
+          <% if (!parentGroup) { %>
+            readonly="readonly"
+            <% } else { %>
+            value="<%= group.parent %>"
+          <% } %>
         <% } else { %>
           value="<%= parentGroup %>"
           readonly="readonly"
@@ -43,7 +47,13 @@
     </div>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
-      <a href="/group/<%= parentGroup.name %>" class="btn"><%- msg('Cancel') %></a>
+      <a
+      <% if (group) { %>
+        href="/group/<%= group.name %>"
+      <% } else { %>
+        href="/group/<%= parentGroup.name %>"
+      <% } %>
+      class="btn"><%- msg('Cancel') %></a>
     </div>
   </fieldset>
 </form>

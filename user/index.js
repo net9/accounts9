@@ -107,9 +107,9 @@ module.exports = function (app) {
     // info for rendering in the view.
     // This won't leak the password, as the view will ask for userinfo.oldpass
     // and userinfo.newpass.
-    res.render('editinfo', {
+    res.render('user/editinfo', {
       locals: {
-        title: messages.get('edit-my-info'),
+        title: messages.get('edit-userinfo'),
         user: req.session.user
       }
     });

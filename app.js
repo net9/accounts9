@@ -68,14 +68,14 @@ app.dynamicHelpers({
   error: function(req, res) {
     var err = req.flash('error');
     if (err.length)
-      return err;
+      return messages.get(err);
     else
       return null;
   },
   info: function(req, res) {
     var succ = req.flash('info');
     if (succ.length)
-      return succ;
+      return messages.get(succ);
     else
       return null;
   },

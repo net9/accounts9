@@ -1,16 +1,16 @@
 <div class="row">
   <div class="span6">
-    <h2><%= msg('my-info') %></h2>
+    <h2><%= msg('userinfo') %></h2>
     <p>
       <a href="/editinfo" class="btn btn-primary">
         <i class="icon-edit icon-white"></i>
-        <%= msg('edit-my-info') %>
+        <%= msg('edit-userinfo') %>
       </a>
     </p>
     <%- partial('userinfo') %>
   </div>
   <div class="span3">
-    <h2><%= msg('Apps') %></h2>
+    <h2><%= msg('apps') %></h2>
     <% if (apps.success) { %>
       <% if (apps.apps.length) { %>
         <ul>
