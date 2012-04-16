@@ -24,6 +24,7 @@ exports.messages = {
   'birthdate-format': '$1-$2-$3',
   'bio': '介绍',
   'belong-groups': '所属的组',
+  'admin-groups': '管理的组',
   'editinfo-nickname-tips': '昵称将用于各种场合的显示。',
   'editinfo-password-tips': '如果不修改密码，请将此留空。',
   'editinfo-website-tips': '不要忘了添加 <strong>http://</strong>.',
@@ -77,4 +78,5 @@ exports.messages = {
   'can-not-set-parent-to-descendant': '不可以将父组设为子孙组',
   'can-not-add-user-to-root-group': '不可以向根组添加用户',
   'can-not-del-user-from-root-group': '不可以从根组删除用户',
+  'permission-denied-view-group': '你没有查看该组的权限',
 };

@@ -12,12 +12,13 @@ module.exports = function (app) {
   app.get(userPath, checkLogin);
   app.get(userPath, getUser);
   app.get(userPath, getUserDirectGroup);
+  app.get(userPath, getUserAdminGroup);
   app.get(userPath, function (req, res, next) {
     var user = req.user;
     res.render('user/user', {
       locals: {
         title: user.title,
-        user: user
+        user: user,
       }
     });
   });
@@ -26,6 +27,7 @@ module.exports = function (app) {
   app.get(dashboard, checkLogin);
   app.get(dashboard, getCurrentUser);
   app.get(dashboard, getUserDirectGroup);
+  app.get(dashboard, getUserAdminGroup);
   app.get(dashboard, getApps);
   app.get(dashboard, function (req, res, next) {
     res.render('user/dashboard', {
@@ -199,6 +201,19 @@ function getUserDirectGroup (req, res, next) {
       return utils.errorRedirect(req, res, err, '/');
     }
     user.groups = groups;
+    next();
+  });
+}
+
+function getUserAdminGroup (req, res, next) {
+  var user = req.user;
+  Group.getAll(function (err, groups) {
+    user.adminGroups = [];
+    groups.forEach(function (group) {
+      if (utils.contains(group.admins, user.name)) {
+        user.adminGroups.push(group);
+      }
+    });
     next();
   });
 }

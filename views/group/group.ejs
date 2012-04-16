@@ -74,7 +74,9 @@
       <tr>
         <th><%- msg('group-children') %></th>
         <td>
-          <p><%- partial('grouplistplain', group.children) %></p>
+          <ul class="unstyled">
+            <%- partial('grouplistitem', group.children) %>
+          </ul>
           <% if (group.currentUserIsAdmin) { %>
             <p>
               <a href="/group/<%= group.name %>/addgroup" class="btn btn-success">

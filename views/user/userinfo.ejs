@@ -53,4 +53,12 @@
       <%- partial('../group/grouplistplain', user.groups) %>
     </td>
   </tr>
+  <tr>
+  <% if (user.adminGroups) { %>
+    <th><%= msg('admin-groups') %></th>
+    <td>
+      <%- partial('../group/grouplistplain', user.adminGroups) %>
+    </td>
+  </tr>
+  <% } %>
 </table>
