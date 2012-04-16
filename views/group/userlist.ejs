@@ -7,8 +7,11 @@
     <th><%= msg('Email') %></th>
     <th><%= msg('mobile') %></th>
     <th><%= msg('birth-date') %></th>
-    <% if (group.users.showAction) { %>
+    <% if (group.currentUserIsAdmin && group.users.directList) { %>
       <th><%= msg('action') %></th>
+    <% } %>
+    <% if (group.currentUserIsAdmin && group.users.indirectList) { %>
+      <th><%= msg('belong-groups') %></th>
     <% } %>
   </tr>
   <%- partial('userlistitem', group.users) %>

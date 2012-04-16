@@ -50,11 +50,7 @@
   <tr>
     <th><%= msg('belong-groups') %></th>
     <td>
-      <% for (var i in user.groups) { %>
-        <a href="/group/<%= user.groups[i].name %>">
-          <%= user.groups[i].title %>
-        </a>
-      <% } %>
+      <%- partial('../group/grouplistplain', user.groups) %>
     </td>
   </tr>
 </table>

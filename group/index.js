@@ -32,7 +32,7 @@ module.exports = function (app) {
   app.get(groupPath, getDirectUsers);
   app.get(groupPath, function (req, res, next) {
     var group = req.group;
-    group.users.showAction = group.currentUserIsAdmin;
+    group.users.directList = true;
     res.render('group/group', {
       locals: {
         title: group.title,
@@ -152,8 +152,10 @@ module.exports = function (app) {
   app.get(allUsersPath, getGroup);
   app.get(allUsersPath, checkCurrentUserIsAdmin);
   app.get(allUsersPath, getAllUsers);
+  app.get(allUsersPath, getAllUsersGroups);
   app.get(allUsersPath, function (req, res, next) {
     var group = req.group;
+    group.users.indirectList = true;
     res.render('group/allusers', {
       locals: {
         title: group.title,
@@ -434,6 +436,23 @@ function getAllUsers (req, res, next) {
       assert(!err);
       group.users = users;
       next();
+    });
+  });
+}
+
+function getAllUsersGroups (req, res, next) {
+  // Groups every user belongs to
+  // TODO: Optimize algorithm
+  var group = req.group;
+  var done = 0;
+  group.users.forEach(function (user) {
+    Group.getByNames(user.groups, function (err, groups) {
+      assert(!err);
+      user.groups = groups;
+      done++;
+      if (done == group.users.length) {
+        next();
+      }
     });
   });
 }

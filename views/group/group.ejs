@@ -74,13 +74,7 @@
       <tr>
         <th><%- msg('group-children') %></th>
         <td>
-          <p>
-            <% for (var i in group.children) { %>
-              <a href="/group/<%= group.children[i].name %>">
-                <%= group.children[i].title %>
-              </a>
-            <% } %>
-          </p>
+          <p><%- partial('grouplistplain', group.children) %></p>
           <% if (group.currentUserIsAdmin) { %>
             <p>
               <a href="/group/<%= group.name %>/addgroup" class="btn btn-success">
