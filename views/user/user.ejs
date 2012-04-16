@@ -2,7 +2,13 @@
   <div class="span6">
     <p>
       <h1>
+        <% if (user.website) { %>
+          <a href="<%= user.website %>" target="_blank" style="text-decoration:none">
+        <% } %>
         <img src="<%= user.gravatar(80) %>" class="thumbnail" style="display:inline" alt="Gravatar" />
+        <% if (user.website) { %>
+          </a>
+        <% } %>
         <%= user.nickname %>
       </h1>
     </p>
