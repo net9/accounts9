@@ -51,6 +51,7 @@ exports.messages = {
   'edit-group': '编辑组',
   'edit-group-success': '组信息修改成功',
   'add-group': '添加组',
+  'add-group-success': '成功添加组',
   'add-child-group': '添加子组',
   'del-group': '删除组',
   'add-user': '添加用户',
