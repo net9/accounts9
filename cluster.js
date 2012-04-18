@@ -9,14 +9,24 @@ if (process.argv.length >= 3) {
   port = parseInt(process.argv[2]);
 }
 
+var workers = {};
 if (cluster.isMaster) {
   cluster.on('death', function (worker) {
-    console.log(worker);
-    cluster.fork();
+    delete workers[worker.pid];
+    worker = cluster.fork();
+    workers[worker.pid] = worker;
   });
   for (var i = 0; i < numCPUs; i++) {
-    cluster.fork();
+    var worker = cluster.fork();
+    workers[worker.pid] = worker;
   }
 } else {
   app.listen(port);
 }
+
+process.on('SIGTERM', function () {
+  for (var pid in workers) {
+    process.kill(pid);
+  }
+  process.exit(0);
+});
