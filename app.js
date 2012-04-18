@@ -4,17 +4,22 @@
  * Module dependencies.
  */
 
-var util = require('util');
 var messages = require('./messages');
 var config = require('./config');
 var express = require('express');
 var MongoStore = require('connect-mongo');
+var fs = require('fs');
+var util = require('util');
 
 var app = module.exports = express.createServer();
+
+var accessLogfile = fs.createWriteStream(config.log.access, {flags: 'a'});
+var errorLogfile = fs.createWriteStream(config.log.error, {flags: 'a'});
 
 // Configuration
 
 app.configure(function () {
+  app.use(express.logger({stream: accessLogfile}));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.bodyParser());
@@ -43,7 +48,13 @@ app.configure('development', function () {
 });
 
 app.configure('production', function () {
-  app.use(express.errorHandler()); 
+  app.error(function (err, req, res, next) {
+    var meta = '[' + new Date() + '] ' + req.url + '\n';
+    errorLogfile.write(meta);
+    errorLogfile.write(err.stack);
+    errorLogfile.write('\n');
+    next();
+  });
 });
 
 // Helper functions for view rendering

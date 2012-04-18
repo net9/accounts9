@@ -20,18 +20,10 @@ module.exports = function (app) {
     });
   });
 
-  app.all('/debug', function(req, res) {
-    var User = require('../user/model');
-    var Group = require('../group/model');
-    
-    User.getByName('test', function (err, user) {
-      Group.createRoot(user, function (err, group) {
-        //console.log(err, group);
-        //group.remove();
-      });
-    });
+  app.all('/debug', function(req, res, next) {
+    next(new Error('aaa'));
 
-    res.send();
+    //res.send();
   });
 };
 
