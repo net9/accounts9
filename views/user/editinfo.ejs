@@ -18,24 +18,28 @@
       <label class="control-label" for="surname"><%- msg('sur-name') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="surname" name="surname" value="<%= user.surname %>">
+        <p class="help-block"><%- msg('editinfo-surname-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="givenname"><%- msg('given-name') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="givenname" name="givenname" value="<%= user.givenname %>">
+        <p class="help-block"><%- msg('editinfo-givenname-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="email"><%- msg('email') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="email" name="email" value="<%= user.email %>">
+        <p class="help-block"><%- msg('editinfo-email-tips') %></p>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="mobile"><%- msg('mobile') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="mobile" name="mobile" value="<%= user.mobile %>">
+        <p class="help-block"><%- msg('editinfo-mobile-tips') %></p>
       </div>
     </div>
     <div class="control-group">
@@ -49,6 +53,7 @@
       <label class="control-label" for="address"><%- msg('address') %></label>
       <div class="controls">
         <input type="text" class="input-medium" id="address" name="address" value="<%= user.address %>">
+        <p class="help-block"><%- msg('editinfo-address-tips') %></p>
       </div>
     </div>
     <div class="control-group">
@@ -78,6 +83,9 @@
         <p class="help-block"><%- msg('editinfo-password-tips') %></p>
       </div>
     </div>
+<div class="alert alert-info">
+  <%- msg('editinfo-notice') %>
+</div>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
       <a href="/dashboard" class="btn"><%- msg('Cancel') %></a>

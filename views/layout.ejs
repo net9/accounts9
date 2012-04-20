@@ -41,11 +41,13 @@
     <div id="container" class="container">
       <% if (info) { %>
         <div class="alert alert-success">
+          <a class="close" data-dismiss="alert">×</a>
           <%= info %>
         </div>
       <% } %>
       <% if (error) { %>
         <div class="alert alert-error">
+          <a class="close" data-dismiss="alert">×</a>
           <%= error %>
         </div>
       <% } %>
