@@ -138,8 +138,18 @@ User.authenticate = function authenticate(username, password, callback) {
  */
 User.create = function create(user, callback) {
   // Validate required fields
-  if (!user.password || !user.email) {
+  if (!user.name || !user.password || !user.email) {
     return callback('fields-required');
+  }
+  
+  var usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,11}$/
+  if (!usernameRegex.exec(user.name)) {
+    return callback('invalid-username');
+  }
+  
+  var emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  if (!emailRegex.exec(user.email)) {
+    return callback('invalid-email');
   }
   
   if (user.password != user['password-repeat']) {
@@ -156,7 +166,7 @@ User.create = function create(user, callback) {
         var user = new User(userOrErr);
         var mongodbUser = new User.model(utils.subset(
           user,
-          ['name', 'groups', 'applyingGroups', 'authorizedApps']
+          ['name', 'groups', 'authorizedApps']
         ));
         mongodbUser.save(function (err) {
           if (err) {

@@ -79,7 +79,7 @@ module.exports = function (app) {
     User.create(user, function (err, user) {
       if (!err) {
         req.session.user = user;
-        req.flash('info', 'register-welcome|' + user.name);
+        req.flash('info', 'register-success');
         res.redirect('/editinfo');
       } else {
         req.flash('error', err);
@@ -89,7 +89,7 @@ module.exports = function (app) {
   });
 
   app.all('/register', function (req, res) {
-    res.render('register', {
+    res.render('user/register', {
       locals: {
         title: messages.get('Register')
       }
