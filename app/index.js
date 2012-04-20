@@ -1,18 +1,17 @@
 var appman = require('./man');
 var messages = require('../messages');
+var utils = require('../utils');
 
 module.exports = function (app) {
 
-  app.all('/appreg', function (req, res, next) {
-    if (req.session.user) next();
-    else res.redirect('/');
-  });
-
-  app.get('/appreg', function (req, res) {
+  var appRegPath = '/appreg';
+  app.all(appRegPath, utils.checkLogin);
+  app.all(appRegPath, utils.checkAuthorized);
+  app.get(appRegPath, function (req, res) {
     res.render('appreg', { locals: { title: messages.get('register-new-app') } });
   });
 
-  app.post('/appreg', function (req, res) {
+  app.post(appRegPath, function (req, res) {
     appman.register(req.session.user.name, {
       name: req.body.name,
       secret: req.body.secret,

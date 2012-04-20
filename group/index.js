@@ -7,6 +7,7 @@ var assert = require('assert');
 module.exports = function (app) {
 
   app.get('/group', utils.checkLogin);
+  app.get('/group', utils.checkAuthorized);
   app.get('/group', function (req, res) {
     Group.getAllStructured(function (err, groupRoot) {
       if (err) {
@@ -23,6 +24,7 @@ module.exports = function (app) {
 
   var groupPath = '/group/:groupname';
   app.get(groupPath, utils.checkLogin);
+  app.get(groupPath, utils.checkAuthorized);
   app.get(groupPath, getGroup);
   app.get(groupPath, checkContainCurrentUser);
   app.get(groupPath, checkCurrentUserIsAdmin);

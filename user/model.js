@@ -3,7 +3,7 @@ var Group = require('../group/model');
 var mongoose = require('../lib/mongoose');
 var utils = require('../utils');
 var assert = require('assert');
-var crypto = require("crypto");
+var crypto = require('crypto');
 
 function User(user) {
   this.name = user.name;
@@ -433,4 +433,26 @@ User.prototype.gravatar = function gravatar (size) {
   var url = 'http://www.gravatar.com/avatar/' + hash
     + '?d=mm&r=x&s=' + size;
   return url;
+};
+
+/*
+ * Judge whether the user is authorized
+ *
+ * callback(err, isAuthorized)
+ * isAuthorized: boolean
+ *
+ */
+User.prototype.isAuthorized = function (callback) {
+  var self = this;
+  self.getAllGroups(function (err, groups) {
+    if (err) {
+      return callback(err);
+    }
+    for (var i in groups) {
+      if (groups[i].name == 'authorized') {
+        return callback(null, true);
+      }
+    }
+    callback(null, false);
+  });
 };

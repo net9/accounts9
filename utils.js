@@ -1,4 +1,6 @@
+var User = require('./user/model');
 var url = require('url');
+var assert = require('assert');
 
 // Creates a new subset that is a subset of the given object.
 exports.subset = function (src, attrs) {
@@ -37,6 +39,23 @@ exports.checkLogin = function (req, res, next) {
         returnto: req.url,
       },
     }));
+  }
+};
+
+exports.checkAuthorized = function (req, res, next) {
+  if (req.session.user) {
+    User.getByName(req.session.user.name, function (err, user) {
+      assert(!err);
+      user.isAuthorized(function (err, isAuthorized) {
+        assert(!err);
+        if (isAuthorized) {
+          next();
+        } else {
+          req.flash('error', 'not-authorized');
+          res.redirect('/dashboard');
+        }
+      });
+    });
   }
 };
 

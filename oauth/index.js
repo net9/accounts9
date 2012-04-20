@@ -1,13 +1,17 @@
-var appman = require('../app/man'),
-    oauthman = require('./man'),
-    messages = require('../messages');
+var appman = require('../app/man');
+var oauthman = require('./man');
+var messages = require('../messages');
 var User = require('../user/model');
+var utils = require('../utils');
 var util = require('util');
 var url = require('url');
 
 module.exports = function (app) {
 
-  app.get('/api/authorize', function (req, res) {
+  var authorizePath = '/api/authorize';
+  app.all(authorizePath, utils.checkLogin);
+  app.all(authorizePath, utils.checkAuthorized);
+  app.get(authorizePath, function (req, res) {
     var clientid = req.query.client_id,
         redirect_uri = req.query.redirect_uri,
         state = req.query.state ? '&state=' + req.query.state : '',

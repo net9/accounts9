@@ -10,6 +10,7 @@ module.exports = function (app) {
 
   var userPath = '/u/:username';
   app.get(userPath, checkLogin);
+  app.get(userPath, utils.checkAuthorized);
   app.get(userPath, getUser);
   app.get(userPath, getUserDirectGroup);
   app.get(userPath, getUserAdminGroup);
