@@ -91,4 +91,5 @@ exports.messages = {
   'can-not-add-user-to-root-group': '不可以向根组添加用户',
   'can-not-del-user-from-root-group': '不可以从根组删除用户',
   'permission-denied-view-group': '你没有查看该组的权限',
+  'permission-denied-view-root-group': '你没有查看根组的权限',
 };

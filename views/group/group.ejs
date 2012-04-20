@@ -91,18 +91,22 @@
   </div>
   <div class="span9">
     <h2><%- msg('user-list') %></h2>
-    <% if (group.currentUserIsAdmin) { %>
-      <p>
-        <a href="/group/<%= group.name %>/adduser" class="btn btn-success">
-          <i class="icon-plus icon-white"></i>
-          <%- msg('add-user') %>
-        </a>
-        <a href="/group/<%= group.name %>/allusers" class="btn btn-info">
-        <i class="icon-list-alt icon-white"></i>
-          <%- msg('all-users') %>
-        </a>
-      </p>
+    <% if (group.currentUserIsAdmin || group.containCurrentUser) { %>
+      <% if (group.currentUserIsAdmin) { %>
+        <p>
+          <a href="/group/<%= group.name %>/adduser" class="btn btn-success">
+            <i class="icon-plus icon-white"></i>
+            <%- msg('add-user') %>
+          </a>
+          <a href="/group/<%= group.name %>/allusers" class="btn btn-info">
+          <i class="icon-list-alt icon-white"></i>
+            <%- msg('all-users') %>
+          </a>
+        </p>
+      <% } %>
+      <%- partial('userlist') %>
+    <% } else { %>
+      <%- msg('permission-denied-view-group') %>
     <% } %>
-    <%- partial('userlist') %>
   </div>
 </div>

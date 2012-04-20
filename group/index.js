@@ -374,12 +374,11 @@ function checkCurrentUserIsAdmin (req, res, next) {
       return utils.errorRedirect(req, res, err, '/group');
     }
     group.currentUserIsAdmin = isAdmin;
-    // If is not direct user and is not admin, no permission
-    if (!group.containCurrentUser && !isAdmin) {
-      utils.errorRedirect(req, res, 'permission-denied-view-group', '/group');
-    } else {
-      next();
+    if (group.name == 'root' && !isAdmin) {
+      err = 'permission-denied-view-root-group';
+      return utils.errorRedirect(req, res, err, '/group');
     }
+    next();
   });
 }
 
