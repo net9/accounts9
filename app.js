@@ -39,6 +39,7 @@ app.configure(function () {
   app.use(express.router(require('./user')));
   app.use(express.router(require('./app/')));
   app.use(express.router(require('./group')));
+  app.use(express.router(require('./interface')));
   app.use(express.static(__dirname + '/public'));
 });
 

@@ -375,6 +375,32 @@ Group.prototype.getAncestors = function getAncestors (callback) {
 };
 
 /*
+ * Get all direct and indirect admins of this group
+ *
+ * callback(err, admins)
+ * admins: Array(String)
+ *
+ */
+Group.prototype.getAdmins = function (callback) {
+  var self = this;
+  var returned = false;
+  
+  self.getAncestors(function (err, ancestors) {
+    if (err) {
+      return callback(err);
+    }
+    ancestors.push(self);
+    // Iterate every ancestor of current group
+    var admins = [];
+    for (var i in ancestors) {
+      var group = ancestors[i];
+      admins = utils.mergeArray(admins, group.admins);
+    }
+    callback(null, admins);
+  });
+};
+
+/*
  * Check whether a user is an direct or indirect admin of this group
  *
  * callback(err, belongTo)

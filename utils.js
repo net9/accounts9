@@ -23,9 +23,24 @@ exports.merge = function (house, guest) {
 };
 
 exports.mergeProps = function (dest, src) {
-  for (key in src) {
+  for (var key in src) {
     dest[key] = src[key];
   }
+};
+
+exports.mergeArray = function (array1, array2) {
+  var map = {};
+  var newArray = [];
+  for (var i = 0; i < array1.length; i++) {
+    map[array1[i]] = true;
+  }
+  for (var i = 0; i < array2.length; i++) {
+    map[array2[i]] = true;
+  }
+  for (var key in map) {
+    newArray.push(key);
+  }
+  return newArray;
 };
 
 exports.checkLogin = function (req, res, next) {
