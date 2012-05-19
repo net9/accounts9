@@ -3,7 +3,7 @@ var Change = ldap.Change;
 
 exports.Connection = function() {
   var client = null;
-  this.open = function(server_uri, callback){
+  this.open = function(server_uri, callback) {
     client = ldap.createClient({
       url: server_uri,
     });
@@ -13,22 +13,22 @@ exports.Connection = function() {
   };
   
   this.close = function() {
-	if (client != null)
-	  client.unbind();
+    if (client != null)
+      client.unbind();
   };
   
   this.authenticate = function (dn, secret, callback) {
-	if (client != null)
-	  client.bind(dn, secret, callback);
-	else
-	  callback('ldap-client-not-opened');
+    if (client != null)
+      client.bind(dn, secret, callback);
+    else
+      callback('ldap-client-not-opened');
   };
   
   this.search = function (base, filter, callback) {
-	if (client == null) {
-	  callback('ldap-client-not-opened');
-	  return;
-	}
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
     client.search(base, {filter: filter, scope: 'sub'}, function(err, result){
       if (err)
         callback(err);
@@ -48,10 +48,10 @@ exports.Connection = function() {
   };
 
   this.add = function (dn, attrs, callback) {
-	if (client == null) {
-	  callback('ldap-client-not-opened');
-	  return;
-	}
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
     client.add(dn, attrs, callback);
   };
   
@@ -64,24 +64,24 @@ exports.Connection = function() {
   };
   
   this.attr_modify = function (dn, mods, callback) {
-	if (client == null) {
-	  callback('ldap-client-not-opened');
-	  return;
-	}
-	
-	var change = [];
-	Object.keys(mods).forEach(function(k) {
-	  change_one = {
-	    type: 'replace',
-	    modification: {}
-	  };
-	  if (mods[k] == '')
-	    mods[k] = [];
-	  change_one.modification[k] = mods[k];
-	  
-	  change.push(new Change(change_one));
-	});
-	
+    if (client == null) {
+      callback('ldap-client-not-opened');
+      return;
+    }
+    
+    var change = [];
+    Object.keys(mods).forEach(function(k) {
+      change_one = {
+        type: 'replace',
+        modification: {}
+      };
+      if (mods[k] == '')
+        mods[k] = [];
+      change_one.modification[k] = mods[k];
+      
+      change.push(new Change(change_one));
+    });
+  
     client.modify(dn, change, callback);
   };
 
