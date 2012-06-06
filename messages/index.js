@@ -15,11 +15,11 @@ exports.get = function (id) {
   if (!util.isArray(id)) {
     id = [id];
   }
-  
+
   var msgs = [];
   for (var i in id) {
     var msg = id[i];
-    for (key in priority) {
+    for (var key in priority) {
       var msg_t = priority[key][msg.toLowerCase()];
       if (msg_t) {
         msg = msg_t;

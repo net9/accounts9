@@ -21,7 +21,7 @@ function User(user) {
   this.groups = user.groups;
   this.applyingGroups = user.applyingGroups;
   this.authorizedApps = user.authorizedApps;
-  
+
   if (!this.groups) {
     // TODO: add to default group
   }
@@ -91,7 +91,7 @@ User.getByName = function getByName (username, callback) {
 User.getByNames = function getByNames (usernames, callback) {
   var users = [];
   var returned = false;
-  
+
   if (usernames.length == 0) {
     return callback(null, users);
   }
@@ -141,21 +141,21 @@ User.create = function create(user, callback) {
   if (!user.name || !user.password || !user.email) {
     return callback('fields-required');
   }
-  
+
   var usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,11}$/
   if (!usernameRegex.exec(user.name)) {
     return callback('invalid-username');
   }
-  
+
   var emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   if (!emailRegex.exec(user.email)) {
     return callback('invalid-email');
   }
-  
+
   if (user.password != user['password-repeat']) {
     return callback('password-mismatch');
   }
-  
+
   // Now make sure that the user doesn't exist.
   User.checkName(user.name, function (err) {
     if (err) {
@@ -294,7 +294,7 @@ User.prototype._update = function _update(callback) {
  */
 User.prototype.addToGroup = function addToGroup (groupName, callback) {
   this.groups = this.groups || [];
-  for (key in this.groups) {
+  for (var key in this.groups) {
     if (this.groups[key] == groupName) {
       return callback('already-in-this-group');
     }
@@ -361,7 +361,7 @@ User.prototype.checkGroup = function checkGroup (groupname, options, callback) {
     callback = options;
     options = {};
   }
-  
+
   // Check whether directly belongs to the group
   if (options.direct) {
     Group.getByName(groupname, function (err, group) {
@@ -372,7 +372,7 @@ User.prototype.checkGroup = function checkGroup (groupname, options, callback) {
     });
     return;
   }
-  
+
   // Check indirectly
   self.getAllGroups(function (err, groups) {
     for (var i in groups) {
@@ -395,7 +395,7 @@ User.prototype.getAllGroups = function getAllGroups (callback) {
   var self = this;
   var groupsMap = {};
   var done = 0;
-  
+
   self.groups.forEach(function (groupname) {
     Group.getByName(groupname, function (err, group) {
       assert(!err);

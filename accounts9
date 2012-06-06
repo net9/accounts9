@@ -1,6 +1,5 @@
 #! /bin/sh
 
-NODE_ENV=production
 DAEMON="node cluster.js"
 NAME=Accounts9
 DESC=Accounts9
@@ -9,7 +8,7 @@ PIDFILE="accounts9.pid"
 case "$1" in
   start)
         echo "Starting $DESC: "
-        nohup $DAEMON > /dev/null &
+        NODE_ENV=production nohup $DAEMON > /dev/null &
         echo $! > $PIDFILE
         echo "$NAME."
         ;;

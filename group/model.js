@@ -52,7 +52,7 @@ Group.getByName = function getByName (name, callback) {
 Group.getByNames = function getByNames (names, callback) {
   var groups = [];
   var returned = false;
-  
+
   if (names.length == 0) {
     return callback(null, groups);
   }
@@ -133,12 +133,12 @@ Group.getAllStructured = function getAllStructured (callback) {
     if (err) {
       return callback(err);
     }
-    
+
     var groupsMap = {};
     groups.forEach(function (group) {
       groupsMap[group.name] = group;
     });
-    
+
     function makeTree (node) {
       node = groupsMap[node];
       assert(node);
@@ -149,7 +149,7 @@ Group.getAllStructured = function getAllStructured (callback) {
       node.children = children;
       return node;
     }
-    
+
     var root = makeTree('root');
     callback(null, root);
   });
@@ -166,12 +166,12 @@ Group.create = function create (group, callback) {
   if (!group.name || !group.title || !group.desc) {
     return callback('fields-required');
   }
-  
+
   // Initialize some array
   group.users = group.users || [];
   group.admins = group.admins || [];
   group.children = group.children || [];
-  
+
   // Now make sure that the group doesn't exist.
   Group.getByName(group.name, function (err) {
     if (!err) {
@@ -263,7 +263,7 @@ Group.prototype.remove = function remove (callback) {
     if (err) {
       return callback(err);
     }
-    
+
     // Remove each user from this group
     self.users.forEach(function (username) {
       // Get user by name
@@ -278,7 +278,7 @@ Group.prototype.remove = function remove (callback) {
         });
       });
     });
-    
+
     // Remove group object from MongoDB
     Group.model.prototype.remove.call(group, callback);
   });
@@ -291,7 +291,7 @@ Group.prototype.remove = function remove (callback) {
  *
  */
 Group.prototype.addUser = function addUser (username, callback) {
-  for (key in this.users) {
+  for (var key in this.users) {
     if (this.users[key] == username) {
       return callback('already-in-this-group');
     }
@@ -310,7 +310,7 @@ Group.prototype.removeUser = function removeUser (userName, callback) {
   for (var i = 0; i < this.users.length; i++) {
     if (this.users[i] == userName) {
       this.users = this.users.slice(0, i).concat(this.users.slice(i + 1));
-      this.save(callback);   
+      this.save(callback);
       return;
     }
   }
@@ -329,7 +329,7 @@ Group.prototype.checkUser = function checkUser (username, options, callback) {
     callback = options;
     options = {};
   }
-  
+
   // Check directly belong to the group
   if (options.direct) {
     for (var i in this.users) {
@@ -339,7 +339,7 @@ Group.prototype.checkUser = function checkUser (username, options, callback) {
     }
     return callback(null, false);
   }
-  
+
   // Check indirectly
   User.getByName(username, function (err, user) {
     if (err) {
@@ -384,7 +384,7 @@ Group.prototype.getAncestors = function getAncestors (callback) {
 Group.prototype.getAdmins = function (callback) {
   var self = this;
   var returned = false;
-  
+
   self.getAncestors(function (err, ancestors) {
     if (err) {
       return callback(err);
@@ -410,7 +410,7 @@ Group.prototype.getAdmins = function (callback) {
 Group.prototype.checkAdmin = function checkAdmin (username, callback) {
   var self = this;
   var returned = false;
-  
+
   self.getAncestors(function (err, ancestors) {
     ancestors.push(self);
     // Iterate every ancestor of current group
@@ -462,7 +462,7 @@ Group.prototype.getDescendant = function getDescendant (callback) {
         if (done == children.length) {
           // Extract groupMap
           var groups = [];
-          for (key in groupMap) {
+          for (var key in groupMap) {
             groups.push(groupMap[key]);
           }
           callback(null, groups);
@@ -502,7 +502,7 @@ Group.prototype.isDescendant = function isDescendant (groupName, callback) {
  *
  */
 Group.prototype.addChildGroup = function addChildGroup (name, callback) {
-  for (key in this.children) {
+  for (var key in this.children) {
     if (this.children[key] == name) {
       return callback('already-in-this-group');
     }
@@ -560,7 +560,7 @@ Group.prototype.getAllUserNames = function getAllUserNames (callback) {
  *
  */
 Group.prototype.addAdmin = function addAdmin (userName, callback) {
-  for (key in this.admins) {
+  for (var key in this.admins) {
     if (this.admins[key] == userName) {
       return callback('already-in-this-group');
     }
@@ -579,7 +579,7 @@ Group.prototype.removeAdmin = function removeAdmin (userName, callback) {
   for (var i = 0; i < this.admins.length; i++) {
     if (this.admins[i] == userName) {
       this.admins = this.admins.slice(0, i).concat(this.admins.slice(i + 1));
-      this.save(callback);   
+      this.save(callback);
       return;
     }
   }
