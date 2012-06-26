@@ -1,15 +1,18 @@
 <h1><%= msg('dashboard') %></h1>
-<h2><%= msg('userinfo') %></h2>
-<p>
-  <a href="/editinfo" class="btn">
+<a href="/editinfo" class="btn" style="float:right">
     <i class="icon-edit icon-white"></i>
     <%= msg('edit-userinfo') %>
-  </a>
-</p>
+</a>
+<h2><%= msg('userinfo') %></h2>
 <div id="profile" class="no-avatar">
     <%- partial('userinfo') %>
 </div>
 <hr>
+
+<a href="/appreg" class="btn" style="float:right">
+  <i class="icon-plus icon-white"></i>
+  <%= msg('register-new-app') %>
+</a>
 <h2><%= msg('apps') %></h2>
 <% if (apps.success) { %>
   <% if (apps.apps.length) { %>
@@ -24,11 +27,8 @@
     <%= msg('error-retrieving-apps') %>
   </p>
 <% } %>
-<a href="/appreg" class="btn">
-  <i class="icon-plus icon-white"></i>
-  <%= msg('register-new-app') %>
-</a>
 <hr>
+
 <h2><%= msg('authorized-apps') %></h2>
 <% if (apps.success) { %>
   <% if (apps.authorizedapps.length) { %>
