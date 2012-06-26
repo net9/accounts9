@@ -1,9 +1,5 @@
 <ul class="breadcrumb">
   <li>
-    <a href="/"><%- msg('index') %></a>
-    <span class="divider">/</span>
-  </li>
-  <li>
     <a href="/group"><%- msg('groups') %></a>
     <span class="divider">/</span>
   </li>
@@ -23,7 +19,7 @@
     </a>
   </p>
 <% } %>
-<table class="table">
+<table class="table vertical">
   <tr>
     <th><%- msg('group-name') %></th>
     <td><%= group.name %></td>

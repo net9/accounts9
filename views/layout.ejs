@@ -19,11 +19,11 @@
             <div id="logo">Accounts9</div>
             <ul id="nav">
               <% if (!curUser) { %>
-                <li class="active"><a href="/login"><%- msg('Login') %></a></li>
-                <li><a href="/register"><%- msg('Register') %></a></li>
+                <li><a class="btn" href="/login"><%- msg('Login') %></a></li>
+                <li><a class="btn" href="/register"><%- msg('Register') %></a></li>
               <% } else { %>
-                <li class="active"><a href="/u/<%= curUser.name %>"><%= curUser.name %></a></li>
-                <li><a href="/logout"><%- msg('Logout') %></a></li>
+                <li><a class="btn" href="/u/<%= curUser.name %>"><%= curUser.name %></a></li>
+                <li><a class="btn" href="/logout"><%- msg('Logout') %></a></li>
               <% } %>
             </ul>
         </div>
@@ -40,7 +40,7 @@
           <% } %>
           <%- body %>
         </div>
-        <div id="footer"><a href="#">THU.DCST.SAST.NET</a> 2012</div>
+        <div id="footer"><a href="/about">THU.DCST.SAST.NET</a> 2012</div>
     </div>
     <script src="/js/jquery-1.7.2.min.js"></script>
     <script src="/js/script.js"></script>
