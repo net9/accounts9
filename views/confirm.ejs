@@ -1,10 +1,12 @@
-<form class="form-horizontal" method="post">
+<form class="horizontal" method="post">
   <fieldset>
     <legend><%= title %></legend>
     <div class="alert alert-error">
       <p><%= confirm %></p>
-      <a href="<%= backUrl %>" class="btn"><%- msg('no-wanna-back-out') %></a>
-      <button type="submit" class="btn btn-danger"><%- msg('yes-wanna-continue') %></button>
+      <p>
+        <a href="<%= backUrl %>" class="btn"><%- msg('no-wanna-back-out') %></a>
+        <button type="submit" class="btn btn-danger"><%- msg('yes-wanna-continue') %></button>
+      </p>
     </div>
   </fieldset>
 </form>

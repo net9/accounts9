@@ -1,35 +1,35 @@
-<form class="form-horizontal" method="post">
+<form class="horizontal" method="post">
   <fieldset>
     <legend><%- msg('register') %></legend>
-    <div class="control-group">
+    <div class="field">
       <label class="control-label" for="name"><%- msg('Username') %></label>
       <div class="controls">
-        <input type="text" class="input-xlarge" id="name" name="name">
+        <input type="text" class="text" id="name" name="name">
         <p class="help-block"><%- msg('reg-username-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
+    <div class="field">
       <label class="control-label" for="password"><%- msg('Password') %></label>
       <div class="controls">
-        <input type="password" class="input-xlarge" id="password" name="password">
+        <input type="password" class="text" id="password" name="password">
         <p class="help-block"><%- msg('reg-password-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
+    <div class="field">
       <label class="control-label" for="password-repeat"><%- msg('password-repeat') %></label>
       <div class="controls">
-        <input type="password" class="input-xlarge" id="password-repeat" name="password-repeat">
+        <input type="password" class="text" id="password-repeat" name="password-repeat">
       </div>
     </div>
-    <div class="control-group">
+    <div class="field">
       <label class="control-label" for="email"><%- msg('Email') %></label>
       <div class="controls">
-        <input type="text" class="input-xlarge" id="email" name="email">
+        <input type="text" class="text" id="email" name="email">
         <p class="help-block"><%- msg('reg-email-tips') %></p>
       </div>
     </div>
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary"><%- msg('Register') %></button>
+      <button type="submit" class="btn"><%- msg('Register') %></button>
       <a href="/" class="btn"><%- msg('Cancel') %></a>
     </div>
   </fieldset>

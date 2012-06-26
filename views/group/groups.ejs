@@ -6,9 +6,7 @@
   <li class="active"><%- msg('groups') %></li>
 </ul>
 
-<div class="row">
-  <div class="span6">
-    <h2><%= msg('groups') %></h2>
-    <%- partial('groupnode', groupRoot) %>
-  </div>
+<div id="group">
+    <h1><%= msg('groups') %></h1>
+    <ul><%- partial('groupnode', groupRoot) %></ul>
 </div>

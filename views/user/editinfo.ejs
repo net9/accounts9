@@ -1,85 +1,85 @@
-<form class="form-horizontal" method="post">
+<form class="horizontal" method="post">
   <fieldset>
     <legend><%= title %></legend>
-    <div class="control-group">
-      <label class="control-label" for="username"><%- msg('Username') %></label>
+    <div class="field">
+      <label for="username"><%- msg('Username') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="username" value="<%= user.name %>" readonly="readonly">
+        <input type="text" class="text" id="username" value="<%= user.name %>" readonly="readonly">
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="nickname"><%- msg('Nickname') %></label>
+    <div class="field">
+      <label for="nickname"><%- msg('Nickname') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="nickname" name="nickname" value="<%= user.nickname %>">
+        <input type="text" class="text" id="nickname" name="nickname" value="<%= user.nickname %>">
         <p class="help-block"><%- msg('editinfo-nickname-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="surname"><%- msg('sur-name') %></label>
+    <div class="field">
+      <label for="surname"><%- msg('sur-name') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="surname" name="surname" value="<%= user.surname %>">
+        <input type="text" class="text" id="surname" name="surname" value="<%= user.surname %>">
         <p class="help-block"><%- msg('editinfo-surname-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="givenname"><%- msg('given-name') %></label>
+    <div class="field">
+      <label for="givenname"><%- msg('given-name') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="givenname" name="givenname" value="<%= user.givenname %>">
+        <input type="text" class="text" id="givenname" name="givenname" value="<%= user.givenname %>">
         <p class="help-block"><%- msg('editinfo-givenname-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="email"><%- msg('email') %></label>
+    <div class="field">
+      <label for="email"><%- msg('email') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="email" name="email" value="<%= user.email %>">
+        <input type="text" class="text" id="email" name="email" value="<%= user.email %>">
         <p class="help-block"><%- msg('editinfo-email-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="mobile"><%- msg('mobile') %></label>
+    <div class="field">
+      <label for="mobile"><%- msg('mobile') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="mobile" name="mobile" value="<%= user.mobile %>">
+        <input type="text" class="text" id="mobile" name="mobile" value="<%= user.mobile %>">
         <p class="help-block"><%- msg('editinfo-mobile-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="website"><%- msg('website') %></label>
+    <div class="field">
+      <label for="website"><%- msg('website') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="website" name="website" value="<%= user.website %>">
+        <input type="text" class="text" id="website" name="website" value="<%= user.website %>">
         <p class="help-block"><%- msg('editinfo-website-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="address"><%- msg('address') %></label>
+    <div class="field">
+      <label for="address"><%- msg('address') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="address" name="address" value="<%= user.address %>">
+        <input type="text" class="text" id="address" name="address" value="<%= user.address %>">
         <p class="help-block"><%- msg('editinfo-address-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="birthdate"><%- msg('birth-date') %></label>
+    <div class="field">
+      <label for="birthdate"><%- msg('birth-date') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="birthdate" name="birthdate" value="<%= user.birthdate %>">
+        <input type="text" class="text" id="birthdate" name="birthdate" value="<%= user.birthdate %>">
         <p class="help-block"><%- msg('editinfo-birthdate-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="bio"><%- msg('bio') %></label>
+    <div class="field">
+      <label for="bio"><%- msg('bio') %></label>
       <div class="controls">
-        <textarea class="input-xlarge" id="bio" name="bio" rows="3"><%= user.bio %></textarea>
+        <textarea class="text" id="bio" name="bio" rows="3"><%= user.bio %></textarea>
         <p class="help-block"><%- msg('editinfo-bio-tips') %></p>
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="oldpass"><%- msg('old-password') %></label>
+    <div class="field">
+      <label for="oldpass"><%- msg('old-password') %></label>
       <div class="controls">
-        <input type="password" class="input-medium" id="oldpass" name="oldpass">
+        <input type="password" class="text" id="oldpass" name="oldpass">
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="newpass"><%- msg('new-password') %></label>
+    <div class="field">
+      <label for="newpass"><%- msg('new-password') %></label>
       <div class="controls">
-        <input type="password" class="input-medium" id="newpass" name="newpass">
+        <input type="password" class="text" id="newpass" name="newpass">
         <p class="help-block"><%- msg('editinfo-password-tips') %></p>
       </div>
     </div>
@@ -87,7 +87,7 @@
   <%- msg('editinfo-notice') %>
 </div>
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary"><%- msg('Submit') %></button>
+      <button type="submit" class="btn"><%- msg('Submit') %></button>
       <a href="/dashboard" class="btn"><%- msg('Cancel') %></a>
     </div>
   </fieldset>

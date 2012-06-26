@@ -1,0 +1,89 @@
+input[type=submit] {
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+input[readonly] {
+    background: #DDD;
+}
+
+button.btn,
+input.btn {
+    background: darken(@green, 15%);
+    line-height: 30px;
+    padding: 0 15px;
+    border: none;
+    color: lighten(@green, 50%);
+
+    &:hover, &:focus {
+        background: darken(@green, 20%);
+        color: #FFF;
+    }
+}
+
+button.btn-danger,
+input.btn-danger {
+    background-color: spin(@green, -100);
+    &:hover, &:focus {
+        background-color: darken(spin(@green, -100), 10%);
+    }
+}
+
+input.readonly {
+    background: #CCC;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+form.horizontal {
+
+    legend {
+        font-size: 2em;
+        padding: 0;
+        padding-bottom: 10px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .field {
+        .cf();
+        margin: 10px 0;
+    }
+    
+    label {
+        float: left;
+        width: 200px;
+        text-align: right;
+        line-height: 30px;
+    }
+
+    .controls,
+    .form-actions {
+        padding-left: 220px;
+    }
+
+    .help-block {
+        color: #666;
+        padding: 0;
+        margin: 0;
+        padding-top: 5px;
+        font-size: 0.8em;
+    }
+
+    textarea.text,
+    input.text {
+        line-height: 28px;
+        border: 1px solid #AAA;
+        padding: 0;
+        margin: 0;
+        width: 280px;
+    }
+
+}

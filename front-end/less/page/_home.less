@@ -1,0 +1,101 @@
+#home {
+    background-position: 0 75px;
+
+    a {
+        color: lighten(@green, 40%);
+
+        &:hover,
+        &:focus {
+            color: #FFF;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+#home-page {
+    width: 960px;
+    height: 2 * 75px + 360px;
+    margin: 0 auto;
+    position: relative;
+}
+
+#home-logo {
+    background: darken(@green, 10%);
+    padding: 5px 10px;
+    position: absolute;
+    top: 140px;
+    left: 15px;
+    color: #FFF;
+    font-family: 'Ubuntu', Helvetica, Arial;
+    font-size: 60px;
+}
+
+#home-welcome {
+    position: absolute;
+    top: 240px;
+    left: 35px;
+    color: #FFF;
+    font-size: 30px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        padding: 5px;
+    }
+}
+
+#home-login {
+    position: absolute;
+    top: 165px;
+    left: 580px;
+}
+
+#home-login input {
+    outline: none;
+    font-size: 30px;
+    opacity: 0.8;
+    border: none;
+
+    &:hover,
+    &:focus {
+        opacity: 1.0;
+    }
+}
+
+#home-input-username,
+#home-input-password {
+    margin: 10px;
+    padding: 10px;
+    width: 330px;
+}
+
+#home-input-submit {
+    background: darken(@green, 15%);
+    color: #FFF;
+    margin: 10px;
+    margin-left: 260px;
+    padding: 10px;
+    width: 100px;
+}
+
+#home-footer {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #AAA;
+    font-size: 0.8em;
+
+    a,
+    a:hover,
+    a:focus {
+        background: none;
+        color: #AAA;
+    }
+}
+

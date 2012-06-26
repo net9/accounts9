@@ -1,13 +1,43 @@
-<div class="hero-unit">
-  <h1>
-    <img src="/img/net9.gif" width="130" height="130" />
-    Accounts9
-  </h1>
-  <p>欢迎各位酒井用户来到Accounts9。</p>
-  <% if (!curUser) { %>
-    <p>
-      <a class="btn btn-primary btn-large" href="/login"><%= msg('login') %></a>
-    </p>
-  <% } %>
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Accounts9</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/style.min.css" rel="stylesheet">
+    <script>
+        (function(d) { d.className = d.className.replace(/(^|\s)no-js(\s|$)/, '$1js$2'); })(document.documentElement);
+    </script>
+</head>
+<body id="home">
 
-</div>
+    <div id="home-page">
+        <div id="home-logo">Accounts9</div>
+        <ul id="home-welcome">
+            <li>欢迎各位酒井用户来到Accounts9。</li>
+            <% if (!curUser) { %>
+              <li><a href="#"><i class="icon-user"></i>注册</a></li>
+            <% } %>
+        </ul>
+        <% if (!curUser) { %>
+          <form action="#" method="post" id="home-login">
+              <div><input type="text" name="username" id="home-input-username" placeholder="用户名" autofocus required></div>
+              <div><input type="password" name="password" id="home-input-password" placeholder="口令" required></div>
+              <div><input type="submit" name="submit" id="home-input-submit" value="登入"></div>
+          </form>
+        <% } %>
+        <div id="home-footer"><a href="#">THU.DCST.SAST.NET</a> 2012</div>
+    </div>
+
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script src="js/jquery.placeholder-enhanced.min.js"></script>
+    <script type="text/javascript">
+        $('input[placeholder]').placeholderEnhanced();
+    </script>
+    
+</body>
+</html>

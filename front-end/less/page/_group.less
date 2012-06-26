@@ -1,0 +1,39 @@
+#group {
+    padding: 10px;
+
+    ul {
+        list-style: none;
+        padding: 5px;
+        margin: 0;
+    }
+
+    li {
+        background: #FFF;
+        color: #000;
+        font-size: 18px;
+        padding: 10px;
+
+        .node {
+            cursor: pointer;
+        }
+
+        &.show {
+            background: @green;
+            color: #FFF;
+
+            & > .node {
+            font-weight: bold;
+                cursor: default;
+            }
+        }
+
+        a {
+            display: block;
+        }
+
+        a.btn {
+            display: inline-block;
+        }
+    }
+
+}

@@ -1,0 +1,27 @@
+table.table {
+    width: 100%;
+
+    th, td {
+        padding: 10px;
+    }
+
+    tr:hover td {
+        background: #F3F3F3;
+    }
+
+    tr:nth-child(odd) {
+        background: #FAFAFA;
+    }
+
+    th {
+        background: @green;
+        text-align: left;
+        color: #FFF;
+        border: 1px solid darken(@green, 10%);
+    }
+
+    td {
+        border: 1px solid #EEE;
+    }
+
+}
