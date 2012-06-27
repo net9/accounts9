@@ -1,5 +1,6 @@
 module.exports = {
   cookieSecret: 'accounts9',
+  interfaceSecret: 'Example',
   ldap: {
     server: "ldap://ldap.net9.org",
     master_dn: "cn=manager,dc=net9,dc=org",
