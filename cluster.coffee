@@ -13,11 +13,9 @@ if cluster.isMaster
     worker = cluster.fork()
     workers[worker.pid] = worker
 
-  i = 0
-  while i < numCPUs
+  for i in [1..numCPUs]
     worker = cluster.fork()
     workers[worker.pid] = worker
-    i++
 else
   app.listen port
 
