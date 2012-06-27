@@ -12,8 +12,8 @@
   <td><%= userlistitem.birthdate %></td>
   <% if (group.currentUserIsAdmin && group.users.directList) { %>
     <td>
-      <a href="/group/<%= group.name %>/deluser/<%= userlistitem.name %>" class="btn btn-danger btn-mini">
-        <i class="icon-trash icon-white"></i>
+      <a href="/group/<%= group.name %>/deluser/<%= userlistitem.name %>" class="btn btn-danger">
+        <i class="icon-trash"></i>
       </a>
     </td>
   <% } %>

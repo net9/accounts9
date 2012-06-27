@@ -6,6 +6,7 @@ module.exports = function (app) {
 
   app.get('/', function (req, res) {
     res.render('index', {
+      layout: false,
       locals: {
         title: messages.get('index')
       }

@@ -1,10 +1,10 @@
-<form class="form-horizontal" method="post">
+<form class="horizontal" method="post">
   <fieldset>
     <legend><%= title %></legend>
-    <div class="control-group">
-      <label class="control-label" for="name"><%- msg('group-name') %></label>
+    <div class="field">
+      <label for="name"><%- msg('group-name') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="name" name="name"
+        <input type="text" class="text" id="name" name="name"
         <% if (group) { %>
           value="<%= group.name %>"
           readonly="readonly"
@@ -12,20 +12,20 @@
         >
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="title"><%- msg('group-title') %></label>
+    <div class="field">
+      <label for="title"><%- msg('group-title') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="title" name="title"
+        <input type="text" class="text" id="title" name="title"
         <% if (group) { %>
           value="<%= group.title %>"
         <% } %>
         >
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="parent"><%- msg('group-parent') %></label>
+    <div class="field">
+      <label for="parent"><%- msg('group-parent') %></label>
       <div class="controls">
-        <input type="text" class="input-medium" id="parent" name="parent"
+        <input type="text" class="text" id="parent" name="parent"
         <% if (group) { %>
           <% if (!parentGroup) { %>
             readonly="readonly"
@@ -39,10 +39,10 @@
         >
       </div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="desc"><%- msg('group-desc') %></label>
+    <div class="field">
+      <label for="desc"><%- msg('group-desc') %></label>
       <div class="controls">
-        <textarea class="input-xlarge" id="desc" rows="3" name="desc"><% if (group) { %><%= group.desc %><% } %></textarea>
+        <textarea class="text" id="desc" rows="3" name="desc"><% if (group) { %><%= group.desc %><% } %></textarea>
       </div>
     </div>
     <div class="form-actions">

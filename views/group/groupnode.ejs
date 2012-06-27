@@ -1,34 +1,12 @@
-<h3>
-  <a href="/group/<%= groupnode.name %>"><%= groupnode.title %></a>
-</h3>
-<p>
-  <%= groupnode.desc %>
-</p>
-
-<% if (groupnode.children.length > 0) { %>
-  <div class="tabbable">
-    <ul class="nav nav-tabs">
-      <% for (var i in groupnode.children) { %>
-        <% if (i == 0) { %>
-          <li class="active">
-        <% } else { %>
-          <li>
-        <% } %>
-        <a href="#<%= groupnode.name + i %>" data-toggle="tab">
-          <%= groupnode.children[i].title %>
-        </a></li>
-      <% } %>
-    </ul>
-    <div class="tab-content">
-      <% for (var i in groupnode.children) { %>
-        <% if (i == 0) { %>
-          <div class="tab-pane active" id="<%= groupnode.name + i %>">
-        <% } else { %>
-          <div class="tab-pane" id="<%= groupnode.name + i %>">
-        <% } %>
+<li>
+    <% if (groupnode.children.length > 0) { %>
+        <div class="node" title="<%= groupnode.desc %>"><a href="/group/<%= groupnode.name %>" class="btn"><i class="icon-link"></i></a> <%= groupnode.title %></div>
+        <ul>
+        <% for (var i in groupnode.children) { %>
           <%- partial('groupnode', groupnode.children[i]) %>
-        </div>
-      <% } %>
-    </div>
-  </div>
-<% } %>
+        <% } %>
+        </ul>
+    <% } else { %>
+        <a href="/group/<%= groupnode.name %>" title="<%= groupnode.desc %>"><%= groupnode.title %></a>
+    <% } %>
+</li>

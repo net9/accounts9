@@ -1,11 +1,11 @@
-<form class="form-horizontal" method="post" action="/api/authorize?client_id=<%- appinfo.clientid %>">
+<form class="horizontal" method="post" action="/api/authorize?client_id=<%- appinfo.clientid %>">
   <fieldset>
     <legend><%= title %></legend>
     <div class="alert alert-info">
       <p><%- msg('app-auth-message', appinfo.clientid, appinfo.name) %></p>
       <p>
-        <button type="submit" name="yes" value="1" class="btn btn-large btn-success"><%- msg('Yes') %></button>
-        <button type="submit" class="btn btn-large btn-danger"><%- msg('No') %></button>
+        <button type="submit" name="yes" value="1" class="btn"><%- msg('Yes') %></button>
+        <button type="submit" class="btn btn-danger"><%- msg('No') %></button>
       </p>
     </div>
   </fieldset>
