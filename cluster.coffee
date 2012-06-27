@@ -1,0 +1,27 @@
+app = require './app' 
+cluster = require 'cluster' 
+os = require 'os' 
+
+numCPUs = os.cpus().length
+port = 3000
+
+port = parseInt(process.argv[2]) if process.argv.length >= 3
+workers = {}
+if cluster.isMaster
+  cluster.on 'death', (worker) ->
+    delete workers[worker.pid]
+    worker = cluster.fork()
+    workers[worker.pid] = worker
+
+  i = 0
+  while i < numCPUs
+    worker = cluster.fork()
+    workers[worker.pid] = worker
+    i++
+else
+  app.listen port
+
+process.on 'SIGTERM', ->
+  for pid of workers
+    process.kill pid
+  process.exit 0

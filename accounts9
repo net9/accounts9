@@ -1,6 +1,6 @@
 #! /bin/sh
 
-DAEMON="node cluster.js"
+DAEMON="coffee cluster"
 NAME=Accounts9
 DESC=Accounts9
 PIDFILE="accounts9.pid"
