@@ -19,8 +19,7 @@ exports.get = (id) ->
       if msg_t
         msg = msg_t
         break
-
     for j in [1...arguments.length]
-      msg = msg.replace args[i - 1], arguments[i] 
+      msg = msg.replace args[j - 1], arguments[j]
     msgs.push msg
   msgs

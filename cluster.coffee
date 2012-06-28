@@ -1,3 +1,5 @@
+#!/usr/bin/env coffee
+
 app = require './app' 
 cluster = require 'cluster' 
 os = require 'os' 
