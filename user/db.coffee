@@ -2,7 +2,7 @@ assert = require("assert")
 ldap = require("./ldap")
 config = require("../config").ldap
 crypto = require("crypto")
-utils = require("../utils")
+utils = require("../lib/utils")
 connect = (options, callback) ->
   if typeof options is "function"
     callback = options

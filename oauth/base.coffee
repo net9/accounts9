@@ -1,4 +1,4 @@
-utils = require("../utils")
+utils = require("../lib/utils")
 mongoose = require("../lib/mongoose")
 mongoose.model "OAuthCode", new mongoose.Schema(
   code:

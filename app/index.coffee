@@ -6,7 +6,7 @@ checkAppOwner = (req, res, next) ->
     next()
 appman = require("./man")
 messages = require("../messages")
-utils = require("../utils")
+utils = require("../lib/utils")
 module.exports = (app) ->
   appRegPath = "/appreg"
   app.all appRegPath, utils.checkLogin

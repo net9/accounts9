@@ -1,6 +1,7 @@
-User = require("./user/model")
-url = require("url")
-assert = require("assert")
+User = require('../user/model')
+url = require('url')
+assert = require('assert')
+
 exports.subset = (src, attrs) ->
   newObj = {}
   attrs.forEach (attr) ->

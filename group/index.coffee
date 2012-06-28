@@ -93,7 +93,7 @@ checkRootAdmin = (req, res, next) ->
 Group = require("./model")
 User = require("../user/model")
 messages = require("../messages")
-utils = require("../utils")
+utils = require("../lib/utils")
 assert = require("assert")
 module.exports = (app) ->
   app.get "/group", utils.checkLogin

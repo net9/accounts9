@@ -5,7 +5,7 @@
 messages = require "./messages" 
 config = require "./config" 
 express = require "express" 
-MongoStore = require "connect-mongo" 
+MongoStore = (require "connect-mongo") express
 fs = require "fs" 
 util = require "util" 
 

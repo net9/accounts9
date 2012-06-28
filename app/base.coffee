@@ -1,4 +1,4 @@
-utils = require("../utils")
+utils = require("../lib/utils")
 util = require("util")
 mongoose = require("../lib/mongoose")
 mongoose.model "App", new mongoose.Schema(

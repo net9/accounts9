@@ -9,7 +9,7 @@ class Group
     @children = group.children
 
 mongoose = require "../lib/mongoose" 
-utils = require "../utils" 
+utils = require "../lib/utils" 
 User = require "../user/model" 
 assert = require "assert" 
 module.exports = Group
