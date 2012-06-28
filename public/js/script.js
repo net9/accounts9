@@ -1,7 +1,8 @@
 $(document).ready(function() {
+    "use strict";
 
-    if ($("#group").length) {
-        $("#group ul").hide();
+    if (document.getElementById("group")) {
+        var lastOpened = '';
         $("#group li").click(function(e) {
             if (e.target.className === 'node') {
                 var s = $(this);
@@ -12,14 +13,18 @@ $(document).ready(function() {
                 } else if (s.children('ul').slideDown().length) {
                     s.addClass('show');
                 }
-                window.location.hash = s.attr('id');
+                lastOpened = s.attr('id');
                 return false;
+            } else if (e.target.tagName === 'A') {
+                window.location.hash = lastOpened;
             }
             return true;
         });
-        $("#group > ul").show();
+
+        $("#group > ul ul").hide();
         var elem = $(window.location.hash || "#group > ul > li");
-        elem.parentsUntil('#group', 'li').addClass('show').children('ul').show();
-        elem.children('div.node').click();
+        elem.parentsUntil("#group", "li").addClass('show').children('ul').show();
+        elem.children("div.node").click();
     }
+
 });
