@@ -1,8 +1,10 @@
+/config.coffee
+node_modules
+/*.log
+
 *~
 *.swp
-config.js
-.DS_Store
-node_modules
+
 .settings
 .project
-*.log
+.DS_Store
