@@ -45,6 +45,10 @@ utils = require("../lib/utils")
 url = require("url")
 assert = require("assert")
 module.exports = (app) ->
+  app.get '/sync', (req, res, next) ->
+    User.sync ->
+     'done'
+  
   userPath = "/u/:username"
   app.get userPath, checkLogin
   app.get userPath, utils.checkAuthorized
@@ -78,7 +82,11 @@ module.exports = (app) ->
         returnto: req.query.returnto
 
   app.post "/login", (req, res) ->
-    User.authenticate req.body.username, req.body.password, (err, user) ->
+    User.getByName req.body.username, (err, user) ->
+      
+      if not err and not (user.checkPassword req.body.password)
+        err = 'invalid-password'
+      
       if err
         req.flash "error", err
         res.render "login",
@@ -98,7 +106,7 @@ module.exports = (app) ->
   app.post "/register", (req, res, next) ->
     user = utils.subset(req.body, [ "name", "password", "password-repeat", "email" ])
     User.create user, (err, user) ->
-      unless err
+      if not err
         req.session.user = user
         req.flash "info", "register-success"
         res.redirect "/editinfo"
@@ -137,10 +145,16 @@ module.exports = (app) ->
       user.bio = req.body.bio
       user.birthdate = req.body.birthdate
       user.fullname = user.surname + user.givenname
-      if req.body.newpass
-        user.oldpass = req.body.oldpass
-        user.password = req.body.newpass
-      next()
+      
+      if not (user.checkPassword req.body.oldpass)
+        req.flash "error", "wrong-old-pass"
+        res.render "editinfo",
+          locals:
+            title: messages.get("edit-my-info")
+            user: user
+      else
+        user.password = utils.genPassword req.body.newpass
+        next()
 
   app.post "/editinfo", (req, res, next) ->
     user = req.user

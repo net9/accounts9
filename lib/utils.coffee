@@ -1,6 +1,7 @@
 User = require('../user/model')
 url = require('url')
 assert = require('assert')
+crypto = require('crypto')
 
 exports.subset = (src, attrs) ->
   newObj = {}
@@ -100,3 +101,11 @@ exports.contains = (array, value) ->
   for i of array
     return true  if array[i] is value
   false
+
+exports.genPassword = (rawpass) ->
+  hash = crypto.createHash("sha1")
+  hash.update rawpass
+  hash.update "salt"
+  buf = new Buffer(256)
+  len = buf.write(hash.digest() + "salt", 0, "ascii")
+  buf.toString("base64", 0, len)

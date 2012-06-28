@@ -1,76 +1,98 @@
-{
-  "type": "block",
-  "src": "{",
-  "value": "{",
-  "children": [],
-  "varDecls": [],
-  "labels": {
-    "table": {},
-    "size": 0
-  },
-  "functions": [],
-  "nonfunctions": [],
-  "transformed": true
-}
-User = (user) ->
-  @name = user.name
-  @uid = parseInt(user.uid)
-  @nickname = user.nickname
-  @surname = user.surname
-  @givenname = user.givenname
-  @fullname = user.fullname
-  @email = user.email
-  @mobile = user.mobile
-  @website = user.website
-  @address = user.address
-  @bio = user.bio
-  @birthdate = user.birthdate
-  @groups = user.groups
-  @applyingGroups = user.applyingGroups
-  @authorizedApps = user.authorizedApps
-  @groups
-userbase = require("./db")
 Group = require("../group/model")
 mongoose = require("../lib/mongoose")
 utils = require("../lib/utils")
 assert = require("assert")
 crypto = require("crypto")
+
+User = (user) ->
+  @name = user.name ? ''
+  @password = user.password ? ''
+  @uid = parseInt(user.uid) ? 0
+  @nickname = user.nickname ? ''
+  @surname = user.surname ? ''
+  @givenname = user.givenname ? ''
+  @fullname = user.fullname ? ''
+  @email = user.email ? ''
+  @mobile = user.mobile ? ''
+  @website = user.website ? ''
+  @address = user.address ? ''
+  @bio = user.bio ? ''
+  @birthdate = user.birthdate ? ''
+  @groups = user.groups ? []
+  @authorizedApps = user.authorizedApps ? []
+  @
+
+User.attributes = ['name', 'password', 'uid', 'nickname', 'surname',
+  'givenname', 'fullname', 'email', 'mobile', 'website', 'address',
+  'bio', 'birthdate', 'groups', 'authorizedApps'
+]
+
 module.exports = User
+
 mongoose.model "User", new mongoose.Schema(
   name:
     type: String
     index: true
     unique: true
-
+  uid: Number
+  password: String
+  nickname: String
+  surname: String
+  givenname: String
+  fullname: String
+  email: String
+  mobile: String
+  website: String
+  address: String
+  bio: String
+  birthdate: String
   groups: [ String ]
-  applyingGroups: [ String ]
   authorizedApps: [ String ]
 )
+
 User.model = mongoose.model("User")
-User.checkName = checkName = (username, callback) ->
-  userbase.checkUser username, (occupied) ->
-    if occupied
+
+User.sync = (callback) ->
+  User.model.find {}, (err, users) ->
+    console.log err if err
+    users.forEach (user) ->
+      User.getByName user.name, (err, user) ->
+        user.password = ''
+        user.save null
+    callback null
+    
+User._getUser = (name, callback) ->
+  return callback("mongodb-not-connected")  unless mongoose.connected
+  User.model.find name: name, (err, users) ->
+    return callback(err)  if err
+    if users.length is 1
+      callback null, users[0]
+    else
+      callback null, null
+
+User.checkName = (name, callback) ->
+  User._getUser name, (err, user) ->
+    return callback(err) if err
+    if user
       callback "occupied"
     else
       callback null
 
-User.getByName = getByName = (username, callback) ->
-  return callback("mongodb-not-connected")  unless mongoose.connected
-  userbase.getByName username, (success, userOrErr) ->
-    if success
-      user = new User(userOrErr)
-      user._getMongodbUserAttr (err) ->
-        return callback(err)  if err
-        callback null, user
+User.getByName = (name, callback) ->
+  User._getUser name, (err, user) ->
+    return callback(err) if err
+    if not user
+      callback 'no-such-user'
     else
-      callback userOrErr
+      user = new User user
+      callback null, user
 
-User.getByNames = getByNames = (usernames, callback) ->
+User.getByNames = (usernames, callback) ->
   users = []
   returned = false
   return callback(null, users)  if usernames.length is 0
   usernames.forEach (username) ->
-    return  if returned
+    return if returned
     User.getByName username, (err, user) ->
       if err
         returned = true
@@ -80,33 +102,23 @@ User.getByNames = getByNames = (usernames, callback) ->
         utils.sortBy users, "uid"
         callback null, users
 
-User.authenticate = authenticate = (username, password, callback) ->
-  userbase.authenticate username, password, (success, userOrErr) ->
-    if success
-      user = new User(userOrErr)
-      callback null, user
-    else
-      callback userOrErr
-
 User.create = create = (user, callback) ->
   return callback("fields-required")  if not user.name or not user.password or not user.email
+  return callback("password-mismatch")  unless user.password is user["password-repeat"]
+  
   usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,11}$/
   return callback("invalid-username")  unless usernameRegex.exec(user.name)
+  
   emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
   return callback("invalid-email")  unless emailRegex.exec(user.email)
-  return callback("password-mismatch")  unless user.password is user["password-repeat"]
+  
+  user = utils.subset(user, User.attributes)
+  user.password = utils.genPassword user.password
+  
   User.checkName user.name, (err) ->
-    return callback(err)  if err
-    userbase.create user, (success, userOrErr) ->
-      if success
-        user = new User(userOrErr)
-        mongodbUser = new User.model(utils.subset(user, [ "name", "groups", "authorizedApps" ]))
-        mongodbUser.save (err) ->
-          return callback(err)  if err
-          user.addToDefaultGroup (err) ->
-            callback err, user
-      else
-        callback userOrErr
+    return callback(err) if err
+    user = new User(user)
+    user.save callback
 
 User::__defineGetter__ "title", ->
   if @fullname
@@ -114,53 +126,24 @@ User::__defineGetter__ "title", ->
   else
     @name
 
-User::save = save = (callback) ->
-  that = this
-  if @password
-    userbase.authenticate @name, @oldpass, (success, userOrErr) ->
-      if success
-        that._update callback
-      else
-        callback "wrong-old-pass"
-  else
-    @_update callback
+User::checkPassword = (password) ->
+  (@password is utils.genPassword password) or (@password is '')
 
-User::_getMongodbUser = _getMongodbUser = (callback) ->
-  User.model.find
-    name: @name
-  , (err, mongodbUser) ->
+User::save = (callback) ->
+  self = this
+  User._getUser self.name, (err, user) ->
     return callback(err)  if err
-    assert.equal mongodbUser.length, 1
-    mongodbUser = mongodbUser[0]
-    callback null, mongodbUser
-
-User::_getMongodbUserAttr = _getMongodbUserAttr = (callback) ->
-  that = this
-  @_getMongodbUser (err, mongodbUser) ->
-    return callback(err)  if err
-    that.groups = mongodbUser.groups
-    that.applyingGroups = mongodbUser.applyingGroups
-    that.authorizedApps = mongodbUser.authorizedApps
-    callback null
-
-User::_update = _update = (callback) ->
-  that = this
-  userbase.update this, (success, userOrErr) ->
-    that.password = that.oldpass = `undefined`
-    if success
-      that._getMongodbUser (err, mongodbUser) ->
-        return callback(err)  if err
-        mongodbUser.groups = that.groups
-        mongodbUser.applyingGroups = that.applyingGroups
-        mongodbUser.authorizedApps = that.authorizedApps
-        mongodbUser.save callback
+    if user
+      utils.mergeProps user, utils.subset(self, User.attributes)
     else
-      callback userOrErr
+      user = new User.model utils.subset(self, User.attributes)
+    User.model::save.call user, callback
 
 User::addToGroup = addToGroup = (groupName, callback) ->
   @groups = @groups or []
   for key of @groups
-    return callback("already-in-this-group")  if @groups[key] is groupName
+    if @groups[key] is groupName
+      return callback("already-in-this-group")
   @groups.push groupName
   @save callback
 
