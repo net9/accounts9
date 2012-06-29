@@ -45,9 +45,9 @@ utils = require("../lib/utils")
 url = require("url")
 assert = require("assert")
 module.exports = (app) ->
-  app.get '/sync', (req, res, next) ->
-    User.sync ->
-     'done'
+  app.get '/test', (req, res, next) ->
+    User.getByName 'byvoid', (err, user) ->
+      user.generateUid null
   
   userPath = "/u/:username"
   app.get userPath, checkLogin
@@ -146,22 +146,24 @@ module.exports = (app) ->
       user.birthdate = req.body.birthdate
       user.fullname = user.surname + user.givenname
       
-      if not (user.checkPassword req.body.oldpass)
-        req.flash "error", "wrong-old-pass"
-        res.render "editinfo",
-          locals:
-            title: messages.get("edit-my-info")
-            user: user
-      else
-        user.password = utils.genPassword req.body.newpass
-        next()
+      if req.body.newpass
+        if user.checkPassword req.body.oldpass
+          user.password = utils.genPassword req.body.newpass
+        else
+          req.flash "error", "wrong-old-pass"
+          res.render "user/editinfo",
+            locals:
+              title: messages.get("edit-my-info")
+              user: user
+          return
+      next()
 
   app.post "/editinfo", (req, res, next) ->
     user = req.user
     user.save (err) ->
       if err
         req.flash "error", err
-        res.render "editinfo",
+        res.render "user/editinfo",
           locals:
             title: messages.get("edit-my-info")
             user: user

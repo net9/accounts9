@@ -118,7 +118,10 @@ User.create = create = (user, callback) ->
   User.checkName user.name, (err) ->
     return callback(err) if err
     user = new User(user)
-    user.save callback
+    user.generateUid (err) ->
+      return callback(err) if err
+      user.addToDefaultGroup (err) ->
+        callback err, user
 
 User::__defineGetter__ "title", ->
   if @fullname
@@ -139,7 +142,7 @@ User::save = (callback) ->
       user = new User.model utils.subset(self, User.attributes)
     User.model::save.call user, callback
 
-User::addToGroup = addToGroup = (groupName, callback) ->
+User::addToGroup = (groupName, callback) ->
   @groups = @groups or []
   for key of @groups
     if @groups[key] is groupName
@@ -147,7 +150,7 @@ User::addToGroup = addToGroup = (groupName, callback) ->
   @groups.push groupName
   @save callback
 
-User::addToDefaultGroup = addToDefaultGroup = (callback) ->
+User::addToDefaultGroup = (callback) ->
   self = this
   Group.getByName "root", (err, root) ->
     unless err
@@ -160,7 +163,7 @@ User::addToDefaultGroup = addToDefaultGroup = (callback) ->
     else
       callback err
 
-User::removeFromGroup = removeFromGroup = (groupName, callback) ->
+User::removeFromGroup = (groupName, callback) ->
   i = 0
 
   while i < @groups.length
@@ -171,7 +174,7 @@ User::removeFromGroup = removeFromGroup = (groupName, callback) ->
     i++
   callback "not-in-this-group"
 
-User::checkGroup = checkGroup = (groupname, options, callback) ->
+User::checkGroup = (groupname, options, callback) ->
   self = this
   unless callback
     callback = options
@@ -189,7 +192,7 @@ User::checkGroup = checkGroup = (groupname, options, callback) ->
       return callback(null, true)  if groups[i].name is groupname
     callback null, false
 
-User::getAllGroups = getAllGroups = (callback) ->
+User::getAllGroups = (callback) ->
   self = this
   groupsMap = {}
   done = 0
@@ -209,7 +212,7 @@ User::getAllGroups = getAllGroups = (callback) ->
             groups.push groupsMap[key]
           callback null, groups
 
-User::gravatar = gravatar = (size) ->
+User::gravatar = (size) ->
   size = 100  unless size
   hash = crypto.createHash("md5")
   hash.update @email
@@ -220,7 +223,14 @@ User::gravatar = gravatar = (size) ->
 User::isAuthorized = (callback) ->
   self = this
   self.getAllGroups (err, groups) ->
-    return callback(err)  if err
+    return callback(err) if err
     for i of groups
       return callback(null, true)  if groups[i].name is "authorized"
     callback null, false
+
+User::generateUid = (callback) ->
+  self = this
+  User.model.findOne().sort('uid', -1).exec (err, doc) ->
+    return callback(err) if err
+    self.uid = doc.uid + 1
+    callback null, self.uid
