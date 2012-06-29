@@ -214,7 +214,7 @@ User::gravatar = gravatar = (size) ->
   hash = crypto.createHash("md5")
   hash.update @email
   hash = hash.digest("hex")
-  url = "http://www.gravatar.com/avatar/" + hash + "?d=mm&r=x&s=" + size
+  url = "https://secure.gravatar.com/avatar/" + hash + "?d=mm&r=x&s=" + size
   url
 
 User::isAuthorized = (callback) ->
