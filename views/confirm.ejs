@@ -2,9 +2,9 @@
   <fieldset>
     <legend><%= title %></legend>
     <div class="alert alert-error">
-      <p><%= confirm %></p>
+      <p><%- confirm %></p>
       <p>
-        <a href="<%= backUrl %>" class="btn"><%- msg('no-wanna-back-out') %></a>
+        <a href="<%- backUrl %>" class="btn"><%- msg('no-wanna-back-out') %></a>
         <button type="submit" class="btn btn-danger"><%- msg('yes-wanna-continue') %></button>
       </p>
     </div>

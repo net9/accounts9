@@ -55,7 +55,7 @@ module.exports = (app) ->
 
       if req.body.yes
         perm = req.body.temporary ? true : false
-        returnCode req, res, oauthinfo.scope, oauthinfo.state, oauthinfo.redirect_uri, true
+        returnCode req, res, oauthinfo.scope, oauthinfo.state, oauthinfo.redirect_uri, perm
       else
         res.redirect oauthinfo.redirect_uri + "?error=access_denied" + oauthinfo.state
 

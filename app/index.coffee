@@ -56,7 +56,7 @@ module.exports = (app) ->
       locals:
         title: messages.get("revoke-authorization")
         backUrl: "/dashboard/"
-        confirm: messages.get("revoke-authorization-confirm", req.appinfo.name)
+        confirm: messages.get("revoke-authorization-confirm", req.appinfo.clientid, req.appinfo.name)
   app.post "/apps/:clientid/revoke", (req, res) ->
     appman.removeAuthorized req.session.user.name, req.appinfo.clientid, (err) ->
       if err
