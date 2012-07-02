@@ -1,12 +1,14 @@
-<li>
-    <% if (groupnode.children.length > 0) { %>
+<% if (groupnode.children.length > 0) { %>
+    <li id="group-<%= groupnode.name %>">
         <div class="node" title="<%= groupnode.desc %>"><a href="/group/<%= groupnode.name %>" class="btn"><i class="icon-link"></i></a> <%= groupnode.title %></div>
         <ul>
         <% for (var i in groupnode.children) { %>
           <%- partial('groupnode', groupnode.children[i]) %>
         <% } %>
         </ul>
-    <% } else { %>
+    </li>
+<% } else { %>
+    <li>
         <a href="/group/<%= groupnode.name %>" title="<%= groupnode.desc %>"><%= groupnode.title %></a>
-    <% } %>
-</li>
+    </li>
+<% } %>
