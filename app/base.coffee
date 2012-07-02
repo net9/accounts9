@@ -46,7 +46,6 @@ exports.getAllByUser = (username, callback) ->
         , (err, auth_app) ->
           return callback(err, apps)  if err
           if auth_app?
-            util.debug "sync:" + index
             authApps.push auth_app
           callback null, apps, authApps  if index is authAppRaw.length - 1
 
@@ -80,9 +79,7 @@ exports.deleteByID = (clientid, callback) ->
     callback (if err then false else true), err
 
 exports.authenticate = (clientid, secret, callback) ->
-  App.findOne
-    clientid: clientid
-  , (err, app) ->
+  App.findOne clientid: clientid, (err, app) ->
     if app is null
       callback false, "no-such-app-clientid"
     else if app.secret isnt secret
@@ -108,18 +105,15 @@ exports.checkAuthorized = (userid, appid, callback) ->
     return callback(false)  if err or not item?
     callback true
 
-exports.markAuthorized = (userid, appid) ->
+exports.markAuthorized = (userid, appid, callback) ->
   relation = new UserAppRelation(
     username: userid
     clientid: appid
   )
-  util.debug "saving uid:" + userid + " aid:" + appid
-  relation.save (err) ->
-    util.debug "saved"
-    util.debug err  if err
+  relation.save callback
 
-exports.removeAuthorized = (userid, appid) ->
+exports.removeAuthorized = (userid, appid, callback) ->
   UserAppRelation.remove
     username: userid
     clientid: appid
-  , (err) ->
+  , callback

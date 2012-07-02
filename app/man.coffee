@@ -102,8 +102,8 @@ exports.updateInfo = (appinfo, callback) ->
 exports.checkAuthorized = (userid, appid, callback) ->
   appbase.checkAuthorized userid, appid, callback
 
-exports.markAuthorized = (userid, appid) ->
-  appbase.markAuthorized userid, appid
+exports.markAuthorized = (userid, appid, callback) ->
+  appbase.markAuthorized userid, appid, callback
 
-exports.removeAuthorized = (userid, appid) ->
-  appbase.removeAuthorized userid, appid
+exports.removeAuthorized = (userid, appid, callback) ->
+  appbase.removeAuthorized userid, appid, callback

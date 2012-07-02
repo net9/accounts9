@@ -3,6 +3,7 @@
     <legend><%= title %></legend>
     <div class="alert alert-info">
       <p><%- msg('app-auth-message', appinfo.clientid, appinfo.name) %></p>
+      <p><label><input type="checkbox" name="temporary" id="temporary" value="1"><%- msg('temporary-authorization') %></label></p>
       <p>
         <button type="submit" name="yes" value="1" class="btn"><%- msg('Yes') %></button>
         <button type="submit" class="btn btn-danger"><%- msg('No') %></button>

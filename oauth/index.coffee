@@ -1,15 +1,3 @@
-returnCode = (req, res, scope, state, redirect_uri, mark) ->
-  oauthman.generateCode
-    username: req.session.user.name
-    scope: scope
-    redirect_uri: redirect_uri
-    clientid: req.query.client_id
-  , (code) ->
-    if code is null
-      res.send 500
-    else
-      appman.markAuthorized req.session.user.name, req.query.client_id  if mark
-      res.redirect redirect_uri + "?code=" + code + state
 appman = require("../app/man")
 oauthman = require("./man")
 messages = require("../messages")
@@ -26,15 +14,14 @@ module.exports = (app) ->
     redirect_uri = req.query.redirect_uri
     state = (if req.query.state then "&state=" + req.query.state else "")
     scope = req.query.scope or "a b"
-    unless clientid
+    if not clientid
       if redirect_uri
         return res.redirect(redirect_uri + "?error=invalid_request" + state)
       else
-        return res.send(
-          error: "invalid_request"
-        , 400)
+        return res.send(error: "invalid_request", 400)
     appman.getByID clientid, (result) ->
-      return res.redirect(redirect_uri + "?error=invalid_client" + state)  unless result.success
+      if not result.success
+        return res.redirect(redirect_uri + "?error=invalid_client" + state) 
       req.session.oauthinfo = req.session.oauthinfo or {}
       req.session.oauthinfo[clientid] =
         redirect_uri: redirect_uri
@@ -67,6 +54,7 @@ module.exports = (app) ->
       delete req.session.oauthinfo[req.query.client_id]
 
       if req.body.yes
+        perm = req.body.temporary ? true : false
         returnCode req, res, oauthinfo.scope, oauthinfo.state, oauthinfo.redirect_uri, true
       else
         res.redirect oauthinfo.redirect_uri + "?error=access_denied" + oauthinfo.state
@@ -122,3 +110,17 @@ module.exports = (app) ->
       res.send
         err: err
         user: user
+
+returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
+  oauthman.generateCode
+    username: req.session.user.name
+    scope: scope
+    redirect_uri: redirect_uri
+    clientid: req.query.client_id
+  , (code) ->
+    if code is null
+      res.send 500
+    else
+      if perm_auth
+        appman.markAuthorized req.session.user.name, req.query.client_id
+      res.redirect redirect_uri + "?code=" + code + state

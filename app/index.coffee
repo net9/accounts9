@@ -51,18 +51,33 @@ module.exports = (app) ->
         appinfo: req.appinfo
         amOwner: req.amOwner
 
+  app.get "/apps/:clientid/revoke", (req, res) ->
+    res.render "confirm",
+      locals:
+        title: messages.get("revoke-authorization")
+        backUrl: "/dashboard/"
+        confirm: messages.get("revoke-authorization-confirm", req.appinfo.name)
+  app.post "/apps/:clientid/revoke", (req, res) ->
+    appman.removeAuthorized req.session.user.name, req.appinfo.clientid, (err) ->
+      if err
+        req.flash "error", err
+      else
+        req.flash "info", "app-revoke-success"
+      res.redirect "/dashboard"
+
   app.all "/apps/:clientid/remove", checkAppOwner
   app.get "/apps/:clientid/remove", (req, res) ->
-    res.render "appremoveconfirm",
+    res.render "confirm",
       locals:
         title: messages.get("removing-app", req.appinfo.name)
-        appinfo: req.appinfo
+        backUrl: "/apps/" + req.appinfo.clientid
+        confirm: messages.get("removing-app-confirm", req.appinfo.name)
 
   app.post "/apps/:clientid/remove", (req, res) ->
     appman.deleteByID req.params.clientid, (result) ->
       if result.success
-        req.flash "info", "app-removal-success|" + req.params.clientid
-        res.redirect "/"
+        req.flash "info", "app-removal-success"
+        res.redirect "/dashboard"
       else
         req.flash "error", "unknown"
         res.redirect "/apps/" + req.params.clientid

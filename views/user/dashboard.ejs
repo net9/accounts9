@@ -9,15 +9,11 @@
 </div>
 <hr>
 
-<a href="/appreg" class="btn" style="float:right;position:relative;top:10px">
-  <i class="icon-plus icon-white"></i>
-  <%= msg('register-new-app') %>
-</a>
-<h2><%= msg('apps') %></h2>
+<h2><%= msg('authorized-apps') %></h2>
 <% if (apps.success) { %>
-  <% if (apps.apps.length) { %>
+  <% if (apps.authorizedapps.length) { %>
     <ul>
-      <%- partial('partials/appitem', apps.apps) %>
+      <%- partial('app/authedappitem', apps.authorizedapps) %>
     </ul>
   <% } else { %>
     <%= msg('no-apps-yet') %>
@@ -29,11 +25,15 @@
 <% } %>
 <hr>
 
-<h2><%= msg('authorized-apps') %></h2>
+<a href="/appreg" class="btn" style="float:right;position:relative;top:10px">
+  <i class="icon-plus icon-white"></i>
+  <%= msg('register-new-app') %>
+</a>
+<h2><%= msg('registered-apps') %></h2>
 <% if (apps.success) { %>
-  <% if (apps.authorizedapps.length) { %>
+  <% if (apps.apps.length) { %>
     <ul>
-      <%- partial('partials/appitem', apps.authorizedapps) %>
+      <%- partial('partials/appitem', apps.apps) %>
     </ul>
   <% } else { %>
     <%= msg('no-apps-yet') %>
