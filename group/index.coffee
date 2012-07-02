@@ -75,11 +75,6 @@ getUser = (req, res, next) ->
     else
       req.user = user
       next()
-checkNotRootGroup = (req, res, next) ->
-  if req.params.groupname is "root"
-    err = "can-not-delete-user-from-root-group"
-    return utils.errorRedirect(req, res, err, "/group/root")
-  next()
 forbidAddUserToRootGroup = (req, res, next) ->
   if req.params.groupname is "root"
     err = "can-not-add-user-to-root-group"
@@ -266,7 +261,6 @@ module.exports = (app) ->
 
   delUserPath = groupPath + "/deluser/:username"
   app.all delUserPath, utils.checkLogin
-  app.all delUserPath, checkNotRootGroup
   app.all delUserPath, getGroup
   app.all delUserPath, checkCurrentUserIsAdmin
   app.all delUserPath, getUser
@@ -281,6 +275,9 @@ module.exports = (app) ->
   app.post delUserPath, (req, res, next) ->
     group = req.group
     user = req.user
+    if (user.groups.length is 1) and (user.groups[0] == 'root')
+      req.fromRoot = true
+    
     user.removeFromGroup group.name, (err) ->
       return utils.errorRedirect(req, res, err, "/group/" + group.name)  if err
       group.removeUser user.name, (err) ->
@@ -289,7 +286,13 @@ module.exports = (app) ->
 
   app.post delUserPath, (req, res, next) ->
     user = req.user
-    return next()  if user.groups.length > 0
+    return next() if user.groups.length > 0
+    
+    # Delete user
+    if req.fromRoot
+      return user.delete next
+    
+    # Add back to root
     Group.getByName "root", (err, rootGroup) ->
       assert not err
       rootGroup.addUser user.name, (err) ->

@@ -19,12 +19,12 @@ User = (user) ->
   @bio = user.bio ? ''
   @birthdate = user.birthdate ? ''
   @groups = user.groups ? []
-  @authorizedApps = user.authorizedApps ? []
+  @regtime = user.regtime ? new Date()
   @
 
 User.attributes = ['name', 'password', 'uid', 'nickname', 'surname',
   'givenname', 'fullname', 'email', 'mobile', 'website', 'address',
-  'bio', 'birthdate', 'groups', 'authorizedApps'
+  'bio', 'birthdate', 'groups', 'regtime'
 ]
 
 module.exports = User
@@ -47,7 +47,7 @@ mongoose.model "User", new mongoose.Schema(
   bio: String
   birthdate: String
   groups: [ String ]
-  authorizedApps: [ String ]
+  regtime: Date
 )
 
 User.model = mongoose.model("User")
@@ -176,7 +176,7 @@ User::removeFromGroup = (groupName, callback) ->
 
 User::checkGroup = (groupname, options, callback) ->
   self = this
-  unless callback
+  if not callback
     callback = options
     options = {}
   if options.direct
@@ -196,6 +196,8 @@ User::getAllGroups = (callback) ->
   self = this
   groupsMap = {}
   done = 0
+  if self.groups.length is 0
+    return callback null, []
   self.groups.forEach (groupname) ->
     Group.getByName groupname, (err, group) ->
       assert not err
@@ -234,3 +236,8 @@ User::generateUid = (callback) ->
     return callback(err) if err
     self.uid = doc.uid + 1
     callback null, self.uid
+
+User::delete = (callback) ->
+  assert @groups.length is 0
+  return callback("mongodb-not-connected")  unless mongoose.connected
+  User.model.remove name: @name, callback
