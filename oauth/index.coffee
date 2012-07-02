@@ -54,7 +54,10 @@ module.exports = (app) ->
       delete req.session.oauthinfo[req.query.client_id]
 
       if req.body.yes
-        perm = req.body.temporary ? true : false
+        if req.body.temporary
+          perm = false
+        else
+          perm = true
         returnCode req, res, oauthinfo.scope, oauthinfo.state, oauthinfo.redirect_uri, perm
       else
         res.redirect oauthinfo.redirect_uri + "?error=access_denied" + oauthinfo.state
