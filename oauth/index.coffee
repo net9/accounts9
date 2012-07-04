@@ -67,26 +67,35 @@ module.exports = (app) ->
     secret = req.param("client_secret")
     code = req.param("code")
     if not clientid or not secret or not code
-      res.send
-        error: "invalid_request"
-      , 400
-    else
-      appman.authenticate
-        clientid: clientid
-        secret: secret
-      , (result) ->
-        if result.success
-          oauthman.getCode code, (err, code) ->
-            if err or code.clientid isnt clientid
-              res.send error: "invalid_grant", 400
-            else
-              oauthman.generateAccessTokenFromCode code, (err, token) ->
-                if err
-                  res.send 500
-                else
-                  res.send
-                    access_token: token.accesstoken
-                    expires_in: ~~((token.expiredate - new Date()) / 1000)
+      return res.send error: "invalid_request", 400
+    
+    console.log clientid
+    console.log secret
+    console.log code
+
+    appman.authenticate
+      clientid: clientid
+      secret: secret
+    , (result) ->
+      if not result.success
+        #Todo error
+        return
+      oauthman.getCode code, (err, code) ->
+        consoel.log err
+        console.log code
+        if not err and code.clientid isnt clientid
+          err = "invalid_grant"
+        if err
+          return res.send error: err, 400
+        oauthman.generateAccessTokenFromCode code, (err, token) ->
+          console.log err
+          console.log token
+          if err
+            res.json err
+          else
+            res.send
+              access_token: token.accesstoken
+              expires_in: ~~((token.expiredate - new Date()) / 1000)
 
   app.all "/api/*", (req, res, next) ->
     token = req.param("access_token")
