@@ -40,7 +40,7 @@ getAccessToken = exports.getAccessToken = (token, callback) ->
 genAccessToken = exports.genAccessToken = (tokeninfo, callback) ->
   # Generate random token
   token = Math.random().toString(36).slice(2, 14)
-  getAccessToken token, (err, token) ->
+  getAccessToken token, (err) ->
     if err
       # If token doesn't exists, insert
       tokeninfo.accesstoken = token

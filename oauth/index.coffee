@@ -81,7 +81,7 @@ module.exports = (app) ->
         #Todo error
         return
       oauthman.getCode code, (err, code) ->
-        consoel.log err
+        console.log err
         console.log code
         if not err and code.clientid isnt clientid
           err = "invalid_grant"
