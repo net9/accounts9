@@ -66,7 +66,6 @@ module.exports = (app) ->
     clientid = req.param("client_id")
     secret = req.param("client_secret")
     code = req.param("code")
-    util.debug "acquire access token"
     if not clientid or not secret or not code
       res.send
         error: "invalid_request"
@@ -77,36 +76,29 @@ module.exports = (app) ->
         secret: secret
       , (result) ->
         if result.success
-          oauthman.getCode code, (result) ->
-            if not result.success or result.codeinfo.clientid isnt clientid
-              res.send
-                error: "invalid_grant"
-              , 400
+          oauthman.getCode code, (err, code) ->
+            if err or code.clientid isnt clientid
+              res.send error: "invalid_grant", 400
             else
-              oauthman.generateAccessTokenFromCode result.codeinfo, (result) ->
-                unless result.success
+              oauthman.generateAccessTokenFromCode code, (err, token) ->
+                if err
                   res.send 500
                 else
-                  accessToken = result.accessToken
                   res.send
-                    access_token: accessToken.accesstoken
-                    expires_in: ~~((accessToken.expiredate - new Date()) / 1000)
+                    access_token: token.accesstoken
+                    expires_in: ~~((token.expiredate - new Date()) / 1000)
 
   app.all "/api/*", (req, res, next) ->
     token = req.param("access_token")
     if token
-      oauthman.getAccessToken token, (result) ->
-        if result.success
-          req.tokeninfo = result.tokeninfo
+      oauthman.getAccessToken token, (err, token) ->
+        if not err
+          req.tokeninfo = token
           next()
         else
-          res.send
-            error: "invalid_token"
-          , 403
+          res.send error: "invalid_token", 403
     else
-      res.send
-        error: "invalid_token"
-      , 403
+      res.send error: "invalid_token", 403
 
   app.get "/api/userinfo", (req, res) ->
     User.getByName req.tokeninfo.username, (err, user) ->
