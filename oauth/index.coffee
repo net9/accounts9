@@ -5,6 +5,7 @@ User = require("../user/model")
 utils = require("../lib/utils")
 util = require("util")
 url = require("url")
+
 module.exports = (app) ->
   authorizePath = "/api/authorize"
   app.all authorizePath, utils.checkLogin
@@ -68,10 +69,6 @@ module.exports = (app) ->
     code = req.param("code")
     if not clientid or not secret or not code
       return res.send error: "invalid_request", 400
-    
-    console.log clientid
-    console.log secret
-    console.log code
 
     appman.authenticate
       clientid: clientid
@@ -81,15 +78,13 @@ module.exports = (app) ->
         #Todo error
         return
       oauthman.getCode code, (err, code) ->
-        console.log err
-        console.log code
+        #Check code
         if not err and code.clientid isnt clientid
           err = "invalid_grant"
         if err
           return res.send error: err, 400
         oauthman.generateAccessTokenFromCode code, (err, token) ->
-          console.log err
-          console.log token
+          #Generate access token
           if err
             res.json err
           else
@@ -98,6 +93,7 @@ module.exports = (app) ->
               expires_in: ~~((token.expiredate - new Date()) / 1000)
 
   app.all "/api/*", (req, res, next) ->
+    #Validate access token
     token = req.param("access_token")
     if token
       oauthman.getAccessToken token, (err, token) ->
