@@ -15,13 +15,17 @@ getCode = exports.getCode = (code, callback) ->
 
 genCode = exports.generateCode = (codeinfo, callback) ->
   code = Math.random().toString(36).slice(2, 14)
-  getCode code, (err, code) ->
+  getCode code, (err) ->
     if not err
       genCode codeinfo, callback
     else
       codeinfo.code = code
       codeinfo.expiredate = new Date(Date.now() + codeTimeout)
-      oauthbase.upsertCode codeinfo, callback
+      oauthbase.upsertCode codeinfo, (err, codeinfo) ->
+        if err
+          callback err
+        else
+          callback null, code
 
 getAccessToken = exports.getAccessToken = (token, callback) ->
   # Find existing token into database

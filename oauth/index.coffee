@@ -112,9 +112,9 @@ returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
     scope: scope
     redirect_uri: redirect_uri
     clientid: req.query.client_id
-  , (code) ->
-    if code is null
-      res.send 500
+  , (err, code) ->
+    if err
+      res.json err
     else
       if perm_auth
         appman.markAuthorized req.session.user.name, req.query.client_id
