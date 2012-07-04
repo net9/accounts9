@@ -6,7 +6,7 @@ cleanupInterval = 600e3
 
 getCode = exports.getCode = (code, callback) ->
   oauthbase.getCode code, (err, code) ->
-    if not err and codeOrErr.expiredate < new Date()
+    if not err and code.expiredate < new Date()
       err = "code-has-expired"
     if not err
       callback null, code
