@@ -103,6 +103,7 @@ exports.contains = (array, value) ->
   false
 
 exports.genPassword = (rawpass) ->
+  rawpass = "" if not rawpass?
   hash = crypto.createHash("sha1")
   hash.update rawpass
   hash.update "salt"

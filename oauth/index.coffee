@@ -63,13 +63,16 @@ module.exports = (app) ->
       else
         res.redirect oauthinfo.redirect_uri + "?error=access_denied" + oauthinfo.state
 
-  app.all "/api/access_token", (req, res) ->
+  accessTokenPath = "/api/access_token"
+  app.all accessTokenPath, (req, res, next) ->
     clientid = req.param("client_id")
     secret = req.param("client_secret")
     code = req.param("code")
-    if not clientid or not secret or not code
+    username = req.param("username")
+    password = req.param("password")
+    if not clientid or not secret or (not code and not username)
       return res.send error: "invalid_request", 400
-
+    
     appman.authenticate
       clientid: clientid
       secret: secret
@@ -77,21 +80,53 @@ module.exports = (app) ->
       if not result.success
         #Todo error
         return
-      oauthman.getCode code, (err, code) ->
-        #Check code
-        if not err and code.clientid isnt clientid
-          err = "invalid_grant"
-        if err
-          return res.send error: err, 400
-        oauthman.generateAccessTokenFromCode code, (err, token) ->
-          #Generate access token
+      if code
+        #Generate access token from code
+        oauthman.getCode code, (err, code) ->
+          #Check code
+          if not err and code.clientid isnt clientid
+            err = "invalid_grant"
           if err
-            res.json err
-          else
-            res.send
-              access_token: token.accesstoken
-              expires_in: ~~((token.expiredate - new Date()) / 1000)
+            return res.send error: err, 400
+          req.code = code
+          next()
+      else
+        #Check username and password
+        User.getByName username, (err, user) ->
+          if not err and not user.checkPassword password
+            err = "invalid_password"
+          return res.send error: err, 400 if err
+          req.user = user
+          req.clientid = clientid
+          next()
 
+  app.all accessTokenPath, (req, res, next) ->
+    return next() if not req.code?
+    code = req.code
+    oauthman.generateAccessTokenFromCode code, (err, token) ->
+      #Generate access token from code
+      return res.send error: err, 400 if err
+      req.token = token
+      next()
+
+  app.all accessTokenPath, (req, res, next) ->
+    return next() if not req.user?
+    user = req.user
+    token = 
+      username: user.name
+      scope: 'all'
+      clientid: req.clientid
+    oauthman.genAccessToken token, (err, token) ->
+      return res.send error: err, 400 if err
+      req.token = token
+      next()
+      
+  app.all accessTokenPath, (req, res, next) ->
+    token = req.token
+    res.send
+      access_token: token.accesstoken
+      expires_in: ~~((token.expiredate - new Date()) / 1000)
+              
   app.all "/api/*", (req, res, next) ->
     #Validate access token
     token = req.param("access_token")
