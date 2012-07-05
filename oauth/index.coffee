@@ -2,8 +2,10 @@ appman = require("../app/man")
 oauthman = require("./man")
 messages = require("../messages")
 User = require("../user/model")
+Group = require("../group/model")
 Metainfo = require("../lib/metainfo")
 utils = require("../lib/utils")
+config = require '../config'
 util = require("util")
 url = require("url")
 
@@ -147,11 +149,24 @@ module.exports = (app) ->
         err: err
         user: user
   
+  #Methods below need additional authrorizations
+  app.get "/api/*", (req, res, next) ->
+    interfaceSecret = req.param("interface_secret")
+    if not (config.interfaceSecret is interfaceSecret)
+      return res.send error: "invalid_secret", 403
+    next()
+  
   app.get "/api/grouptimestamp", (req, res) ->
     Metainfo.groupTimestamp (err, group_timestamp) ->
       res.send
         err: err
         group_timestamp: group_timestamp.getTime()
+  
+  app.get "/api/groups", (req, res) ->
+    Group.getAll (err, groups) ->
+      res.send
+        err: err
+        groups: groups
 
 returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
   oauthman.generateCode
