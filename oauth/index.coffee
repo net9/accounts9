@@ -2,6 +2,7 @@ appman = require("../app/man")
 oauthman = require("./man")
 messages = require("../messages")
 User = require("../user/model")
+Metainfo = require("../lib/metainfo")
 utils = require("../lib/utils")
 util = require("util")
 url = require("url")
@@ -145,6 +146,12 @@ module.exports = (app) ->
       res.send
         err: err
         user: user
+  
+  app.get "/api/grouptimestamp", (req, res) ->
+    Metainfo.groupTimestamp (err, group_timestamp) ->
+      res.send
+        err: err
+        group_timestamp: group_timestamp.getTime()
 
 returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
   oauthman.generateCode

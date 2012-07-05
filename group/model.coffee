@@ -8,10 +8,11 @@ class Group
     @parent = group.parent
     @children = group.children
 
-mongoose = require "../lib/mongoose" 
-utils = require "../lib/utils" 
-User = require "../user/model" 
-assert = require "assert" 
+mongoose = require "../lib/mongoose"
+metainfo = require "../lib/metainfo"
+utils = require "../lib/utils"
+User = require "../user/model"
+assert = require "assert"
 module.exports = Group
 
 mongoose.model "Group", new mongoose.Schema(
@@ -135,9 +136,12 @@ Group.initialize = initialize = (user, callback) ->
 Group::save = save = (callback) ->
   self = this
   Group._getGroup @name, (err, group) ->
-    return callback(err)  if err
+    return callback err if err
     utils.mergeProps group, self
-    Group.model::save.call group, callback
+    Group.model::save.call group, (err) ->
+      callback err
+      #Update group metainfo
+      metainfo.updateGroup()
 
 Group::remove = remove = (callback) ->
   self = this
