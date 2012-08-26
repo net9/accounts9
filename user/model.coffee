@@ -234,7 +234,10 @@ User::generateUid = (callback) ->
   self = this
   User.model.findOne().sort('uid', -1).exec (err, doc) ->
     return callback(err) if err
-    self.uid = doc.uid + 1
+    if doc == null
+      self.uid = 1
+    else
+      self.uid = doc.uid + 1
     callback null, self.uid
 
 User::delete = (callback) ->
