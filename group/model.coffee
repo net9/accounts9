@@ -143,19 +143,18 @@ Group::save = save = (callback) ->
       #Update group metainfo
       metainfo.updateGroup()
 
-Group::remove = remove = (callback) ->
+Group::remove = (callback) ->
   self = this
   Group._getGroup @name, (err, group) ->
     return callback(err)  if err
-    self.users.forEach (username) ->
-      User.getByName username, (err, user) ->
-        assert false  if err
-        user.removeFromGroup self,
-          groupNotRemove: true
-        , (err) ->
-          assert false  if err
-
-    Group.model::remove.call group, callback
+    if self.users.length != 0 or self.children.length != 0
+      return callback('can-not-delete-group-not-empty')
+    
+    Group.getByName self.parent, (err, parentGroup) ->
+      return callback(err)  if err
+      parentGroup.removeChildGroup self.name, (err) ->
+        return callback(err)  if err
+        Group.model::remove.call group, callback
 
 Group::addUser = addUser = (username, callback) ->
   for key of @users

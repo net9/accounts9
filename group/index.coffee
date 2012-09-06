@@ -1,3 +1,9 @@
+Group = require("./model")
+User = require("../user/model")
+messages = require("../messages")
+utils = require("../lib/utils")
+assert = require("assert")
+
 getGroup = (req, res, next) ->
   Group.getByName req.params.groupname, (err, group) ->
     if err
@@ -85,11 +91,7 @@ checkRootAdmin = (req, res, next) ->
     err = "can-not-delete-the-only-admin-from-root-group"
     return utils.errorRedirect(req, res, err, "/group/root")
   next()
-Group = require("./model")
-User = require("../user/model")
-messages = require("../messages")
-utils = require("../lib/utils")
-assert = require("assert")
+
 module.exports = (app) ->
   app.get "/group", utils.checkLogin
   app.get "/group", utils.checkAuthorized
@@ -198,6 +200,28 @@ module.exports = (app) ->
   app.post editGroupPath, (req, res, next) ->
     req.flash "info", "edit-group-success"
     res.redirect "/group/" + req.group.name
+
+  delGroupPath = groupPath + "/del"
+  app.all delGroupPath, utils.checkLogin
+  app.all delGroupPath, getGroup
+  app.all delGroupPath, checkCurrentUserIsAdmin
+  app.get delGroupPath, (req, res, next) ->
+    backUrl = "/group/" + req.group.parent
+    res.render "confirm",
+      locals:
+        title: messages.get("del-group")
+        backUrl: backUrl
+        confirm: messages.get("del-group-confirm")
+
+  app.post delGroupPath, (req, res, next) ->
+    group = req.group
+    group.remove (err) ->
+      if err
+        req.flash "error", err
+        res.redirect "/group/" + req.group.name
+      else
+        req.flash "info", "del-group-success"
+        res.redirect "/group/" + req.group.parent
 
   allUsersPath = groupPath + "/allusers"
   app.get allUsersPath, utils.checkLogin
