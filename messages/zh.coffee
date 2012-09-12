@@ -4,6 +4,7 @@ exports.messages =
   "login": "登入"
   "logout": "登出"
   "register": "注册"
+  "fetch-password": "找回口令"
   "dashboard": "控制面板"
   "userinfo": "个人信息"
   "edit-userinfo": "修改个人信息"

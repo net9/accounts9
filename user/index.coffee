@@ -1,42 +1,3 @@
-checkLogin = (req, res, next) ->
-  if req.session.user
-    next()
-  else
-    req.flash "error", "not-loged-in"
-    res.redirect url.format(
-      pathname: "/login"
-      query:
-        returnto: req.url
-    )
-getUser = (req, res, next) ->
-  User.getByName req.params.username, (err, user) ->
-    return utils.errorRedirect(req, res, err, "/")  if err
-    req.user = user
-    next()
-getCurrentUser = (req, res, next) ->
-  User.getByName req.session.user.name, (err, user) ->
-    return utils.errorRedirect(req, res, err, "/")  if err
-    req.user = user
-    next()
-getUserDirectGroup = (req, res, next) ->
-  user = req.user
-  Group.getByNames user.groups, (err, groups) ->
-    return utils.errorRedirect(req, res, err, "/")  if err
-    user.groups = groups
-    next()
-getUserAdminGroup = (req, res, next) ->
-  user = req.user
-  Group.getAll (err, groups) ->
-    user.adminGroups = []
-    groups.forEach (group) ->
-      user.adminGroups.push group  if utils.contains(group.admins, user.name)
-
-    next()
-getApps = (req, res, next) ->
-  user = req.user
-  appman.getAllByUser user.name, (apps) ->
-    req.apps = apps
-    next()
 User = require("./model")
 Group = require("../group/model")
 appman = require("../app/man")
@@ -98,7 +59,12 @@ module.exports = (app) ->
         redirectUrl = req.param("returnto")
         redirectUrl = "/u/" + user.name  unless redirectUrl
         res.redirect redirectUrl
-
+        
+  app.get "/login/fetchpwd", (req, res) ->
+    res.render "user/fetchpwd",
+      locals:
+        title: messages.get("fetch-password")
+  
   app.get "/logout", (req, res) ->
     req.session.user = null
     res.redirect req.query.returnto or "/"
@@ -171,3 +137,43 @@ module.exports = (app) ->
         req.session.user = user
         req.flash "info", messages.get("editinfo-success")
         res.redirect "/dashboard"
+
+checkLogin = (req, res, next) ->
+  if req.session.user
+    next()
+  else
+    req.flash "error", "not-loged-in"
+    res.redirect url.format(
+      pathname: "/login"
+      query:
+        returnto: req.url
+    )
+getUser = (req, res, next) ->
+  User.getByName req.params.username, (err, user) ->
+    return utils.errorRedirect(req, res, err, "/")  if err
+    req.user = user
+    next()
+getCurrentUser = (req, res, next) ->
+  User.getByName req.session.user.name, (err, user) ->
+    return utils.errorRedirect(req, res, err, "/")  if err
+    req.user = user
+    next()
+getUserDirectGroup = (req, res, next) ->
+  user = req.user
+  Group.getByNames user.groups, (err, groups) ->
+    return utils.errorRedirect(req, res, err, "/")  if err
+    user.groups = groups
+    next()
+getUserAdminGroup = (req, res, next) ->
+  user = req.user
+  Group.getAll (err, groups) ->
+    user.adminGroups = []
+    groups.forEach (group) ->
+      user.adminGroups.push group  if utils.contains(group.admins, user.name)
+
+    next()
+getApps = (req, res, next) ->
+  user = req.user
+  appman.getAllByUser user.name, (apps) ->
+    req.apps = apps
+    next()
