@@ -1,4 +1,5 @@
 BBS = require("./model")
+messages = require("../messages")
 
 module.exports = (app) ->
   connectPath = '/bbs/connect'
@@ -13,6 +14,7 @@ module.exports = (app) ->
       req.flash "error", req.query.error
       return res.redirect '/dashboard'
     BBS.updateToken req.session.user, req.query.code, (err) ->
+      req.flash "info", messages.get("net9-bbs-connect-success")
       res.redirect '/dashboard'
 
 checkLogin = (req, res, next) ->
