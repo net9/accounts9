@@ -1,15 +1,13 @@
 User = require("./model")
+BBSUser = require("../bbs/model")
 Group = require("../group/model")
 appman = require("../app/man")
 messages = require("../messages")
 utils = require("../lib/utils")
 url = require("url")
 assert = require("assert")
+
 module.exports = (app) ->
-  app.get '/test', (req, res, next) ->
-    User.getByName 'byvoid', (err, user) ->
-      user.generateUid null
-  
   userPath = "/u/:username"
   app.get userPath, checkLogin
   app.get userPath, utils.checkAuthorized
@@ -26,6 +24,7 @@ module.exports = (app) ->
   dashboard = "/dashboard"
   app.get dashboard, checkLogin
   app.get dashboard, getCurrentUser
+  app.get dashboard, getCurrentUserBBS
   app.get dashboard, getUserDirectGroup
   app.get dashboard, getUserAdminGroup
   app.get dashboard, getApps
@@ -34,6 +33,7 @@ module.exports = (app) ->
       locals:
         title: messages.get("dashboard")
         user: req.user
+        bbsUser: req.bbsUser
         apps: req.apps
 
   app.get "/login", (req, res) ->
@@ -150,13 +150,18 @@ checkLogin = (req, res, next) ->
     )
 getUser = (req, res, next) ->
   User.getByName req.params.username, (err, user) ->
-    return utils.errorRedirect(req, res, err, "/")  if err
+    return utils.errorRedirect(req, res, err, "/dashboard") if err
     req.user = user
     next()
 getCurrentUser = (req, res, next) ->
   User.getByName req.session.user.name, (err, user) ->
     return utils.errorRedirect(req, res, err, "/")  if err
     req.user = user
+    next()
+getCurrentUserBBS = (req, res, next) ->
+  BBSUser.getAndUpdate req.session.user.uid, (err, bbsUser) ->
+    return utils.errorRedirect(req, res, err, "/")  if err
+    req.bbsUser = bbsUser
     next()
 getUserDirectGroup = (req, res, next) ->
   user = req.user

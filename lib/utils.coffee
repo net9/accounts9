@@ -110,3 +110,10 @@ exports.genPassword = (rawpass) ->
   buf = new Buffer(256)
   len = buf.write(hash.digest() + "salt", 0, "ascii")
   buf.toString("base64", 0, len)
+
+exports.parseJSON = (data, callback) ->
+  try
+    data = JSON.parse data
+  catch err
+    return callback err
+  callback null, data

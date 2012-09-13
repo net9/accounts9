@@ -112,4 +112,5 @@ exports.messages =
   "remove-app": "删除应用"
   "revoke-authorization": "撤销授权"
   "revoke-authorization-confirm": "你确定要撤销<a href=\"/apps/$1\" target=\"_blank\"><strong>$2</strong></a>的访问权限吗？撤销后<strong>$2</strong>将不能再访问你的个人信息。"
-  
+  "net9-bbs": "酒井BBS"
+  "net9-bbs-connect": "连接酒井BBS"
