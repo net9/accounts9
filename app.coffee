@@ -68,6 +68,11 @@ app.helpers
 
   inspect: (obj) ->
     util.inspect obj
+  
+  displayDate: (timestamp) ->
+    date = new Date(timestamp * 1000)
+    date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' +
+      date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 
 app.dynamicHelpers
   curUser: (req, res) ->
