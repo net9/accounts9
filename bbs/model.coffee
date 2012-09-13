@@ -57,7 +57,11 @@ BBSUser.getAndUpdate = (uid, callback) ->
   BBSUser.findOne uid:uid, (err, bbsUser) ->
     return callback err if err
     return callback null, null if not bbsUser
-    #TODO check if token expired
+
+    #TODO use refresh token
+    if new Date().getTime() / 1000 >= bbsUser.accessTokenExpire
+      return callback null, null
+    
     bbsUser.updateInformation (err) ->
       callback err, bbsUser
 
