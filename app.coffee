@@ -20,6 +20,7 @@ app.configure ->
   app.use express.logger(stream: accessLogfile)
   app.set "views", __dirname + "/views"
   app.set "view engine", "ejs"
+  app.enable "jsonp callback"
   app.use express.bodyParser()
   app.use express.methodOverride()
   app.use express.cookieParser()

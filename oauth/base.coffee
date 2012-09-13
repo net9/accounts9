@@ -6,6 +6,7 @@ mongoose.model "OAuthCode", new mongoose.Schema(
     index: true
   expiredate: Date
   username: String
+  uid: Number
   redirect_uri: String
   clientid: String
   scope: String
@@ -40,6 +41,7 @@ mongoose.model "AccessToken", new mongoose.Schema(
 
   expiredate: Date
   username: String
+  uid: Number
   clientid: String
   scope: String
 )

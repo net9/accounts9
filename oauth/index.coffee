@@ -179,6 +179,7 @@ module.exports = (app) ->
 returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
   oauthman.generateCode
     username: req.session.user.name
+    uid: req.session.user.uid
     scope: scope
     redirect_uri: redirect_uri
     clientid: req.query.client_id
