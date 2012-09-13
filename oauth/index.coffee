@@ -23,7 +23,7 @@ module.exports = (app) ->
       if redirect_uri
         return res.redirect(redirect_uri + "?error=invalid_request" + state)
       else
-        return res.send(error: "invalid_request", 400)
+        return res.json(error: "invalid_request", 400)
     appman.getByID clientid, (result) ->
       if not result.success
         return res.redirect(redirect_uri + "?error=invalid_client" + state) 
@@ -75,7 +75,7 @@ module.exports = (app) ->
     username = req.param("username")
     password = req.param("password")
     if not clientid or not secret or (not code and not username)
-      return res.send error: "invalid_request", 400
+      return res.json error: "invalid_request", 400
     
     appman.authenticate
       clientid: clientid
@@ -91,7 +91,7 @@ module.exports = (app) ->
           if not err and code.clientid isnt clientid
             err = "invalid_grant"
           if err
-            return res.send error: err, 400
+            return res.json error: err, 400
           req.code = code
           next()
       else
@@ -99,7 +99,7 @@ module.exports = (app) ->
         User.getByName username, (err, user) ->
           if not err and not user.checkPassword password
             err = "invalid_password"
-          return res.send error: err, 400 if err
+          return res.json error: err, 400 if err
           req.user = user
           req.clientid = clientid
           next()
@@ -109,7 +109,7 @@ module.exports = (app) ->
     code = req.code
     oauthman.generateAccessTokenFromCode code, (err, token) ->
       #Generate access token from code
-      return res.send error: err, 400 if err
+      return res.json error: err, 400 if err
       req.token = token
       next()
 
@@ -122,13 +122,13 @@ module.exports = (app) ->
       scope: 'all'
       clientid: req.clientid
     oauthman.genAccessToken token, (err, token) ->
-      return res.send error: err, 400 if err
+      return res.json error: err, 400 if err
       req.token = token
       next()
       
   app.all accessTokenPath, (req, res, next) ->
     token = req.token
-    res.send
+    res.json
       access_token: token.accesstoken
       expires_in: ~~((token.expiredate - new Date()) / 1000)
               
@@ -141,19 +141,19 @@ module.exports = (app) ->
           req.tokeninfo = token
           next()
         else
-          res.send error: "invalid_token", 403
+          res.json error: "invalid_token", 403
     else
-      res.send error: "invalid_token", 403
+      res.json error: "invalid_token", 403
 
   app.get "/api/userinfo", (req, res) ->
     User.getByName req.tokeninfo.username, (err, user) ->
-      res.send
+      res.json
         err: err
         user: user
 
   app.get "/api/bbsuserinfo", (req, res) ->
     BBSUser.getAndUpdate req.tokeninfo.uid, (err, bbsUser) ->
-      res.send
+      res.json
         err: err
         user: bbsUser
   
@@ -161,18 +161,18 @@ module.exports = (app) ->
   app.get "/api/*", (req, res, next) ->
     interfaceSecret = req.param("interface_secret")
     if not (config.interfaceSecret is interfaceSecret)
-      return res.send error: "invalid_secret", 403
+      return res.json error: "invalid_secret", 403
     next()
   
   app.get "/api/grouptimestamp", (req, res) ->
     Metainfo.groupTimestamp (err, group_timestamp) ->
-      res.send
+      res.json
         err: err
         group_timestamp: group_timestamp.getTime()
   
   app.get "/api/groups", (req, res) ->
     Group.getAll (err, groups) ->
-      res.send
+      res.json
         err: err
         groups: groups
 
