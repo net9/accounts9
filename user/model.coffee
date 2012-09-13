@@ -232,9 +232,10 @@ User::isAuthorized = (callback) ->
 
 User::generateUid = (callback) ->
   self = this
-  User.model.findOne().sort('uid', -1).exec (err, doc) ->
+  User.model.find().sort('-uid').limit(1).exec (err, doc) ->
     return callback(err) if err
-    if doc == null
+    doc = doc[0]
+    if !doc
       self.uid = 1
     else
       self.uid = doc.uid + 1
