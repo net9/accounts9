@@ -9,6 +9,9 @@ module.exports = (app) ->
   tokenPath = '/bbs/token'
   app.get tokenPath, checkLogin
   app.get tokenPath, (req, res, next) ->
+    if req.query.error
+      req.flash "error", req.query.error
+      return res.redirect '/dashboard'
     BBS.updateToken req.session.user, req.query.code, (err) ->
       res.redirect '/dashboard'
 
