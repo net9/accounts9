@@ -28,39 +28,20 @@ BBSUser.getAuthorizeUrl = () ->
     redirect_uri: config.host + '/bbs/token'
 
 BBSUser.getAccessToken = (code, callback) ->
-  https = require('https')
   querystring = require('querystring')
-  
   params = 
     redirect_uri: 'displaycode'
     code: code
     grant_type: 'authorization_code'
     client_id: bbsOAuth._clientId
     client_secret: bbsOAuth._clientSecret
-  
-  uri = bbsOAuth._getAccessTokenUrl() + '?' + querystring.stringify params
+  url = bbsOAuth._getAccessTokenUrl() + '?' + querystring.stringify params
 
-  buffer = ''
-  callbackCalled = false
-  req = https.get uri, (res) ->
-    if res.statusCode != 200
-      callbackCalled = true
-      callback res.statusCode, res.headers
-    res.on 'data', (chunk) ->
-      buffer += chunk
-    res.on 'end', () ->
-      if not callbackCalled
-        callbackCalled = true
-        try
-          result = JSON.parse buffer
-        catch err
-          callback err
-          return
-        callback null, result.access_token
-  req.on 'error', (err) ->
-    if not callbackCalled
-      callbackCalled = true
-      callback err
+  bbsOAuth._request 'GET', url, null, null, null, (err, data) ->
+    return callback err if err
+    utils.parseJSON data, (err, result) ->
+      return callback err if err
+      callback null, result.access_token
 
 BBSUser.updateToken = (user, code, callback) ->
   BBSUser.getAccessToken code, (err, accessToken) ->
