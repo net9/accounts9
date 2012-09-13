@@ -2,6 +2,7 @@ appman = require("../app/man")
 oauthman = require("./man")
 messages = require("../messages")
 User = require("../user/model")
+BBSUser = require("../bbs/model")
 Group = require("../group/model")
 Metainfo = require("../lib/metainfo")
 utils = require("../lib/utils")
@@ -117,6 +118,7 @@ module.exports = (app) ->
     user = req.user
     token = 
       username: user.name
+      uid: user.uid
       scope: 'all'
       clientid: req.clientid
     oauthman.genAccessToken token, (err, token) ->
@@ -148,6 +150,12 @@ module.exports = (app) ->
       res.send
         err: err
         user: user
+
+  app.get "/api/bbsuserinfo", (req, res) ->
+    BBSUser.getAndUpdate req.tokeninfo.uid, (err, bbsUser) ->
+      res.send
+        err: err
+        user: bbsUser
   
   #Methods below need additional authrorizations
   app.get "/api/*", (req, res, next) ->
