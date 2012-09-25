@@ -148,7 +148,7 @@ module.exports = (app) ->
       res.json error: "invalid_token", 403
 
   app.get "/api/userinfo", (req, res) ->
-    User.getByName req.tokeninfo.username, (err, user) ->
+    User.getByName req.param('user') ? req.tokeninfo.username, (err, user) ->
       res.header 'Access-Control-Allow-Origin', '*'
       res.header 'Access-Control-Allow-Methods', 'GET'
       res.json
