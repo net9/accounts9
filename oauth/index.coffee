@@ -149,12 +149,16 @@ module.exports = (app) ->
 
   app.get "/api/userinfo", (req, res) ->
     User.getByName req.tokeninfo.username, (err, user) ->
+      res.header 'Access-Control-Allow-Origin', '*'
+      res.header 'Access-Control-Allow-Methods', 'GET'
       res.json
         err: err
         user: user
 
   app.get "/api/groupinfo", (req, res) ->
     Group.getByName req.param('group'), (err, group) ->
+      res.header 'Access-Control-Allow-Origin', '*'
+      res.header 'Access-Control-Allow-Methods', 'GET'
       res.json
         err: err
         group: group
