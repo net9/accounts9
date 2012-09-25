@@ -74,6 +74,8 @@ module.exports = (app) ->
     code = req.param("code")
     username = req.param("username")
     password = req.param("password")
+    res.header 'Access-Control-Allow-Origin', '*'
+    res.header 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS'
     if not clientid or not secret or (not code and not username)
       return res.json error: "invalid_request", 400
 
