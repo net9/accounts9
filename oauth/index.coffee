@@ -26,7 +26,7 @@ module.exports = (app) ->
         return res.json(error: "invalid_request", 400)
     appman.getByID clientid, (result) ->
       if not result.success
-        return res.redirect(redirect_uri + "?error=invalid_client" + state) 
+        return res.redirect(redirect_uri + "?error=invalid_client" + state)
       req.session.oauthinfo = req.session.oauthinfo or {}
       req.session.oauthinfo[clientid] =
         redirect_uri: redirect_uri
@@ -76,7 +76,7 @@ module.exports = (app) ->
     password = req.param("password")
     if not clientid or not secret or (not code and not username)
       return res.json error: "invalid_request", 400
-    
+
     appman.authenticate
       clientid: clientid
       secret: secret
@@ -116,7 +116,7 @@ module.exports = (app) ->
   app.all accessTokenPath, (req, res, next) ->
     return next() if not req.user?
     user = req.user
-    token = 
+    token =
       username: user.name
       uid: user.uid
       scope: 'all'
@@ -125,13 +125,13 @@ module.exports = (app) ->
       return res.json error: err, 400 if err
       req.token = token
       next()
-      
+
   app.all accessTokenPath, (req, res, next) ->
     token = req.token
     res.json
       access_token: token.accesstoken
       expires_in: ~~((token.expiredate - new Date()) / 1000)
-              
+
   app.all "/api/*", (req, res, next) ->
     #Validate access token
     token = req.param("access_token")
@@ -151,25 +151,31 @@ module.exports = (app) ->
         err: err
         user: user
 
+  app.get "/api/groupinfo", (req, res) ->
+    Group.getByName req.param('group'), (err, group) ->
+      res.json
+        err: err
+        group: group
+
   app.get "/api/bbsuserinfo", (req, res) ->
     BBSUser.getAndUpdate req.tokeninfo.uid, (err, bbsUser) ->
       res.json
         err: err
         user: bbsUser
-  
+
   #Methods below need additional authrorizations
   app.get "/api/*", (req, res, next) ->
     interfaceSecret = req.param("interface_secret")
     if not (config.interfaceSecret is interfaceSecret)
       return res.json error: "invalid_secret", 403
     next()
-  
+
   app.get "/api/grouptimestamp", (req, res) ->
     Metainfo.groupTimestamp (err, group_timestamp) ->
       res.json
         err: err
         group_timestamp: group_timestamp.getTime()
-  
+
   app.get "/api/groups", (req, res) ->
     Group.getAll (err, groups) ->
       res.json
