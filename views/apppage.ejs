@@ -1,13 +1,15 @@
 <h1><%= title %></h1>
 <table class="table">
-  <tr>
-    <th><%= msg('client-id') %></th>
-    <td><%= appinfo.clientid %></td>
-  </tr>
-  <tr>
-    <th><%= msg('client-secret') %></th>
-    <td><%= appinfo.secret %></td>
-  </tr>
+  <% if (amOwner) { %>
+    <tr>
+      <th><%= msg('client-id') %></th>
+      <td><%= appinfo.clientid %></td>
+    </tr>
+    <tr>
+      <th><%= msg('client-secret') %></th>
+      <td><%= appinfo.secret %></td>
+    </tr>
+  <% } %>
   <tr>
     <th><%= msg('app-desc') %></th>
     <td><%= appinfo.desc %></td>
