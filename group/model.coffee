@@ -84,6 +84,7 @@ Group.getAllStructured = getAllStructured = (callback) ->
       while i < node.children.length
         children.push makeTree(node.children[i])
         i++
+      utils.sortBy children, "name"
       node.children = children
       node
     return callback(err)  if err
