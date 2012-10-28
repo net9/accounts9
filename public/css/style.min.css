@@ -296,6 +296,7 @@ form.horizontal label{float:left;width:200px;text-align:right;line-height:30px;}
 form.horizontal .controls,form.horizontal .form-actions{padding-left:220px;}
 form.horizontal .help-block{color:#666;padding:0;margin:0;padding-top:5px;font-size:0.8em;}
 form.horizontal textarea.text,form.horizontal input.text{line-height:20px;border:1px solid #AAA;padding:4px;margin:0;width:280px;}
+form.horizontal input.text-tiny{width:70px;}
 table.table{width:100%;}table.table th,table.table td{padding:10px;}
 table.table tr:hover td{background:#F3F3F3;}
 table.table tr:nth-child(odd){background:#FAFAFA;}
@@ -331,6 +332,6 @@ ul.breadcrumb .divider{color:#999;padding:0 5px;}
 #profile-avatar{border:1px solid #549723;position:absolute;top:-50px;left:23px;height:100px;width:100px;}
 #group{padding:10px;}#group ul{list-style:none;padding:5px;margin:0;}
 #group li{background:#FFF;color:#000;font-size:18px;padding:10px;}#group li .node{cursor:pointer;}
-#group li.show{background:#67b82b;color:#FFF;}#group li.show >.node{font-weight:bold;}
+#group li.show{background:#67b82b;color:#FFF;}#group li.show>.node{font-weight:bold;}
 #group li a{display:block;}
 #group li a.btn{display:inline-block;}

@@ -17,8 +17,9 @@ exports.merge = (house, guest) ->
   house
 
 exports.mergeProps = (dest, src) ->
-  for key of src
+  for key in Object.keys(src)
     dest[key] = src[key]
+  dest
 
 exports.mergeArray = (array1, array2) ->
   map = {}

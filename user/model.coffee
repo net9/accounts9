@@ -1,35 +1,11 @@
+'use continuation'
 Group = require("../group/model")
 mongoose = require("../lib/mongoose")
 utils = require("../lib/utils")
 assert = require("assert")
 crypto = require("crypto")
 
-User = (user) ->
-  @name = user.name ? ''
-  @password = user.password ? ''
-  @uid = parseInt(user.uid) ? 0
-  @nickname = user.nickname ? ''
-  @surname = user.surname ? ''
-  @givenname = user.givenname ? ''
-  @fullname = user.fullname ? ''
-  @email = user.email ? ''
-  @mobile = user.mobile ? ''
-  @website = user.website ? ''
-  @address = user.address ? ''
-  @bio = user.bio ? ''
-  @birthdate = user.birthdate ? ''
-  @groups = user.groups ? []
-  @regtime = user.regtime ? new Date()
-  @
-
-User.attributes = ['name', 'password', 'uid', 'nickname', 'surname',
-  'givenname', 'fullname', 'email', 'mobile', 'website', 'address',
-  'bio', 'birthdate', 'groups', 'regtime'
-]
-
-module.exports = User
-
-mongoose.model "User", new mongoose.Schema(
+UserSchema = new mongoose.Schema(
   name:
     type: String
     index: true
@@ -48,30 +24,46 @@ mongoose.model "User", new mongoose.Schema(
   birthdate: String
   groups: [ String ]
   regtime: Date
+  bachelor:
+    year: Number
+    classNumber: Number
+  master:
+    year: Number
+    classNumber: Number
+  doctor:
+    year: Number
+    classNumber: Number
 )
 
-User.model = mongoose.model("User")
+mongoose.model "User", UserSchema
+module.exports = User = mongoose.model "User"
+
+UserSchema.pre 'save', (next) ->
+  @nickname ?= ''
+  @surname ?= ''
+  @givenname ?= ''
+  @fullname ?= ''
+  @email ?= ''
+  @mobile ?= ''
+  @website ?= ''
+  @address ?= ''
+  @bio ?= ''
+  @birthdate ?= ''
+  @regtime ?= new Date()
+  @groups ?= []
+  next()
 
 User.sync = (callback) ->
-  User.model.find {}, (err, users) ->
+  User.find {}, (err, users) ->
     console.log err if err
     users.forEach (user) ->
       User.getByName user.name, (err, user) ->
         user.password = ''
         user.save null
     callback null
-    
-User._getUser = (name, callback) ->
-  return callback("mongodb-not-connected")  unless mongoose.connected
-  User.model.find name: name, (err, users) ->
-    return callback(err)  if err
-    if users.length is 1
-      callback null, users[0]
-    else
-      callback null, null
 
 User.checkName = (name, callback) ->
-  User._getUser name, (err, user) ->
+  User.findOne name: name, (err, user) ->
     return callback(err) if err
     if user
       callback "occupied"
@@ -79,12 +71,11 @@ User.checkName = (name, callback) ->
       callback null
 
 User.getByName = (name, callback) ->
-  User._getUser name, (err, user) ->
+  User.findOne name: name, (err, user) ->
     return callback(err) if err
     if not user
       callback 'no-such-user'
     else
-      user = new User user
       callback null, user
 
 User.getByNames = (usernames, callback) ->
@@ -112,7 +103,6 @@ User.create = create = (user, callback) ->
   emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
   return callback("invalid-email")  unless emailRegex.exec(user.email)
   
-  user = utils.subset(user, User.attributes)
   user.password = utils.genPassword user.password
   
   User.checkName user.name, (err) ->
@@ -131,16 +121,6 @@ User::__defineGetter__ "title", ->
 
 User::checkPassword = (password) ->
   (@password is utils.genPassword password) or (@password is '')
-
-User::save = (callback) ->
-  self = this
-  User._getUser self.name, (err, user) ->
-    return callback(err)  if err
-    if user
-      utils.mergeProps user, utils.subset(self, User.attributes)
-    else
-      user = new User.model utils.subset(self, User.attributes)
-    User.model::save.call user, callback
 
 User::addToGroup = (groupName, callback) ->
   @groups = @groups or []
@@ -194,25 +174,25 @@ User::checkGroup = (groupname, options, callback) ->
 
 User::getAllGroups = (callback) ->
   self = this
-  groupsMap = {}
   done = 0
   if self.groups.length is 0
     return callback null, []
-  self.groups.forEach (groupname) ->
-    Group.getByName groupname, (err, group) ->
-      assert not err
-      groupsMap[group.name] = group
-      group.getAncestors (err, ancestors) ->
-        assert not err
-        ancestors.forEach (group) ->
-          groupsMap[group.name] = group
 
-        done++
-        if done is self.groups.length
-          groups = []
-          for key of groupsMap
-            groups.push groupsMap[key]
-          callback null, groups
+  groupsMap = {}
+  try
+    for groupName in self.groups
+      Group.getByName groupName, obtain(group)
+      groupsMap[group.name] = group
+      group.getAncestors obtain(ancestors)
+      for ancestorGroup in ancestors
+        groupsMap[ancestorGroup.name] = ancestorGroup
+
+    groups = []
+    for key of groupsMap
+      groups.push groupsMap[key]
+    callback null, groups
+  catch err
+    callback err
 
 User::gravatar = (size) ->
   size = 100  unless size
@@ -232,7 +212,7 @@ User::isAuthorized = (callback) ->
 
 User::generateUid = (callback) ->
   self = this
-  User.model.find().sort('-uid').limit(1).exec (err, doc) ->
+  User.find().sort('-uid').limit(1).exec (err, doc) ->
     return callback(err) if err
     doc = doc[0]
     if !doc
@@ -244,4 +224,4 @@ User::generateUid = (callback) ->
 User::delete = (callback) ->
   assert @groups.length is 0
   return callback("mongodb-not-connected")  unless mongoose.connected
-  User.model.remove name: @name, callback
+  User.remove name: @name, callback

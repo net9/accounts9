@@ -59,8 +59,62 @@
     <div class="field">
       <label for="birthdate"><%- msg('birth-date') %></label>
       <div class="controls">
-        <input type="text" class="text" id="birthdate" name="birthdate" value="<%= user.birthdate %>">
+        <input type="text" class="text" id="birthdate" name="birthdate" value="<%= user.birthdate %>" autocomplete="off">
         <p class="help-block"><%- msg('editinfo-birthdate-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="bachelorYear"><%- msg('bachelor') %></label>
+      <div class="controls">
+        <% if (user.bachelor && user.bachelor.year) { %>
+          <input type="text" class="text text-tiny" name="bachelorYear" value="<%= user.bachelor.year %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="bachelorYear" value="">
+        <% } %>
+        <%- msg('year') %>
+        <% if (user.bachelor && user.bachelor.classNumber) { %>
+          <input type="text" class="text text-tiny" name="bachelorClassNumber" value="<%= user.bachelor.classNumber %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="bachelorClassNumber" value="">
+        <% } %>
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-bachelor-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="masterYear"><%- msg('master') %></label>
+      <div class="controls">
+        <% if (user.master && user.master.year) { %>
+          <input type="text" class="text text-tiny" name="masterYear" value="<%= user.master.year %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="masterYear" value="">
+        <% } %>
+        <%- msg('year') %>
+        <% if (user.master && user.master.classNumber) { %>
+          <input type="text" class="text text-tiny" name="masterClassNumber" value="<%= user.master.classNumber %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="masterClassNumber" value="">
+        <% } %>
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-master-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="doctorYear"><%- msg('doctor') %></label>
+      <div class="controls">
+        <% if (user.doctor && user.doctor.year) { %>
+          <input type="text" class="text text-tiny" name="doctorYear" value="<%= user.doctor.year %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="doctorYear" value="">
+        <% } %>
+        <%- msg('year') %>
+        <% if (user.doctor && user.doctor.classNumber) { %>
+          <input type="text" class="text text-tiny" name="doctorClassNumber" value="<%= user.doctor.classNumber %>">
+        <% } else { %>
+          <input type="text" class="text text-tiny" name="doctorClassNumber" value="">
+        <% } %>
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-doctor-tips') %></p>
       </div>
     </div>
     <div class="field">
@@ -73,13 +127,13 @@
     <div class="field">
       <label for="oldpass"><%- msg('old-password') %></label>
       <div class="controls">
-        <input type="password" class="text" id="oldpass" name="oldpass">
+        <input type="password" class="text" id="oldpass" name="oldpass" autocomplete="off">
       </div>
     </div>
     <div class="field">
       <label for="newpass"><%- msg('new-password') %></label>
       <div class="controls">
-        <input type="password" class="text" id="newpass" name="newpass">
+        <input type="password" class="text" id="newpass" name="newpass" autocomplete="off">
         <p class="help-block"><%- msg('editinfo-password-tips') %></p>
       </div>
     </div>

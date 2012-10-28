@@ -111,6 +111,9 @@ module.exports = (app) ->
       user.bio = req.body.bio
       user.birthdate = req.body.birthdate
       user.fullname = user.surname + user.givenname
+      user.bachelor = year: req.body.bachelorYear, classNumber: req.body.bachelorClassNumber
+      user.master = year: req.body.masterYear, classNumber: req.body.masterClassNumber
+      user.doctor = year: req.body.doctorYear, classNumber: req.body.doctorClassNumber
       
       if req.body.newpass
         if user.checkPassword req.body.oldpass
@@ -128,6 +131,7 @@ module.exports = (app) ->
     user = req.user
     user.save (err) ->
       if err
+        console.log arguments
         req.flash "error", err
         res.render "user/editinfo",
           locals:
@@ -167,7 +171,7 @@ getUserDirectGroup = (req, res, next) ->
   user = req.user
   Group.getByNames user.groups, (err, groups) ->
     return utils.errorRedirect(req, res, err, "/")  if err
-    user.groups = groups
+    user.directGroups = groups
     next()
 getUserAdminGroup = (req, res, next) ->
   user = req.user
