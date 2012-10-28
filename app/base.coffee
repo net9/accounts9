@@ -1,3 +1,4 @@
+"use continuation"
 utils = require("../lib/utils")
 util = require("util")
 mongoose = require("../lib/mongoose")
@@ -27,27 +28,19 @@ App = mongoose.model("App")
 UserAppRelation = mongoose.model("UserAppRelation")
 exports.getAllByUser = (username, callback) ->
   return callback("mongodb-not-connected")  unless mongoose.connected
-  App.find
-    owners: username
-  , (err, app_arr_raw) ->
-    return callback(err)  if err
+  try
+    App.find {owners: username}, obtain(app_arr_raw)
     apps = app_arr_raw.map((app) ->
       app.toObject()
     )
-    UserAppRelation.find
-      username: username
-    , (err, authAppRaw) ->
-      return callback(err, apps)  if err
-      authApps = []
-      return callback(null, apps, authApps)  if authAppRaw.length is 0
-      authAppRaw.forEach (item, index) ->
-        App.findOne
-          clientid: item.clientid
-        , (err, auth_app) ->
-          return callback(err, apps)  if err
-          if auth_app?
-            authApps.push auth_app
-          callback null, apps, authApps  if index is authAppRaw.length - 1
+    UserAppRelation.find {username: username}, obtain(authAppRaw)
+    authApps = []
+    for item in authAppRaw
+      App.findOne {clientid: item.clientid}, obtain(auth_app)
+      authApps.push auth_app if auth_app?
+    callback null, apps, authApps
+  catch err
+    callback err
 
 exports.checkByName = (appname, callback) ->
   App.count
