@@ -41,6 +41,45 @@
       <td><%= msg('birthdate-format', user.birthdate.slice(0, 4), user.birthdate.slice(4, 6), user.birthdate.slice(6, 8)) %></td>
     </tr>
   <% } %>
+  <% if (user.bachelor && (user.bachelor.year || user.bachelor.classNumber)) { %>
+    <tr>
+      <th><%= msg('bachelor') %></th>
+      <td>
+        <% if (user.bachelor.year) { %>
+          <%= user.bachelor.year %><%- msg('year') %>
+        <% } %>
+        <% if (user.bachelor.classNumber) { %>
+          <%= user.bachelor.classNumber %><%- msg('class-number') %>
+        <% } %>
+      </td>
+    </tr>
+  <% } %>
+  <% if (user.master && (user.master.year || user.master.classNumber)) { %>
+    <tr>
+      <th><%= msg('master') %></th>
+      <td>
+        <% if (user.master.year) { %>
+          <%= user.master.year %><%- msg('year') %>
+        <% } %>
+        <% if (user.master.classNumber) { %>
+          <%= user.master.classNumber %><%- msg('class-number') %>
+        <% } %>
+      </td>
+    </tr>
+  <% } %>
+  <% if (user.doctor && (user.doctor.year || user.doctor.classNumber)) { %>
+    <tr>
+      <th><%= msg('doctor') %></th>
+      <td>
+        <% if (user.doctor.year) { %>
+          <%= user.doctor.year %><%- msg('year') %>
+        <% } %>
+        <% if (user.doctor.classNumber) { %>
+          <%= user.doctor.classNumber %><%- msg('class-number') %>
+        <% } %>
+      </td>
+    </tr>
+  <% } %>
   <% if (user.bio) { %>
     <tr>
       <th><%= msg('Bio') %></th>

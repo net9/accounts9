@@ -131,7 +131,6 @@ module.exports = (app) ->
     user = req.user
     user.save (err) ->
       if err
-        console.log arguments
         req.flash "error", err
         res.render "user/editinfo",
           locals:
