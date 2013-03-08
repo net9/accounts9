@@ -6,7 +6,10 @@ assert = require 'assert'
 module.exports = (app) ->
   interfacePath = '/interface'
   app.all interfacePath, (req, res, next) ->
-    return res.json(error: 'invalid-secret')  unless config.interfaceSecret is req.body.interfaceSecret
+    secret = req.body.interfaceSecret
+    secret ?= req.query.interfaceSecret
+    if config.interfaceSecret isnt secret
+      return res.json(error: 'invalid-secret')
     next()
 
   app.all interfacePath, (req, res, next) ->

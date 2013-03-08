@@ -68,7 +68,8 @@ getAllUsers = (req, res, next) ->
 getAllUsersGroups = (req, res, next) ->
   group = req.group
   done = 0
-  group.users.forEach (user) ->
+  group.users.forEach (user, i) ->
+    user = group.users[i] = group.users[i].toObject()
     Group.getByNames user.groups, (err, groups) ->
       assert not err
       user.groups = groups
