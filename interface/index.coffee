@@ -47,9 +47,10 @@ module.exports = (app) ->
   app.all interfacePath, (req, res, next) ->
     users = req.users
     done = 0
-    users.forEach (user) ->
+    users.forEach (user, i) ->
       user.getAllGroups (err, groups) ->
         assert not err
+        user = users[i] = users[i].toObject()
         user.allGroups = groups
         done++
         next()  if done is users.length
