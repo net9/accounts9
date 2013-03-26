@@ -6,8 +6,9 @@ messages = require "./messages"
 config = require "./config" 
 express = require "express" 
 MongoStore = (require "connect-mongo") express
-fs = require "fs" 
-util = require "util" 
+fs = require "fs"
+util = require "util"
+path = require "path"
 
 # Configuration
 
@@ -40,7 +41,11 @@ app.configure ->
   app.use express.router require("./group") 
   app.use express.router require("./bbs") 
   app.use express.router require("./interface") 
-  app.use express.static __dirname+"/public" 
+  app.use require('connect-assets')(
+    src: path.join __dirname, 'assets'
+    buildDir: 'public'
+  )
+  app.use express.static __dirname + "/public" 
 
 app.configure "development", ->
   app.use express.errorHandler(
