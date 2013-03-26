@@ -23,6 +23,11 @@
                 <li><a class="btn" href="/login"><%- msg('Login') %></a></li>
                 <li><a class="btn" href="/register"><%- msg('Register') %></a></li>
               <% } else { %>
+                <li>
+                  <form method="get" action="/search">
+                    <input name="q" id="search"/>
+                  </form>
+                </li>
                 <li><a class="btn" href="/u/<%= curUser.name %>"><%= curUser.name %></a></li>
                 <li><a class="btn" href="/logout"><%- msg('Logout') %></a></li>
               <% } %>

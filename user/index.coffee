@@ -1,3 +1,4 @@
+'use continuation'
 User = require("./model")
 BBSUser = require("../bbs/model")
 Group = require("../group/model")
@@ -140,6 +141,35 @@ module.exports = (app) ->
         req.session.user = user
         req.flash "info", messages.get("editinfo-success")
         res.redirect "/dashboard"
+
+  searchPath = "/search"
+  app.get searchPath, checkLogin
+  app.get searchPath, utils.checkAuthorized
+  app.get searchPath, (req, res, next) ->
+    query = req.query.q
+    if query
+      cond =
+        $or: [
+          {name:
+            $regex: query},
+          {fullname:
+            $regex: query},
+          {nickname:
+            $regex: query},
+          {address:
+            $regex: query},
+          {website:
+            $regex: query},
+          {bio:
+            $regex: query},
+        ]
+      User.find cond, obtain(users)
+    else
+      users = []
+    res.render "user/searchresult",
+      locals:
+        title: '搜索结果'
+        users: users
 
 checkLogin = (req, res, next) ->
   if req.session.user
