@@ -11,4 +11,9 @@
 </ul>
 
 <h1><%- msg('all-users') %></h1>
-<%- partial('userlist') %>
+<% (function () { %>
+  <% var users = group.users %>
+  <% var showActions = false %>
+  <% var showBelong = true %>
+  <% include ../user/userlist %>
+<% })() %>

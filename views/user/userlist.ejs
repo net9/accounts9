@@ -1,0 +1,42 @@
+<table class="table" style="font-size:12px">
+  <tr>
+    <th><%= msg('uid') %></th>
+    <th><%= msg('username') %></th>
+    <th><%= msg('Nickname') %></th>
+    <th><%= msg('full-name') %></th>
+    <th><%= msg('Email') %></th>
+    <th><%= msg('mobile') %></th>
+    <th><%= msg('birth-date') %></th>
+    <% if (showActions) { %>
+      <th><%= msg('action') %></th>
+    <% } %>
+    <% if (showBelong) { %>
+      <th><%= msg('belong-groups') %></th>
+    <% } %>
+  </tr>
+  <% users.forEach(function(user) { %>
+    <tr>
+      <td><%= user.uid %></td>
+      <td>
+        <a href="/u/<%= user.name %>">
+          <%= user.name %>
+        </a>
+      </td>
+      <td><%= user.nickname %></td>
+      <td><%= user.fullname %></td>
+      <td><%= user.email %></td>
+      <td><%= user.mobile %></td>
+      <td><%= user.birthdate %></td>
+      <% if (showActions) { %>
+        <td>
+          <a href="/group/<%= group.name %>/deluser/<%= user.name %>" class="btn btn-danger">
+            <i class="icon-trash"></i>
+          </a>
+        </td>
+      <% } %>
+      <% if (showBelong) { %>
+        <td><%- partial('../group/grouplistplain', user.groups) %></td>
+      <% } %>
+    </tr>
+  <% }) %>
+</table>

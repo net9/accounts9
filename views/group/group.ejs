@@ -97,4 +97,9 @@
     </a>
   </p>
 <% } %>
-<%- partial('userlist') %>
+<% (function () { %>
+  <% var users = group.users %>
+  <% var showActions = group.currentUserIsAdmin %>
+  <% var showBelong = false %>
+  <% include ../user/userlist %>
+<% })() %>
