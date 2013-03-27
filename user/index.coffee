@@ -19,28 +19,6 @@ checkLogin = (req, res, next) ->
         returnto: req.url
     )
 
-getUser = (req, res, next) ->
-  User.getByName req.params.username, (err, user) ->
-    if err
-      return utils.errorRedirect(req, res, err, '/dashboard')
-    req.user = user
-    next()
-
-getUserDirectGroup = (req, res, next) ->
-  user = req.user
-  Group.getByNames user.groups, (err, groups) ->
-    return utils.errorRedirect(req, res, err, '/')  if err
-    user.directGroups = groups
-    next()
-
-getUserAdminGroup = (req, res, next) ->
-  user = req.user
-  Group.getAll (err, groups) ->
-    user.adminGroups = []
-    groups.forEach (group) ->
-      user.adminGroups.push group  if utils.contains(group.admins, user.name)
-    next()
-
 userPage = (req, res, next) ->
   try
     checkLogin req, res, obtain()
@@ -55,23 +33,26 @@ userPage = (req, res, next) ->
   catch err
     utils.errorRedirect(req, res, err, '/dashboard')
 
-module.exports = (app) ->
-  app.get '/u/:username', userPage
-
-  dashboard = '/dashboard'
-  app.get dashboard, checkLogin
-  app.get dashboard, getCurrentUser
-  app.get dashboard, getCurrentUserBBS
-  app.get dashboard, getUserDirectGroup
-  app.get dashboard, getUserAdminGroup
-  app.get dashboard, getApps
-  app.get dashboard, (req, res, next) ->
+dashboradPage = (req, res, next) ->
+  try
+    checkLogin req, res, obtain()
+    User.getByName req.session.user.name, obtain(user)
+    user.getDirectGroups obtain()
+    user.getAdminGroups obtain()
+    BBSUser.getAndUpdate req.session.user.uid, obtain(bbsUser)
+    appman.getAllByUser user.name, cont(apps)
     res.render 'user/dashboard',
       locals:
         title: messages.get('dashboard')
-        user: req.user
-        bbsUser: req.bbsUser
-        apps: req.apps
+        user: user
+        bbsUser: bbsUser
+        apps: apps
+  catch err
+    utils.errorRedirect(req, res, err, '/dashboard')
+
+module.exports = (app) ->
+  app.get '/u/:username', userPage
+  app.get '/dashboard', dashboradPage
 
   app.get '/login', (req, res) ->
     res.render 'login',
@@ -206,22 +187,3 @@ module.exports = (app) ->
       locals:
         title: '搜索结果'
         users: users
-
-
-
-getCurrentUser = (req, res, next) ->
-  User.getByName req.session.user.name, (err, user) ->
-    return utils.errorRedirect(req, res, err, '/')  if err
-    req.user = user
-    next()
-getCurrentUserBBS = (req, res, next) ->
-  BBSUser.getAndUpdate req.session.user.uid, (err, bbsUser) ->
-    return utils.errorRedirect(req, res, err, '/')  if err
-    req.bbsUser = bbsUser
-    next()
-
-getApps = (req, res, next) ->
-  user = req.user
-  appman.getAllByUser user.name, (apps) ->
-    req.apps = apps
-    next()
