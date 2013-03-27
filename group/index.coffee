@@ -1,13 +1,13 @@
 Group = require("./model")
 User = require("../user/model")
 messages = require("../messages")
-utils = require("../lib/utils")
+helpers = require("../lib/helpers")
 assert = require("assert")
 
 getGroup = (req, res, next) ->
   Group.getByName req.params.groupname, (err, group) ->
     if err
-      utils.errorRedirect req, res, err, "/"
+      helpers.errorRedirect req, res, err, "/"
     else
       req.group = group
       next()
@@ -17,18 +17,18 @@ checkContainCurrentUser = (req, res, next) ->
     direct: true
   , (err, belongTo) ->
     if err
-      utils.errorRedirect req, res, err, "/group"
+      helpers.errorRedirect req, res, err, "/group"
     else
       group.containCurrentUser = belongTo
       next()
 checkCurrentUserIsAdmin = (req, res, next) ->
   group = req.group
   group.checkAdmin req.session.user.name, (err, isAdmin) ->
-    return utils.errorRedirect(req, res, err, "/group")  if err
+    return helpers.errorRedirect(req, res, err, "/group")  if err
     group.currentUserIsAdmin = isAdmin
     if group.name is "root" and not isAdmin
       err = "permission-denied-view-root-group"
-      return utils.errorRedirect(req, res, err, "/group")
+      return helpers.errorRedirect(req, res, err, "/group")
     next()
 getParentGroup = (req, res, next) ->
   group = req.group
@@ -78,35 +78,35 @@ getAllUsersGroups = (req, res, next) ->
 getUser = (req, res, next) ->
   User.getByName req.params.username, (err, user) ->
     if err
-      utils.errorRedirect req, res, err, "/"
+      helpers.errorRedirect req, res, err, "/"
     else
       req.user = user
       next()
 forbidAddUserToRootGroup = (req, res, next) ->
   if req.params.groupname is "root"
     err = "can-not-add-user-to-root-group"
-    return utils.errorRedirect(req, res, err, "/group/root")
+    return helpers.errorRedirect(req, res, err, "/group/root")
   next()
 checkRootAdmin = (req, res, next) ->
   if req.group.name is "root" and req.group.admins.length is 1
     err = "can-not-delete-the-only-admin-from-root-group"
-    return utils.errorRedirect(req, res, err, "/group/root")
+    return helpers.errorRedirect(req, res, err, "/group/root")
   next()
 
 module.exports = (app) ->
-  app.get "/group", utils.checkLogin
-  app.get "/group", utils.checkAuthorized
+  app.get "/group", helpers.checkLogin
+  app.get "/group", helpers.checkAuthorized
   app.get "/group", (req, res) ->
     Group.getAllStructured (err, groupRoot) ->
-      return utils.errorRedirect(req, res, err, "/")  if err
+      return helpers.errorRedirect(req, res, err, "/")  if err
       res.render "group/groups",
         locals:
           title: messages.get("groups")
           groupRoot: groupRoot
 
   groupPath = "/group/:groupname"
-  app.get groupPath, utils.checkLogin
-  app.get groupPath, utils.checkAuthorized
+  app.get groupPath, helpers.checkLogin
+  app.get groupPath, helpers.checkAuthorized
   app.get groupPath, getGroup
   app.get groupPath, checkContainCurrentUser
   app.get groupPath, checkCurrentUserIsAdmin
@@ -123,7 +123,7 @@ module.exports = (app) ->
         group: group
 
   addGroupPath = groupPath + "/addgroup"
-  app.all addGroupPath, utils.checkLogin
+  app.all addGroupPath, helpers.checkLogin
   app.all addGroupPath, getGroup
   app.all addGroupPath, checkCurrentUserIsAdmin
   app.get addGroupPath, (req, res, next) ->
@@ -146,14 +146,14 @@ module.exports = (app) ->
 
     Group.create groupInfo, (err, group) ->
       parentGroupPath = "/group/" + parentGroup.name + "/addgroup"
-      return utils.errorRedirect(req, res, err, parentGroupPath)  if err
+      return helpers.errorRedirect(req, res, err, parentGroupPath)  if err
       parentGroup.addChildGroup group.name, (err) ->
         assert not err
         req.flash "info", "add-group-success"
         res.redirect "/group/" + group.name
 
   editGroupPath = groupPath + "/edit"
-  app.all editGroupPath, utils.checkLogin
+  app.all editGroupPath, helpers.checkLogin
   app.all editGroupPath, getGroup
   app.all editGroupPath, checkCurrentUserIsAdmin
   app.get editGroupPath, (req, res, next) ->
@@ -170,16 +170,16 @@ module.exports = (app) ->
     if newParent and group.parent isnt newParent
       if newParent is group.name
         err = "can-not-set-parent-to-itself"
-        return utils.errorRedirect(req, res, err, groupEditPath)
+        return helpers.errorRedirect(req, res, err, groupEditPath)
       originalParent = group.parent
       group.parent = newParent
       Group.getByName newParent, (err, newParent) ->
-        return utils.errorRedirect(req, res, err, groupEditPath)  if err
+        return helpers.errorRedirect(req, res, err, groupEditPath)  if err
         group.isDescendant newParent.name, (err, isDescendant) ->
           assert not err
           if isDescendant
             err = "can-not-set-parent-to-descendant"
-            return utils.errorRedirect(req, res, err, groupEditPath)
+            return helpers.errorRedirect(req, res, err, groupEditPath)
           newParent.addChildGroup group.name, (err) ->
             assert not err
             Group.getByName originalParent, (err, originalParent) ->
@@ -203,7 +203,7 @@ module.exports = (app) ->
     res.redirect "/group/" + req.group.name
 
   delGroupPath = groupPath + "/del"
-  app.all delGroupPath, utils.checkLogin
+  app.all delGroupPath, helpers.checkLogin
   app.all delGroupPath, getGroup
   app.all delGroupPath, checkCurrentUserIsAdmin
   app.get delGroupPath, (req, res, next) ->
@@ -225,7 +225,7 @@ module.exports = (app) ->
         res.redirect "/group/" + req.group.parent
 
   allUsersPath = groupPath + "/allusers"
-  app.get allUsersPath, utils.checkLogin
+  app.get allUsersPath, helpers.checkLogin
   app.get allUsersPath, getGroup
   app.get allUsersPath, checkCurrentUserIsAdmin
   app.get allUsersPath, getAllUsers
@@ -239,7 +239,7 @@ module.exports = (app) ->
         group: group
 
   addUserPath = groupPath + "/adduser"
-  app.all addUserPath, utils.checkLogin
+  app.all addUserPath, helpers.checkLogin
   app.all addUserPath, forbidAddUserToRootGroup
   app.all addUserPath, getGroup
   app.all addUserPath, checkCurrentUserIsAdmin
@@ -253,7 +253,7 @@ module.exports = (app) ->
     group = req.group
     User.getByName req.body.name, (err, user) ->
       errUrl = "/group/" + group.name + "/adduser"
-      return utils.errorRedirect(req, res, err, errUrl)  if err
+      return helpers.errorRedirect(req, res, err, errUrl)  if err
       req.user = user
       next()
 
@@ -274,7 +274,7 @@ module.exports = (app) ->
     user = req.user
     group = req.group
     user.addToGroup group.name, (err) ->
-      return utils.errorRedirect(req, res, err, errUrl)  if err
+      return helpers.errorRedirect(req, res, err, errUrl)  if err
       group.addUser user.name, (err) ->
         assert not err
         next()
@@ -285,7 +285,7 @@ module.exports = (app) ->
     res.redirect "/group/" + group.name
 
   delUserPath = groupPath + "/deluser/:username"
-  app.all delUserPath, utils.checkLogin
+  app.all delUserPath, helpers.checkLogin
   app.all delUserPath, getGroup
   app.all delUserPath, checkCurrentUserIsAdmin
   app.all delUserPath, getUser
@@ -304,7 +304,7 @@ module.exports = (app) ->
       req.fromRoot = true
     
     user.removeFromGroup group.name, (err) ->
-      return utils.errorRedirect(req, res, err, "/group/" + group.name)  if err
+      return helpers.errorRedirect(req, res, err, "/group/" + group.name)  if err
       group.removeUser user.name, (err) ->
         assert not err
         next()
@@ -332,7 +332,7 @@ module.exports = (app) ->
     res.redirect "/group/" + group.name
 
   addAdminPath = groupPath + "/addadmin"
-  app.all addAdminPath, utils.checkLogin
+  app.all addAdminPath, helpers.checkLogin
   app.all addAdminPath, getGroup
   app.all addAdminPath, checkCurrentUserIsAdmin
   app.get addAdminPath, (req, res, next) ->
@@ -345,14 +345,14 @@ module.exports = (app) ->
     group = req.group
     User.getByName req.body.name, (err, user) ->
       errUrl = "/group/" + group.name + "/addadmin"
-      return utils.errorRedirect(req, res, err, errUrl)  if err
+      return helpers.errorRedirect(req, res, err, errUrl)  if err
       group.addAdmin user.name, (err) ->
-        return utils.errorRedirect(req, res, err, errUrl)  if err
+        return helpers.errorRedirect(req, res, err, errUrl)  if err
         req.flash "info", "add-admin-success"
         res.redirect "/group/" + group.name
 
   delAdminPath = groupPath + "/deladmin/:username"
-  app.all delAdminPath, utils.checkLogin
+  app.all delAdminPath, helpers.checkLogin
   app.all delAdminPath, getGroup
   app.all delAdminPath, checkCurrentUserIsAdmin
   app.all delAdminPath, checkRootAdmin
@@ -369,6 +369,6 @@ module.exports = (app) ->
     group = req.group
     user = req.user
     group.removeAdmin user.name, (err) ->
-      return utils.errorRedirect(req, res, err, "/group/" + group.name)  if err
+      return helpers.errorRedirect(req, res, err, "/group/" + group.name)  if err
       req.flash "info", "del-admin-success"
       res.redirect "/group/" + group.name

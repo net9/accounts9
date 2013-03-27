@@ -6,22 +6,12 @@ Group = require('../group/model')
 appman = require('../app/man')
 messages = require('../messages')
 utils = require('../lib/utils')
-
-checkLogin = (req, res, next) ->
-  if req.session.user
-    next()
-  else
-    req.flash 'error', 'not-loged-in'
-    res.redirect url.format(
-      pathname: '/login'
-      query:
-        returnto: req.url
-    )
+helpers = require('../lib/helpers')
 
 exports.userPage = (req, res, next) ->
   try
-    checkLogin req, res, obtain()
-    utils.checkAuthorized req, res, obtain()
+    helpers.checkLogin req, res, obtain()
+    helpers.checkAuthorized req, res, obtain()
     User.getByName req.params.username, obtain(user)
     user.getDirectGroups obtain()
     user.getAdminGroups obtain()
@@ -30,11 +20,11 @@ exports.userPage = (req, res, next) ->
         title: user.title
         user: user
   catch err
-    utils.errorRedirect(req, res, err, '/dashboard')
+    helpers.errorRedirect(req, res, err, '/dashboard')
 
 exports.dashboradPage = (req, res, next) ->
   try
-    checkLogin req, res, obtain()
+    helpers.checkLogin req, res, obtain()
     User.getByName req.session.user.name, obtain(user)
     user.getDirectGroups obtain()
     user.getAdminGroups obtain()
@@ -47,7 +37,7 @@ exports.dashboradPage = (req, res, next) ->
         bbsUser: bbsUser
         apps: apps
   catch err
-    utils.errorRedirect(req, res, err, '/')
+    helpers.errorRedirect(req, res, err, '/')
 
 exports.loginPage = (req, res) ->
   res.render 'login',
@@ -102,7 +92,7 @@ exports.checkUser = (req, res) ->
 
 exports.editInfoPage = (req, res, next) ->
   try
-    checkLogin req, res, obtain()
+    helpers.checkLogin req, res, obtain()
     res.render 'user/editinfo',
       locals:
         title: messages.get('edit-userinfo')
@@ -112,7 +102,7 @@ exports.editInfoPage = (req, res, next) ->
 
 exports.editInfo = (req, res, next) ->
   try
-    checkLogin req, res, obtain()
+    helpers.checkLogin req, res, obtain()
     User.getByName req.session.user.name, obtain(user)
     user.nickname = req.body.nickname
     user.surname = req.body.surname
@@ -128,6 +118,11 @@ exports.editInfo = (req, res, next) ->
     user.bachelor = year: req.body.bachelorYear, classNumber: req.body.bachelorClassNumber
     user.master = year: req.body.masterYear, classNumber: req.body.masterClassNumber
     user.doctor = year: req.body.doctorYear, classNumber: req.body.doctorClassNumber
+    
+    # Check email
+    User.findOne {email: user.email}, obtain(existance)
+    if (existance and (existance.uid isnt user.uid))
+      throw 'email-already-exists'
     
     # Change if new password is set
     if req.body.newpass
@@ -150,8 +145,8 @@ exports.editInfo = (req, res, next) ->
 
 exports.search = (req, res, next) ->
   try
-    checkLogin req, res, obtain()
-    utils.checkAuthorized req, res, obtain()
+    helpers.checkLogin req, res, obtain()
+    helpers.checkAuthorized req, res, obtain()
     query = req.query.q
     if query
       cond =

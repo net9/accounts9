@@ -1,4 +1,3 @@
-User = require('../user/model')
 url = require('url')
 assert = require('assert')
 crypto = require('crypto')
@@ -37,33 +36,6 @@ exports.mergeArray = (array1, array2) ->
   for key of map
     newArray.push key
   newArray
-
-exports.checkLogin = (req, res, next) ->
-  if req.session.user
-    next()
-  else
-    req.flash "error", "not-loged-in"
-    res.redirect url.format(
-      pathname: "/login"
-      query:
-        returnto: req.url
-    )
-
-exports.checkAuthorized = (req, res, next) ->
-  if req.session.user
-    User.getByName req.session.user.name, (err, user) ->
-      assert not err
-      user.isAuthorized (err, isAuthorized) ->
-        assert not err
-        if isAuthorized
-          next()
-        else
-          req.flash "error", "not-authorized"
-          res.redirect "/dashboard"
-
-exports.errorRedirect = (req, res, err, redirect) ->
-  req.flash "error", err
-  res.redirect redirect
 
 exports.reduce = (array) ->
   map = {}

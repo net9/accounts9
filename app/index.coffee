@@ -6,11 +6,11 @@ checkAppOwner = (req, res, next) ->
     next()
 appman = require("./man")
 messages = require("../messages")
-utils = require("../lib/utils")
+helpers = require("../lib/helpers")
 module.exports = (app) ->
   appRegPath = "/appreg"
-  app.all appRegPath, utils.checkLogin
-  app.all appRegPath, utils.checkAuthorized
+  app.all appRegPath, helpers.checkLogin
+  app.all appRegPath, helpers.checkAuthorized
   app.get appRegPath, (req, res) ->
     res.render "appreg",
       locals:

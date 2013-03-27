@@ -5,15 +5,15 @@ User = require("../user/model")
 BBSUser = require("../bbs/model")
 Group = require("../group/model")
 Metainfo = require("../lib/metainfo")
-utils = require("../lib/utils")
+helpers = require("../lib/helpers")
 config = require '../config'
 util = require("util")
 url = require("url")
 
 module.exports = (app) ->
   authorizePath = "/api/authorize"
-  app.all authorizePath, utils.checkLogin
-  app.all authorizePath, utils.checkAuthorized
+  app.all authorizePath, helpers.checkLogin
+  app.all authorizePath, helpers.checkAuthorized
   app.get authorizePath, (req, res) ->
     clientid = req.query.client_id
     redirect_uri = req.query.redirect_uri
