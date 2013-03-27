@@ -10,6 +10,30 @@ routes = [
   }, {
     path: '/dashboard'
     GET: user.dashboradPage
+  }, {
+    path: '/login'
+    GET: user.loginPage
+    POST: user.login
+  }, {
+    path: '/logout'
+    GET: user.logout
+  }, {
+    path: '/login/fetchpwd'
+    GET: user.fetchPasswordPage
+  }, {
+    path: '/register'
+    POST: user.register
+    ALL: user.registerPage
+  }, {
+    path: '/checkuser'
+    ALL: user.checkUser
+  }, {
+    path: '/editinfo'
+    GET: user.editInfoPage
+    POST: user.editInfo
+  }, {
+    path: '/search'
+    GET: user.search
   }
 ]
 
@@ -31,4 +55,5 @@ module.exports = (app) ->
   for route in routes
     for method, handler of route
       if method isnt 'path'
-        app[method.toLowerCase()] route.path, handler
+        method = method.toLowerCase()
+        app[method] route.path, handler
