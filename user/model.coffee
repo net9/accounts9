@@ -16,7 +16,10 @@ UserSchema = new mongoose.Schema(
   surname: String
   givenname: String
   fullname: String
-  email: String
+  email:
+    type: String
+    index: true
+    unique: true
   mobile: String
   website: String
   address: String
@@ -44,6 +47,7 @@ UserSchema.pre 'save', (next) ->
   @givenname ?= ''
   @fullname ?= ''
   @email ?= ''
+  @email = @email.toLowerCase()
   @mobile ?= ''
   @website ?= ''
   @address ?= ''
@@ -51,6 +55,7 @@ UserSchema.pre 'save', (next) ->
   @birthdate ?= ''
   @regtime ?= new Date()
   @groups ?= []
+  
   next()
 
 User.sync = (callback) ->
@@ -66,7 +71,7 @@ User.checkName = (name, callback) ->
   User.findOne name: name, (err, user) ->
     return callback(err) if err
     if user
-      callback "occupied"
+      callback "username-occupied"
     else
       callback null
 
@@ -93,25 +98,40 @@ User.getByNames = (usernames, callback) ->
         utils.sortBy users, "uid"
         callback null, users
 
-User.create = create = (user, callback) ->
-  return callback("fields-required")  if not user.name or not user.password or not user.email
-  return callback("password-mismatch")  unless user.password is user["password-repeat"]
+# Create a new user
+User.create = (user, callback) ->
+  # Check require fields and if passwords match
+  if not user.name or not user.password or not user.email
+    return callback("fields-required")
+  if user.password isnt user["password-repeat"]
+    return callback("password-mismatch")
   
-  usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{3,11}$/
-  return callback("invalid-username")  unless usernameRegex.exec(user.name)
+  # Normalize username and email address to lower case
+  user.name = user.name.toLowerCase()
+  user.email = user.email.toLowerCase()
   
-  emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
-  return callback("invalid-email")  unless emailRegex.exec(user.email)
+  # Validate username and email format
+  usernameRegex = /^[a-z][a-z0-9_]{3,11}$/
+  if not usernameRegex.exec(user.name)
+    return callback("invalid-username")
+  emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
+  if not emailRegex.exec(user.email)
+    return callback("invalid-email")
   
+  # Generate password hash
   user.password = utils.genPassword user.password
   
-  User.checkName user.name, (err) ->
-    return callback(err) if err
+  try
+    User.checkName user.name, obtain()
+    User.findOne {email: user.email}, obtain(existance)
+    if (existance)
+      throw 'email-already-exists'
     user = new User(user)
-    user.generateUid (err) ->
-      return callback(err) if err
-      user.addToDefaultGroup (err) ->
-        callback err, user
+    user.generateUid obtain()
+    user.addToDefaultGroup obtain()
+    callback null, user
+  catch err
+    callback err
 
 User::__defineGetter__ "title", ->
   if @fullname

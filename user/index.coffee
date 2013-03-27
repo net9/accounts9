@@ -120,6 +120,7 @@ exports.editInfo = (req, res, next) ->
     user.doctor = year: req.body.doctorYear, classNumber: req.body.doctorClassNumber
     
     # Check email
+    user.email = user.email.toLowerCase()
     User.findOne {email: user.email}, obtain(existance)
     if (existance and (existance.uid isnt user.uid))
       throw 'email-already-exists'
