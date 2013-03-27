@@ -1,3 +1,4 @@
+'use continuation'
 Group = require("./model")
 User = require("../user/model")
 messages = require("../messages")
@@ -11,16 +12,7 @@ getGroup = (req, res, next) ->
     else
       req.group = group
       next()
-checkContainCurrentUser = (req, res, next) ->
-  group = req.group
-  group.checkUser req.session.user.name,
-    direct: true
-  , (err, belongTo) ->
-    if err
-      helpers.errorRedirect req, res, err, "/group"
-    else
-      group.containCurrentUser = belongTo
-      next()
+
 checkCurrentUserIsAdmin = (req, res, next) ->
   group = req.group
   group.checkAdmin req.session.user.name, (err, isAdmin) ->
@@ -30,33 +22,7 @@ checkCurrentUserIsAdmin = (req, res, next) ->
       err = "permission-denied-view-root-group"
       return helpers.errorRedirect(req, res, err, "/group")
     next()
-getParentGroup = (req, res, next) ->
-  group = req.group
-  if group.parent
-    Group.getByName group.parent, (err, parentGroup) ->
-      assert not err
-      group.parent = parentGroup
-      next()
-  else
-    next()
-getChildrenGroup = (req, res, next) ->
-  group = req.group
-  Group.getByNames group.children, (err, children) ->
-    assert not err
-    group.children = children
-    next()
-getGroupAdmins = (req, res, next) ->
-  group = req.group
-  User.getByNames group.admins, (err, admins) ->
-    assert not err
-    group.admins = admins
-    next()
-getDirectUsers = (req, res, next) ->
-  group = req.group
-  User.getByNames group.users, (err, users) ->
-    assert not err
-    group.users = users
-    next()
+
 getAllUsers = (req, res, next) ->
   group = req.group
   group.getAllUserNames (err, users) ->
@@ -93,35 +59,8 @@ checkRootAdmin = (req, res, next) ->
     return helpers.errorRedirect(req, res, err, "/group/root")
   next()
 
-module.exports = (app) ->
-  app.get "/group", helpers.checkLogin
-  app.get "/group", helpers.checkAuthorized
-  app.get "/group", (req, res) ->
-    Group.getAllStructured (err, groupRoot) ->
-      return helpers.errorRedirect(req, res, err, "/")  if err
-      res.render "group/groups",
-        locals:
-          title: messages.get("groups")
-          groupRoot: groupRoot
-
+exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
-  app.get groupPath, helpers.checkLogin
-  app.get groupPath, helpers.checkAuthorized
-  app.get groupPath, getGroup
-  app.get groupPath, checkContainCurrentUser
-  app.get groupPath, checkCurrentUserIsAdmin
-  app.get groupPath, getParentGroup
-  app.get groupPath, getChildrenGroup
-  app.get groupPath, getGroupAdmins
-  app.get groupPath, getDirectUsers
-  app.get groupPath, (req, res, next) ->
-    group = req.group
-    group.users.directList = true
-    res.render "group/group",
-      locals:
-        title: group.title
-        group: group
-
   addGroupPath = groupPath + "/addgroup"
   app.all addGroupPath, helpers.checkLogin
   app.all addGroupPath, getGroup
@@ -372,3 +311,42 @@ module.exports = (app) ->
       return helpers.errorRedirect(req, res, err, "/group/" + group.name)  if err
       req.flash "info", "del-admin-success"
       res.redirect "/group/" + group.name
+
+exports.hierarchyPage = (req, res) ->
+  try
+    helpers.checkAuthorized req, res, obtain()
+    Group.getAllStructured obtain(groupRoot)
+    res.render "group/groups",
+      locals:
+        title: messages.get("groups")
+        groupRoot: groupRoot
+  catch err
+    helpers.errorRedirect(req, res, err, "/")
+
+exports.groupPage = (req, res, next) ->
+  try
+    helpers.checkAuthorized req, res, obtain()
+    Group.getByName req.params.groupname, obtain(group)
+    # Check if the group contains current user
+    group.checkUser req.session.user.name, {direct: true}, obtain(group.containCurrentUser)
+    # Check if current user is the admin of the group
+    group.checkAdmin req.session.user.name, obtain(group.currentUserIsAdmin)
+    # Disallow to view root group
+    if group.name is "root" and not group.currentUserIsAdmin
+      throw "permission-denied-view-root-group"
+    # Get parent
+    if group.parent
+      Group.getByName group.parent, obtain(group.parent)
+    # Get children
+    Group.getByNames group.children, obtain(group.children)
+    # Get admins
+    User.getByNames group.admins, obtain(group.admins)
+    # Get users that directly belong to this group
+    User.getByNames group.users, obtain(group.users)
+    res.render "group/group",
+      locals:
+        title: group.title
+        group: group
+  catch err
+    console.error(err.stack)
+    helpers.errorRedirect req, res, err, "/group"

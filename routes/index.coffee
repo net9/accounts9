@@ -1,5 +1,6 @@
 messages = require('../messages')
 user = require('../user')
+group = require('../group')
 
 indexPage = (req, res) ->
   res.render 'index',
@@ -49,6 +50,12 @@ routes = [
   }, {
     path: '/search'
     GET: user.search
+  }, {
+    path: '/group'
+    GET: group.hierarchyPage
+  }, {
+    path: '/group/:groupname'
+    GET: group.groupPage
   }
 ]
 

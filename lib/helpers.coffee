@@ -3,6 +3,7 @@ url = require('url')
 assert = require('assert')
 User = require('../user/model')
 
+# Check if current user is logged in
 exports.checkLogin = (req, res, next) ->
   if req.session.user
     next()
@@ -14,6 +15,7 @@ exports.checkLogin = (req, res, next) ->
         returnto: req.url
     )
 
+# Check if current user is logged in and authorized
 exports.checkAuthorized = (req, res, next) ->
   exports.checkLogin req, res, obtain()
   try
@@ -27,6 +29,7 @@ exports.checkAuthorized = (req, res, next) ->
   catch err
     next err
 
+# Set error information and redirect
 exports.errorRedirect = (req, res, err, redirect) ->
   req.flash "error", err
   res.redirect redirect
