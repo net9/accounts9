@@ -158,6 +158,8 @@ exports.search = (req, res, next) ->
             $regex: query},
           {nickname:
             $regex: query},
+          {email:
+            $regex: query},
           {address:
             $regex: query},
           {website:
