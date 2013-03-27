@@ -194,6 +194,28 @@ User::getAllGroups = (callback) ->
   catch err
     callback err
 
+# Get group objects that the user directly belongs to
+User::getDirectGroups = (callback) ->
+  self = this
+  try
+    Group.getByNames self.groups, obtain(self.directGroups)
+    callback null, self.directGroups
+  catch err
+    callback err
+
+# Get group objects that the user manages
+User::getAdminGroups = (callback) ->
+  self = this
+  try
+    Group.getAll obtain(groups)
+    self.adminGroups = []
+    groups.forEach (group) ->
+      if utils.contains(group.admins, self.name)
+        self.adminGroups.push group
+    callback null, self.adminGroups
+  catch err
+    callback err
+
 User::gravatar = (size) ->
   size = 100  unless size
   hash = crypto.createHash("md5")

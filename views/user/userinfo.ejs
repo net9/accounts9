@@ -86,14 +86,16 @@
       <td><%= user.bio %></td>
     </tr>
   <% } %>
+  <% if (user.directGroups) { %>
   <tr>
     <th><%= msg('belong-groups') %></th>
     <td>
       <%- partial('../group/grouplistplain', user.directGroups) %>
     </td>
   </tr>
-  <tr>
+  <% } %>
   <% if (user.adminGroups) { %>
+  <tr>
     <th><%= msg('admin-groups') %></th>
     <td>
       <%- partial('../group/grouplistplain', user.adminGroups) %>
