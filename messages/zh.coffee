@@ -37,7 +37,7 @@ exports.messages =
   "editinfo-birthdate-tips": "8位数字，例如19890604(yyyymmdd)"
   "editinfo-bio-tips": "例如现于XXX公司工作/大学上学。"
   "editinfo-notice": "<strong>说明</strong>：以上信息只有已认证的酒井用户才有权限看到，不会被公开。"
-  "editinfo-success": "成功修改个人信息"
+  "editinfo-success": "成功修改信息"
   "wrong-old-password": "旧密码错误"
   "year": "级"
   "class-number": "班"

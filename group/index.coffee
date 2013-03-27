@@ -348,5 +348,4 @@ exports.groupPage = (req, res, next) ->
         title: group.title
         group: group
   catch err
-    console.error(err.stack)
     helpers.errorRedirect req, res, err, "/group"

@@ -48,6 +48,10 @@ routes = [
     GET: user.editInfoPage
     POST: user.editInfo
   }, {
+    path: '/editinfo/:username'
+    GET: user.editInfoPage
+    POST: user.editInfo
+  }, {
     path: '/search'
     GET: user.search
   }, {

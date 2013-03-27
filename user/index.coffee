@@ -93,17 +93,31 @@ exports.checkUser = (req, res) ->
 exports.editInfoPage = (req, res, next) ->
   try
     helpers.checkLogin req, res, obtain()
+    # By default edit current user
+    user = req.session.user
+    # If username is specified, edit specified user
+    if req.params.username
+      # This privilege is reserved for admin of root
+      helpers.checkRootAdmin req, res, obtain()
+      User.getByName req.params.username, obtain(user)
     res.render 'user/editinfo',
       locals:
         title: messages.get('edit-userinfo')
-        user: req.session.user
+        user: user
   catch err
     next err
 
 exports.editInfo = (req, res, next) ->
   try
     helpers.checkLogin req, res, obtain()
-    User.getByName req.session.user.name, obtain(user)
+    # By default edit current user
+    username = req.session.user.name
+    if req.params.username
+      # This privilege is reserved for admin of root
+      helpers.checkRootAdmin req, res, obtain()
+      username = req.params.username
+      editByAdmin = true
+    User.getByName username, obtain(user)
     user.nickname = req.body.nickname
     user.surname = req.body.surname
     user.givenname = req.body.givenname
@@ -127,16 +141,20 @@ exports.editInfo = (req, res, next) ->
     
     # Change if new password is set
     if req.body.newpass
-      if user.checkPassword req.body.oldpass
+      if editByAdmin or user.checkPassword(req.body.oldpass)
         user.password = utils.genPassword req.body.newpass
       else
         throw 'wrong-old-password'
     user.save obtain()
     
-    # Set session
-    req.session.user = user
+    # Update session
+    if user.uid is req.session.user.uid
+      req.session.user = user
     req.flash 'info', messages.get('editinfo-success')
-    res.redirect '/dashboard'
+    if not editByAdmin
+      res.redirect '/dashboard'
+    else
+      res.redirect '/editinfo/' + user.name
   catch err
     req.flash 'error', err
     res.render 'user/editinfo',
