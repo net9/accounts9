@@ -34,7 +34,7 @@ app.configure ->
     )
   )
   app.use app.router
-  app.use express.router require("./routes") 
+  require("./routes")(app)
   app.use express.router require("./oauth") 
   require("./user")(app)
   app.use express.router require("./app/") 

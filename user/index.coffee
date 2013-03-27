@@ -19,41 +19,7 @@ checkLogin = (req, res, next) ->
         returnto: req.url
     )
 
-userPage = (req, res, next) ->
-  try
-    checkLogin req, res, obtain()
-    utils.checkAuthorized req, res, obtain()
-    User.getByName req.params.username, obtain(user)
-    user.getDirectGroups obtain()
-    user.getAdminGroups obtain()
-    res.render 'user/user',
-      locals:
-        title: user.title
-        user: user
-  catch err
-    utils.errorRedirect(req, res, err, '/dashboard')
-
-dashboradPage = (req, res, next) ->
-  try
-    checkLogin req, res, obtain()
-    User.getByName req.session.user.name, obtain(user)
-    user.getDirectGroups obtain()
-    user.getAdminGroups obtain()
-    BBSUser.getAndUpdate req.session.user.uid, obtain(bbsUser)
-    appman.getAllByUser user.name, cont(apps)
-    res.render 'user/dashboard',
-      locals:
-        title: messages.get('dashboard')
-        user: user
-        bbsUser: bbsUser
-        apps: apps
-  catch err
-    utils.errorRedirect(req, res, err, '/dashboard')
-
-module.exports = (app) ->
-  app.get '/u/:username', userPage
-  app.get '/dashboard', dashboradPage
-
+exports = module.exports = (app) ->
   app.get '/login', (req, res) ->
     res.render 'login',
       locals:
@@ -187,3 +153,34 @@ module.exports = (app) ->
       locals:
         title: '搜索结果'
         users: users
+
+exports.userPage = (req, res, next) ->
+  try
+    checkLogin req, res, obtain()
+    utils.checkAuthorized req, res, obtain()
+    User.getByName req.params.username, obtain(user)
+    user.getDirectGroups obtain()
+    user.getAdminGroups obtain()
+    res.render 'user/user',
+      locals:
+        title: user.title
+        user: user
+  catch err
+    utils.errorRedirect(req, res, err, '/dashboard')
+
+exports.dashboradPage = (req, res, next) ->
+  try
+    checkLogin req, res, obtain()
+    User.getByName req.session.user.name, obtain(user)
+    user.getDirectGroups obtain()
+    user.getAdminGroups obtain()
+    BBSUser.getAndUpdate req.session.user.uid, obtain(bbsUser)
+    appman.getAllByUser user.name, cont(apps)
+    res.render 'user/dashboard',
+      locals:
+        title: messages.get('dashboard')
+        user: user
+        bbsUser: bbsUser
+        apps: apps
+  catch err
+    utils.errorRedirect(req, res, err, '/dashboard')
