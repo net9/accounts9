@@ -75,6 +75,14 @@ routes = [
   }, {
     path: '/group/:groupname/allusers'
     GET: group.allUsersPage
+  }, {
+    path: '/group/:groupname/adduser'
+    GET: group.addUserPage
+    POST: group.addUser
+  }, {
+    path: '/group/:groupname/deluser/:username'
+    GET: group.delUserPage
+    POST: group.delUser
   }
 ]
 

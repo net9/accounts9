@@ -58,99 +58,6 @@ exports = {}
 exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
 
-  addUserPath = groupPath + "/adduser"
-  app.all addUserPath, helpers.checkLogin
-  app.all addUserPath, forbidAddUserToRootGroup
-  app.all addUserPath, getGroup
-  app.all addUserPath, checkCurrentUserIsAdmin
-  app.get addUserPath, (req, res, next) ->
-    res.render "group/adduser",
-      locals:
-        title: messages.get("add-user")
-        group: req.group
-
-  app.post addUserPath, (req, res, next) ->
-    group = req.group
-    User.getByName req.body.name, (err, user) ->
-      errUrl = "/group/" + group.name + "/adduser"
-      return helpers.errorRedirect(req, res, err, errUrl)  if err
-      req.user = user
-      next()
-
-  app.post addUserPath, (req, res, next) ->
-    user = req.user
-    if user.groups.length is 1 and user.groups[0] is "root"
-      Group.getByName "root", (err, rootGroup) ->
-        assert not err
-        rootGroup.removeUser user.name, (err) ->
-          assert not err
-          user.removeFromGroup "root", (err) ->
-            assert not err
-            next()
-    else
-      next()
-
-  app.post addUserPath, (req, res, next) ->
-    user = req.user
-    group = req.group
-    user.addToGroup group.name, (err) ->
-      return helpers.errorRedirect(req, res, err, errUrl)  if err
-      group.addUser user.name, (err) ->
-        assert not err
-        next()
-
-  app.post addUserPath, (req, res, next) ->
-    group = req.group
-    req.flash "info", "add-user-success"
-    res.redirect "/group/" + group.name
-
-  delUserPath = groupPath + "/deluser/:username"
-  app.all delUserPath, helpers.checkLogin
-  app.all delUserPath, getGroup
-  app.all delUserPath, checkCurrentUserIsAdmin
-  app.all delUserPath, getUser
-  app.get delUserPath, (req, res, next) ->
-    backUrl = "/group/" + req.group.name
-    res.render "confirm",
-      locals:
-        title: messages.get("del-user")
-        backUrl: backUrl
-        confirm: messages.get("del-user-confirm", req.user.title)
-
-  app.post delUserPath, (req, res, next) ->
-    group = req.group
-    user = req.user
-    if (user.groups.length is 1) and (user.groups[0] == 'root')
-      req.fromRoot = true
-    
-    user.removeFromGroup group.name, (err) ->
-      return helpers.errorRedirect(req, res, err, "/group/" + group.name)  if err
-      group.removeUser user.name, (err) ->
-        assert not err
-        next()
-
-  app.post delUserPath, (req, res, next) ->
-    user = req.user
-    return next() if user.groups.length > 0
-    
-    # Delete user
-    if req.fromRoot
-      return user.delete next
-    
-    # Add back to root
-    Group.getByName "root", (err, rootGroup) ->
-      assert not err
-      rootGroup.addUser user.name, (err) ->
-        assert not err
-        user.addToGroup "root", (err) ->
-          assert not err
-          next()
-
-  app.post delUserPath, (req, res, next) ->
-    group = req.group
-    req.flash "info", "del-user-success"
-    res.redirect "/group/" + group.name
-
   addAdminPath = groupPath + "/addadmin"
   app.all addAdminPath, helpers.checkLogin
   app.all addAdminPath, getGroup
@@ -340,3 +247,77 @@ exports.allUsersPage = (req, res, next) ->
         group: group
   catch err
     helpers.errorRedirect req, res, err, "/group"
+
+exports.addUserPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    if group.name is "root"
+      throw "can-not-add-user-to-root-group"
+    res.render "group/adduser",
+      locals:
+        title: messages.get("add-user")
+        group: group
+  catch err
+    helpers.errorRedirect req, res, err, "/group"
+
+exports.addUser = (req, res, next) ->
+  errUrl = '/group'
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    errUrl = "/group/" + group.name
+    if group.name is "root"
+      throw "can-not-add-user-to-root-group"
+    errUrl = "/group/" + group.name + "/adduser"
+    User.getByName req.body.name, obtain(user)
+    # Remove from root group if user is in root group
+    if user.groups.length is 1 and user.groups[0] is "root"
+      Group.getByName "root", obtain(rootGroup)
+      rootGroup.removeUser user.name, obtain()
+      user.removeFromGroup "root", obtain()
+    # Add user to group
+    user.addToGroup group.name, obtain()
+    group.addUser user.name, obtain()
+
+    req.flash "info", "add-user-success"
+    res.redirect "/group/" + group.name
+  catch err
+    helpers.errorRedirect req, res, err, errUrl
+
+exports.delUserPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    User.getByName req.params.username, obtain(user)
+    backUrl = '/group/' + group.name
+    res.render 'confirm',
+      locals:
+        title: messages.get("del-user")
+        backUrl: backUrl
+        confirm: messages.get("del-user-confirm", user.title)
+  catch err
+    helpers.errorRedirect req, res, err, "/group"
+
+exports.delUser = (req, res, next) ->
+  redirectUrl = "/group"
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    redirectUrl = "/group/" + group.name
+    User.getByName req.params.username, obtain(user)
+    # Determine if user is in root group
+    if (user.groups.length is 1) and (user.groups[0] == 'root')
+      fromRoot = true
+    # Remove user from group
+    user.removeFromGroup group.name, obtain()
+    group.removeUser user.name, obtain()
+    # Delete user if from root group
+    if fromRoot
+      user.delete obtain()
+    # Add back to root
+    else if user.groups.length == 0
+      Group.getByName "root", obtain(rootGroup)
+      rootGroup.addUser user.name, obtain()
+      user.addToGroup "root", obtain()
+
+    req.flash "info", "del-user-success"
+    res.redirect redirectUrl
+  catch err
+    helpers.errorRedirect req, res, err, redirectUrl
