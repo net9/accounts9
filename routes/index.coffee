@@ -60,6 +60,10 @@ routes = [
   }, {
     path: '/group/:groupname'
     GET: group.groupPage
+  }, {
+    path: '/group/:groupname/addgroup'
+    GET: group.addGroupPage
+    POST: group.addGroup
   }
 ]
 

@@ -59,37 +59,22 @@ checkRootAdmin = (req, res, next) ->
     return helpers.errorRedirect(req, res, err, "/group/root")
   next()
 
+getGroupAndCheckAdminPermission = (req, res, next) ->
+  try
+    helpers.checkAuthorized req, res, obtain()
+    Group.getByName req.params.groupname, obtain(group)
+    # Check if current user is the admin of the group
+    group.checkAdmin req.session.user.name, obtain(group.currentUserIsAdmin)
+    if not group.currentUserIsAdmin
+      next 'permission-denied'
+    next null, group
+  catch err
+    next err
+
+exports = {}
+
 exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
-  addGroupPath = groupPath + "/addgroup"
-  app.all addGroupPath, helpers.checkLogin
-  app.all addGroupPath, getGroup
-  app.all addGroupPath, checkCurrentUserIsAdmin
-  app.get addGroupPath, (req, res, next) ->
-    res.render "group/edit",
-      locals:
-        title: messages.get("add-group")
-        parentGroup: req.group.name
-        group: null
-
-  app.post addGroupPath, (req, res, next) ->
-    parentGroup = req.group
-    groupInfo =
-      name: req.body.name
-      title: req.body.title
-      desc: req.body.desc
-      users: []
-      admins: []
-      parent: parentGroup.name
-      children: []
-
-    Group.create groupInfo, (err, group) ->
-      parentGroupPath = "/group/" + parentGroup.name + "/addgroup"
-      return helpers.errorRedirect(req, res, err, parentGroupPath)  if err
-      parentGroup.addChildGroup group.name, (err) ->
-        assert not err
-        req.flash "info", "add-group-success"
-        res.redirect "/group/" + group.name
 
   editGroupPath = groupPath + "/edit"
   app.all editGroupPath, helpers.checkLogin
@@ -349,3 +334,33 @@ exports.groupPage = (req, res, next) ->
         group: group
   catch err
     helpers.errorRedirect req, res, err, "/group"
+
+exports.addGroupPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    res.render "group/edit",
+      locals:
+        title: messages.get("add-group")
+        parentGroup: group.name
+        group: null
+  catch err
+    helpers.errorRedirect req, res, err, "/"
+
+exports.addGroup = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(parentGroup)
+    groupInfo =
+      name: req.body.name
+      title: req.body.title
+      desc: req.body.desc
+      users: []
+      admins: []
+      parent: parentGroup.name
+      children: []
+    Group.create groupInfo, obtain(group)
+    parentGroupPath = "/group/" + parentGroup.name + "/addgroup"
+    parentGroup.addChildGroup group.name, obtain()
+    req.flash "info", "add-group-success"
+    res.redirect "/group/" + group.name
+  catch err
+    helpers.errorRedirect req, res, err, "/"
