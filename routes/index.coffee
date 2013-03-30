@@ -1,6 +1,7 @@
 messages = require('../messages')
 user = require('../user')
 group = require('../group')
+bbs = require('../bbs')
 
 indexPage = (req, res) ->
   res.render 'index',
@@ -91,6 +92,12 @@ routes = [
     path: '/group/:groupname/deladmin/:username'
     GET: group.delAdminPage
     POST: group.delAdmin
+  }, {
+    path: '/bbs/connect'
+    GET: bbs.connect
+  }, {
+    path: '/bbs/token'
+    GET: bbs.token
   }
 ]
 

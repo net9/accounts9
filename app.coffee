@@ -37,7 +37,6 @@ app.configure ->
   require("./routes")(app)
   app.use express.router require("./oauth")
   app.use express.router require("./app/")
-  app.use express.router require("./bbs")
   app.use express.router require("./interface")
   app.use require('connect-assets')(
     src: path.join __dirname, 'assets'
