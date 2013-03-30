@@ -3,43 +3,6 @@ Group = require("./model")
 User = require("../user/model")
 messages = require("../messages")
 helpers = require("../lib/helpers")
-assert = require("assert")
-
-getGroup = (req, res, next) ->
-  Group.getByName req.params.groupname, (err, group) ->
-    if err
-      helpers.errorRedirect req, res, err, "/"
-    else
-      req.group = group
-      next()
-
-checkCurrentUserIsAdmin = (req, res, next) ->
-  group = req.group
-  group.checkAdmin req.session.user.name, (err, isAdmin) ->
-    return helpers.errorRedirect(req, res, err, "/group")  if err
-    group.currentUserIsAdmin = isAdmin
-    if group.name is "root" and not isAdmin
-      err = "permission-denied-view-root-group"
-      return helpers.errorRedirect(req, res, err, "/group")
-    next()
-
-getUser = (req, res, next) ->
-  User.getByName req.params.username, (err, user) ->
-    if err
-      helpers.errorRedirect req, res, err, "/"
-    else
-      req.user = user
-      next()
-forbidAddUserToRootGroup = (req, res, next) ->
-  if req.params.groupname is "root"
-    err = "can-not-add-user-to-root-group"
-    return helpers.errorRedirect(req, res, err, "/group/root")
-  next()
-checkRootAdmin = (req, res, next) ->
-  if req.group.name is "root" and req.group.admins.length is 1
-    err = "can-not-delete-the-only-admin-from-root-group"
-    return helpers.errorRedirect(req, res, err, "/group/root")
-  next()
 
 getGroupAndCheckAdminPermission = (req, res, next) ->
   try
@@ -52,53 +15,6 @@ getGroupAndCheckAdminPermission = (req, res, next) ->
     next null, group
   catch err
     next err
-
-exports = {}
-
-exports = module.exports = (app) ->
-  groupPath = "/group/:groupname"
-
-  addAdminPath = groupPath + "/addadmin"
-  app.all addAdminPath, helpers.checkLogin
-  app.all addAdminPath, getGroup
-  app.all addAdminPath, checkCurrentUserIsAdmin
-  app.get addAdminPath, (req, res, next) ->
-    res.render "group/adduser",
-      locals:
-        title: messages.get("add-admin")
-        group: req.group
-
-  app.post addAdminPath, (req, res, next) ->
-    group = req.group
-    User.getByName req.body.name, (err, user) ->
-      errUrl = "/group/" + group.name + "/addadmin"
-      return helpers.errorRedirect(req, res, err, errUrl)  if err
-      group.addAdmin user.name, (err) ->
-        return helpers.errorRedirect(req, res, err, errUrl)  if err
-        req.flash "info", "add-admin-success"
-        res.redirect "/group/" + group.name
-
-  delAdminPath = groupPath + "/deladmin/:username"
-  app.all delAdminPath, helpers.checkLogin
-  app.all delAdminPath, getGroup
-  app.all delAdminPath, checkCurrentUserIsAdmin
-  app.all delAdminPath, checkRootAdmin
-  app.all delAdminPath, getUser
-  app.get delAdminPath, (req, res, next) ->
-    backUrl = "/group/" + req.group.name
-    res.render "confirm",
-      locals:
-        title: messages.get("del-admin")
-        backUrl: backUrl
-        confirm: messages.get("del-admin-confirm", req.user.title)
-
-  app.post delAdminPath, (req, res, next) ->
-    group = req.group
-    user = req.user
-    group.removeAdmin user.name, (err) ->
-      return helpers.errorRedirect(req, res, err, "/group/" + group.name)  if err
-      req.flash "info", "del-admin-success"
-      res.redirect "/group/" + group.name
 
 exports.hierarchyPage = (req, res) ->
   try
@@ -318,6 +234,59 @@ exports.delUser = (req, res, next) ->
       user.addToGroup "root", obtain()
 
     req.flash "info", "del-user-success"
+    res.redirect redirectUrl
+  catch err
+    helpers.errorRedirect req, res, err, redirectUrl
+
+exports.addAdminPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    res.render "group/adduser",
+      locals:
+        title: messages.get("add-admin")
+        group: group
+  catch err
+    helpers.errorRedirect req, res, err, "/group"
+
+exports.addAdmin = (req, res, next) ->
+  errUrl = '/group'
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    errUrl = "/group/" + group.name + "/addadmin"
+    User.getByName req.body.name, obtain(user)
+    group.addAdmin user.name, obtain()
+    req.flash "info", "add-admin-success"
+    res.redirect "/group/" + group.name
+  catch err
+    helpers.errorRedirect req, res, err, errUrl
+
+exports.delAdminPage = (req, res, next) ->
+  errUrl = '/group'
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    errUrl = '/group/' + group.name
+    if group.name is "root" and group.admins.length is 1
+      throw "can-not-delete-the-only-admin-from-root-group"
+    User.getByName req.params.username, obtain(user)
+    backUrl = "/group/" + group.name
+    res.render "confirm",
+      locals:
+        title: messages.get("del-admin")
+        backUrl: backUrl
+        confirm: messages.get("del-admin-confirm", user.title)
+  catch err
+    helpers.errorRedirect req, res, err, errUrl
+
+exports.delAdmin = (req, res, next) ->
+  redirectUrl = '/group'
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    redirectUrl = '/group/' + group.name
+    if group.name is "root" and group.admins.length is 1
+      throw "can-not-delete-the-only-admin-from-root-group"
+    User.getByName req.params.username, obtain(user)
+    group.removeAdmin user.name, obtain()
+    req.flash "info", "del-admin-success"
     res.redirect redirectUrl
   catch err
     helpers.errorRedirect req, res, err, redirectUrl
