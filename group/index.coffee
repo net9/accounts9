@@ -76,56 +76,6 @@ exports = {}
 exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
 
-  editGroupPath = groupPath + "/edit"
-  app.all editGroupPath, helpers.checkLogin
-  app.all editGroupPath, getGroup
-  app.all editGroupPath, checkCurrentUserIsAdmin
-  app.get editGroupPath, (req, res, next) ->
-    res.render "group/edit",
-      locals:
-        title: messages.get("edit-group")
-        parentGroup: req.group.parent
-        group: req.group
-
-  app.post editGroupPath, (req, res, next) ->
-    group = req.group
-    newParent = req.body.parent
-    groupEditPath = "/group/" + group.name + "/edit"
-    if newParent and group.parent isnt newParent
-      if newParent is group.name
-        err = "can-not-set-parent-to-itself"
-        return helpers.errorRedirect(req, res, err, groupEditPath)
-      originalParent = group.parent
-      group.parent = newParent
-      Group.getByName newParent, (err, newParent) ->
-        return helpers.errorRedirect(req, res, err, groupEditPath)  if err
-        group.isDescendant newParent.name, (err, isDescendant) ->
-          assert not err
-          if isDescendant
-            err = "can-not-set-parent-to-descendant"
-            return helpers.errorRedirect(req, res, err, groupEditPath)
-          newParent.addChildGroup group.name, (err) ->
-            assert not err
-            Group.getByName originalParent, (err, originalParent) ->
-              assert not err
-              originalParent.removeChildGroup group.name, (err) ->
-                assert not err
-                next()
-    else
-      next()
-
-  app.post editGroupPath, (req, res, next) ->
-    group = req.group
-    group.title = req.body.title
-    group.desc = req.body.desc
-    group.save (err) ->
-      assert not err
-      next()
-
-  app.post editGroupPath, (req, res, next) ->
-    req.flash "info", "edit-group-success"
-    res.redirect "/group/" + req.group.name
-
   delGroupPath = groupPath + "/del"
   app.all delGroupPath, helpers.checkLogin
   app.all delGroupPath, getGroup
@@ -364,3 +314,42 @@ exports.addGroup = (req, res, next) ->
     res.redirect "/group/" + group.name
   catch err
     helpers.errorRedirect req, res, err, "/"
+
+exports.editGroupPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    res.render "group/edit",
+      locals:
+        title: messages.get("add-group")
+        parentGroup: group.parent
+        group: group
+  catch err
+    helpers.errorRedirect req, res, err, "/"
+
+exports.editGroup = (req, res, next) ->
+  redirectPath = '/'
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    newParent = req.body.parent
+    redirectPath = '/group/' + group.name + '/edit'
+    # Change parent
+    if newParent and group.parent isnt newParent
+      if newParent is group.name
+        throw "can-not-set-parent-to-itself"
+      originalParent = group.parent
+      group.parent = newParent
+      Group.getByName newParent, obtain(newParent)
+      group.isDescendant newParent.name, obtain(isDescendant)
+      if isDescendant
+        throw "can-not-set-parent-to-descendant"
+      newParent.addChildGroup group.name, obtain()
+      Group.getByName originalParent, obtain(originalParent)
+      originalParent.removeChildGroup group.name, obtain()
+    # Change property
+    group.title = req.body.title
+    group.desc = req.body.desc
+    group.save obtain()
+    req.flash "info", "edit-group-success"
+    res.redirect "/group/" + group.name
+  catch err
+    helpers.errorRedirect req, res, err, redirectPath
