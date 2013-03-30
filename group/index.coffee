@@ -76,28 +76,6 @@ exports = {}
 exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
 
-  delGroupPath = groupPath + "/del"
-  app.all delGroupPath, helpers.checkLogin
-  app.all delGroupPath, getGroup
-  app.all delGroupPath, checkCurrentUserIsAdmin
-  app.get delGroupPath, (req, res, next) ->
-    backUrl = "/group/" + req.group.parent
-    res.render "confirm",
-      locals:
-        title: messages.get("del-group")
-        backUrl: backUrl
-        confirm: messages.get("del-group-confirm")
-
-  app.post delGroupPath, (req, res, next) ->
-    group = req.group
-    group.remove (err) ->
-      if err
-        req.flash "error", err
-        res.redirect "/group/" + req.group.name
-      else
-        req.flash "info", "del-group-success"
-        res.redirect "/group/" + req.group.parent
-
   allUsersPath = groupPath + "/allusers"
   app.get allUsersPath, helpers.checkLogin
   app.get allUsersPath, getGroup
@@ -353,3 +331,26 @@ exports.editGroup = (req, res, next) ->
     res.redirect "/group/" + group.name
   catch err
     helpers.errorRedirect req, res, err, redirectPath
+
+exports.delGroupPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    backUrl = "/group/" + group.name
+    res.render "confirm",
+      locals:
+        title: messages.get("del-group")
+        backUrl: backUrl
+        confirm: messages.get("del-group-confirm")
+  catch err
+    helpers.errorRedirect req, res, err, "/"
+
+exports.delGroup = (req, res, next) ->
+  redirectUrl = "/"
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    redirectUrl = "/group/" + group.name
+    group.remove obtain()
+    req.flash "info", "del-group-success"
+    res.redirect "/group/" + group.parent
+  catch err
+    helpers.errorRedirect req, res, err, redirectUrl

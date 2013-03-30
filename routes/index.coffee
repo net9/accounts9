@@ -68,6 +68,10 @@ routes = [
     path: '/group/:groupname/edit'
     GET: group.editGroupPage
     POST: group.editGroup
+  }, {
+    path: '/group/:groupname/del'
+    GET: group.delGroupPage
+    POST: group.delGroup
   }
 ]
 
