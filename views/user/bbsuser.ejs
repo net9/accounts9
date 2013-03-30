@@ -1,0 +1,49 @@
+<p>已绑定酒井帐号：<%= bbsUser.information.userid %></p>
+<table class="table">
+  <tr>
+    <td>昵称</td>
+	<td><%= bbsUser.information.nick %></td>
+  </tr>
+  <tr>
+    <td>姓名</td>
+	<td><%= bbsUser.information.realname %></td>
+  </tr>
+  <tr>
+    <td>地址</td>
+	<td><%= bbsUser.information.address %></td>
+  </tr>
+  <tr>
+    <td>邮箱</td>
+	<td><%= bbsUser.information.email %></td>
+  </tr>
+  <tr>
+    <td>性别</td>
+	<td><%= bbsUser.information.gender %></td>
+  </tr>
+  <tr>
+    <td>生命值</td>
+	<td><%= bbsUser.information.life %></td>
+  </tr>
+  <tr>
+    <td>经验值</td>
+	<td><%= bbsUser.information.exp %></td>
+  </tr>
+  <tr>
+    <td>上次登录地址</td>
+	<td><%= bbsUser.information.lasthost %></td>
+  </tr>
+  <tr>
+    <td>上次登录时间</td>
+	<td><%= displayDate(bbsUser.information.lastlogin) %></td>
+  </tr>
+  <tr>
+    <td>登录次数</td>
+	<td><%= bbsUser.information.numlogins %></td>
+  </tr>
+  <tr>
+    <td>发帖次数</td>
+	<td><%= bbsUser.information.numposts %></td>
+  </tr>
+</table>
+<h3>个人说明</h3>
+<blockquote><%= bbsUser.information.plan %></blockquote>

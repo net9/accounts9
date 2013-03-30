@@ -15,10 +15,12 @@ exports.userPage = (req, res, next) ->
     User.getByName req.params.username, obtain(user)
     user.getDirectGroups obtain()
     user.getAdminGroups obtain()
+    BBSUser.getBBSUser user.uid, obtain(bbsUser)
     res.render 'user/user',
       locals:
         title: user.title
         user: user
+        bbsUser: bbsUser
   catch err
     helpers.errorRedirect(req, res, err, '/dashboard')
 

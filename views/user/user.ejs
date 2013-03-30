@@ -18,4 +18,8 @@
         </a>
       </p>
     <% } %>
+    <% if (bbsUser) { %>
+      <h2><%= msg('net9-bbs') %></h2>
+      <% include bbsuser %>
+    <% } %>
 </div>

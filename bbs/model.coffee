@@ -53,6 +53,10 @@ BBSUser.updateToken = (user, code, callback) ->
     BBSUser.update uid:user.uid, bbsUser, upsert:true, (err) ->
       callback err
 
+BBSUser.getBBSUser = (uid, callback) ->
+  BBSUser.findOne uid:uid, (err, bbsUser) ->
+    callback err, bbsUser
+
 BBSUser.getAndUpdate = (uid, callback) ->
   BBSUser.findOne uid:uid, (err, bbsUser) ->
     return callback err if err
