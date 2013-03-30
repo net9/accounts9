@@ -23,24 +23,6 @@ checkCurrentUserIsAdmin = (req, res, next) ->
       return helpers.errorRedirect(req, res, err, "/group")
     next()
 
-getAllUsers = (req, res, next) ->
-  group = req.group
-  group.getAllUserNames (err, users) ->
-    assert not err
-    User.getByNames users, (err, users) ->
-      assert not err
-      group.users = users
-      next()
-getAllUsersGroups = (req, res, next) ->
-  group = req.group
-  done = 0
-  group.users.forEach (user, i) ->
-    user = group.users[i] = group.users[i].toObject()
-    Group.getByNames user.groups, (err, groups) ->
-      assert not err
-      user.groups = groups
-      done++
-      next()  if done is group.users.length
 getUser = (req, res, next) ->
   User.getByName req.params.username, (err, user) ->
     if err
@@ -75,20 +57,6 @@ exports = {}
 
 exports = module.exports = (app) ->
   groupPath = "/group/:groupname"
-
-  allUsersPath = groupPath + "/allusers"
-  app.get allUsersPath, helpers.checkLogin
-  app.get allUsersPath, getGroup
-  app.get allUsersPath, checkCurrentUserIsAdmin
-  app.get allUsersPath, getAllUsers
-  app.get allUsersPath, getAllUsersGroups
-  app.get allUsersPath, (req, res, next) ->
-    group = req.group
-    group.users.indirectList = true
-    res.render "group/allusers",
-      locals:
-        title: group.title
-        group: group
 
   addUserPath = groupPath + "/adduser"
   app.all addUserPath, helpers.checkLogin
@@ -272,7 +240,7 @@ exports.addGroupPage = (req, res, next) ->
         parentGroup: group.name
         group: null
   catch err
-    helpers.errorRedirect req, res, err, "/"
+    helpers.errorRedirect req, res, err, "/group"
 
 exports.addGroup = (req, res, next) ->
   try
@@ -291,7 +259,7 @@ exports.addGroup = (req, res, next) ->
     req.flash "info", "add-group-success"
     res.redirect "/group/" + group.name
   catch err
-    helpers.errorRedirect req, res, err, "/"
+    helpers.errorRedirect req, res, err, "/group"
 
 exports.editGroupPage = (req, res, next) ->
   try
@@ -302,10 +270,10 @@ exports.editGroupPage = (req, res, next) ->
         parentGroup: group.parent
         group: group
   catch err
-    helpers.errorRedirect req, res, err, "/"
+    helpers.errorRedirect req, res, err, "/group"
 
 exports.editGroup = (req, res, next) ->
-  redirectPath = '/'
+  redirectPath = '/group'
   try
     getGroupAndCheckAdminPermission req, res, obtain(group)
     newParent = req.body.parent
@@ -342,7 +310,7 @@ exports.delGroupPage = (req, res, next) ->
         backUrl: backUrl
         confirm: messages.get("del-group-confirm")
   catch err
-    helpers.errorRedirect req, res, err, "/"
+    helpers.errorRedirect req, res, err, "/group"
 
 exports.delGroup = (req, res, next) ->
   redirectUrl = "/"
@@ -354,3 +322,21 @@ exports.delGroup = (req, res, next) ->
     res.redirect "/group/" + group.parent
   catch err
     helpers.errorRedirect req, res, err, redirectUrl
+
+exports.allUsersPage = (req, res, next) ->
+  try
+    getGroupAndCheckAdminPermission req, res, obtain(group)
+    # Get all users belongs to the group
+    group.getAllUserNames obtain(users)
+    User.getByNames users, obtain(group.users)
+    # Get groups that each user belongs to
+    for i of group.users
+      user = group.users[i] = group.users[i].toObject()
+      Group.getByNames user.groups, obtain(user.groups)
+    group.users.indirectList = true
+    res.render "group/allusers",
+      locals:
+        title: group.title
+        group: group
+  catch err
+    helpers.errorRedirect req, res, err, "/group"
