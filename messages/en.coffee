@@ -23,6 +23,7 @@ exports.messages =
   "editinfo-website-tips": "Don't forget the <strong>http://</strong>."
   "editinfo-birthdate-tips": "Digits 7~14 of your ID number, eg. 19640809 (yyyymmdd)"
   "new-password": "New password"
+  "new-password-repeat": "Confirm new password"
   "given-name": "First name"
   "sur-name": "Last name"
   "full-name": "Full name"

@@ -14,6 +14,7 @@ exports.messages =
   "password-repeat": "重复输入口令"
   "old-password": "旧口令"
   "new-password": "新口令"
+  "new-password-repeat": "重复输入新口令"
   "given-name": "名"
   "sur-name": "姓"
   "full-name": "姓名"
