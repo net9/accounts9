@@ -136,21 +136,23 @@ exports.editInfo = (req, res, next) ->
     user.bachelor = year: req.body.bachelorYear, classNumber: req.body.bachelorClassNumber
     user.master = year: req.body.masterYear, classNumber: req.body.masterClassNumber
     user.doctor = year: req.body.doctorYear, classNumber: req.body.doctorClassNumber
-    
+
     # Check email
     user.email = user.email.toLowerCase()
     User.findOne {email: user.email}, obtain(existance)
     if (existance and (existance.uid isnt user.uid))
       throw 'email-already-exists'
-    
+
     # Change if new password is set
     if req.body.newpass
+      if req.body.newpass != req.body.newpassrepeat
+        throw 'password-mismatch'
       if editByAdmin or user.checkPassword(req.body.oldpass)
         user.password = utils.genPassword req.body.newpass
       else
         throw 'wrong-old-password'
     user.save obtain()
-    
+
     # Update session
     if user.uid is req.session.user.uid
       req.session.user = user
