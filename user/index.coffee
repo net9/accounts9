@@ -145,7 +145,7 @@ exports.editInfo = (req, res, next) ->
 
     # Change if new password is set
     if req.body.newpass
-      if req.body.newpass != req.body.newpassrepeat
+      if (not editByAdmin) and (req.body.newpass isnt req.body.newpassrepeat)
         throw 'password-mismatch'
       if editByAdmin or user.checkPassword(req.body.oldpass)
         user.password = utils.genPassword req.body.newpass
