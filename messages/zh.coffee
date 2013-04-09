@@ -126,3 +126,6 @@ exports.messages =
   "net9-bbs": "酒井BBS"
   "net9-bbs-connect": "连接酒井BBS"
   "net9-bbs-connect-success": "成功连接酒井BBS"
+  "third-party-connection": "第三方连接"
+  "renren": "人人网"
+  "connect-to-renren": "连接到人人网"

@@ -18,11 +18,13 @@ exports.userPage = (req, res, next) ->
     user.getDirectGroups obtain()
     user.getAdminGroups obtain()
     BBSUser.getBBSUser user.uid, obtain(bbsUser)
+    ThirdPartyUser.get user.uid, obtain(thirdpartyUser)
     res.render 'user/user',
       locals:
         title: user.title
         user: user
         bbsUser: bbsUser
+        thirdpartyUser: thirdpartyUser
   catch err
     helpers.errorRedirect(req, res, err, '/dashboard')
 
@@ -34,11 +36,13 @@ exports.dashboradPage = (req, res, next) ->
     user.getAdminGroups obtain()
     BBSUser.getAndUpdate req.session.user.uid, obtain(bbsUser)
     appman.getAllByUser user.name, cont(apps)
+    ThirdPartyUser.get req.session.user.uid, obtain(thirdpartyUser)
     res.render 'user/dashboard',
       locals:
         title: messages.get('dashboard')
         user: user
         bbsUser: bbsUser
+        thirdpartyUser: thirdpartyUser
         apps: apps
   catch err
     helpers.errorRedirect(req, res, err, '/')

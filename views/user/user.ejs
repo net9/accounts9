@@ -18,7 +18,18 @@
         </a>
       </p>
     <% } %>
+
+    <hr>
+    <% if (thirdpartyUser && thirdpartyUser.renren) { %>
+      <p>
+        <a href="http://www.renren.com/<%= thirdpartyUser.renren.uid %>" target="_blank" style="border:none">
+          <img src="/img/renren.png" title="<%= msg('renren') %>">
+        </a>
+      </p>
+    <% } %>
+
     <% if (bbsUser) { %>
+      <hr>
       <h2><%= msg('net9-bbs') %></h2>
       <% include bbsuser %>
     <% } %>

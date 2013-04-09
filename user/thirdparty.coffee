@@ -29,6 +29,9 @@ renren = new oauth.OAuth2(
 )
 renren.redirectUri = config.host + '/dashboard/connect/renren/token'
 
+ThirdPartyUser.get = (uid, callback) ->
+  ThirdPartyUser.findOne {uid: uid}, callback
+
 ThirdPartyUser.getOrCreate = (uid, callback) ->
   try
     ThirdPartyUser.findOne {uid: uid}, obtain(user)

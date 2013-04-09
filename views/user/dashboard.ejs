@@ -71,3 +71,21 @@
 <% if (bbsUser) { %>
   <% include bbsuser %>
 <% } %>
+<hr>
+
+<h2><%= msg('third-party-connection') %></h2>
+<ul>
+  <li>
+    <% if (!thirdpartyUser || !thirdpartyUser.renren) { %>
+      <a href="/dashboard/connect/renren" class="btn">
+        <i class="icon-plus icon-white"></i>
+        <%= msg('connect-to-renren') %>
+      </a>
+    <% } else { %>
+      <a href="http://www.renren.com/<%= thirdpartyUser.renren.uid %>" target="_blank">
+        <%= msg('renren') %>
+      </a>
+    <% } %>
+  </li>
+</ul>
+<hr>
