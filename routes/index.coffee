@@ -28,6 +28,12 @@ routes = [
     path: '/dashboard'
     GET: user.dashboradPage
   }, {
+    path: '/dashboard/connect/renren'
+    GET: user.connectRenren
+  }, {
+    path: '/dashboard/connect/renren/token'
+    GET: user.connectRenrenToken
+  }, {
     path: '/login'
     GET: user.loginPage
     POST: user.login

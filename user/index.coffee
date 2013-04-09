@@ -2,11 +2,13 @@
 url = require('url')
 User = require('./model')
 BBSUser = require('../bbs/model')
+ThirdPartyUser = require('./thirdparty')
 Group = require('../group/model')
 appman = require('../app/man')
 messages = require('../messages')
 utils = require('../lib/utils')
 helpers = require('../lib/helpers')
+config = require('../config')
 
 exports.userPage = (req, res, next) ->
   try
@@ -196,3 +198,18 @@ exports.search = (req, res, next) ->
         users: users
   catch err
     next err
+
+exports.connectRenren = (req, res, next) ->
+  res.redirect ThirdPartyUser.getRenrenAuthrizeUrl()
+
+exports.connectRenrenToken = (req, res, next) ->
+  try
+    helpers.checkLogin req, res, obtain()
+    if req.query.error
+      throw req.query.error
+    code = req.query.code
+    ThirdPartyUser.updateRenren req.session.user, code, obtain()
+    req.flash 'info', '连接成功'
+    res.redirect '/dashboard'
+  catch err
+    helpers.errorRedirect(req, res, err, '/dashboard')
