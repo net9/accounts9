@@ -34,6 +34,12 @@ routes = [
     path: '/dashboard/connect/renren/token'
     GET: user.connectRenrenToken
   }, {
+    path: '/dashboard/connect/weibo'
+    GET: user.connectWeibo
+  }, {
+    path: '/dashboard/connect/weibo/token'
+    GET: user.connectWeiboToken
+  }, {
     path: '/login'
     GET: user.loginPage
     POST: user.login

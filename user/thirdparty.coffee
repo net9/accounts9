@@ -3,6 +3,7 @@ oauth = require('oauth')
 mongoose = require('../lib/mongoose')
 config = require('../config')
 utils = require('../lib/utils')
+weibo = require('weibo')
 
 mongoose.model "ThirdPartyUser", new mongoose.Schema(
   uid:
@@ -28,6 +29,13 @@ renren = new oauth.OAuth2(
   '/oauth/token'
 )
 renren.redirectUri = config.host + '/dashboard/connect/renren/token'
+
+weibo.init(
+  'weibo',
+  config.thirdparty.weibo.appKey,
+  config.thirdparty.weibo.appSecret,
+  config.host + '/dashboard/connect/weibo/token'
+)
 
 ThirdPartyUser.get = (uid, callback) ->
   ThirdPartyUser.findOne {uid: uid}, callback
@@ -67,3 +75,10 @@ ThirdPartyUser.updateRenren = (user, code, callback) ->
     callback null, thirdpartyUser
   catch err
     callback err
+
+ThirdPartyUser.getWeiboAuthorizeUrl = (callback) ->
+  params =
+    blogtype: 'weibo'
+  weibo.get_authorization_url params, cont(err, data)
+  return callback(err) if err
+  callback null, data.auth_url

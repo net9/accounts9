@@ -219,3 +219,13 @@ exports.connectRenrenToken = (req, res, next) ->
     res.redirect '/dashboard'
   catch err
     helpers.errorRedirect(req, res, err, '/dashboard')
+
+exports.connectWeibo = (req, res, next) ->
+  try
+    ThirdPartyUser.getWeiboAuthorizeUrl obtain(redirectUrl)
+    res.redirect redirectUrl
+  catch err
+    helpers.errorRedirect(req, res, err, '/dashboard')
+
+exports.connectWeiboToken = (req, res, next) ->
+  next 'not-implemented'
