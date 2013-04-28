@@ -1,11 +1,9 @@
-Accounts9
-=========
+# Accounts9
 The authentication module for the new net9 system.
 
 See https://accounts.net9.org
 
-Installation & Running
-----------------------
+## Installation & Running
 
     git clone git://github.com/net9/accounts9.git
     cd accounts9
@@ -14,8 +12,7 @@ Installation & Running
     npm install
     npm start
 
-Miscellaneous
--------------
+## Miscellaneous
 
 What we have right now:
 
@@ -25,3 +22,7 @@ What we have right now:
 * OAuth 2.0
   * Access token
   * Remember authorized apps
+
+## License
+
+MIT License
