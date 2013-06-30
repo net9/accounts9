@@ -28,7 +28,7 @@
 <h2><%= msg('authorized-apps') %></h2>
 <% if (apps.success) { %>
   <% if (apps.authorizedapps.length) { %>
-    <ul>
+    <ul class="action-list">
       <%- partial('app/authedappitem', apps.authorizedapps) %>
     </ul>
   <% } else { %>
@@ -62,7 +62,7 @@
 <hr>
 
 <h2><%= msg('third-party-connection') %></h2>
-<ul>
+<ul class="action-list">
   <li>
     <% if (!thirdpartyUser || !thirdpartyUser.renren) { %>
       <a href="/dashboard/connect/renren" class="btn">

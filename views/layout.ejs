@@ -17,7 +17,7 @@
 <body>
     <div id="page">
         <div id="header">
-            <div id="logo">Accounts9</div>
+            <div id="logo"><a href="/u/<%= curUser.name %>">Accounts9</a></div>
             <ul id="nav">
               <% if (!curUser) { %>
                 <li><a class="btn" href="/login"><%- msg('Login') %></a></li>
