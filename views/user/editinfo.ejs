@@ -17,21 +17,21 @@
     <div class="field">
       <label for="surname"><%- msg('sur-name') %></label>
       <div class="controls">
-        <input type="text" class="text" id="surname" name="surname" value="<%= user.surname %>">
+        <input type="text" class="text" id="surname" name="surname" value="<%= user.surname %>" required>
         <p class="help-block"><%- msg('editinfo-surname-tips') %></p>
       </div>
     </div>
     <div class="field">
       <label for="givenname"><%- msg('given-name') %></label>
       <div class="controls">
-        <input type="text" class="text" id="givenname" name="givenname" value="<%= user.givenname %>">
+        <input type="text" class="text" id="givenname" name="givenname" value="<%= user.givenname %>" required>
         <p class="help-block"><%- msg('editinfo-givenname-tips') %></p>
       </div>
     </div>
     <div class="field">
       <label for="email"><%- msg('email') %></label>
       <div class="controls">
-        <input type="text" class="text" id="email" name="email" value="<%= user.email %>">
+        <input type="text" class="text" id="email" name="email" value="<%= user.email %>" required>
         <p class="help-block"><%- msg('editinfo-email-tips') %></p>
       </div>
     </div>
