@@ -79,7 +79,7 @@ exports.logout = (req, res) ->
   res.redirect req.query.returnto or '/'
 
 exports.register = (req, res, next) ->
-  user = utils.subset(req.body, ['name', 'password', 'password-repeat', 'email'])
+  user = utils.subset(req.body, ['name', 'surname', 'givenname', 'password', 'password-repeat', 'email'])
   User.create user, (err, user) ->
     if not err
       req.session.user = user
