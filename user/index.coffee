@@ -79,7 +79,8 @@ exports.logout = (req, res) ->
   res.redirect req.query.returnto or '/'
 
 exports.register = (req, res, next) ->
-  user = utils.subset(req.body, ['name', 'surname', 'givenname', 'password', 'password-repeat', 'email'])
+  console.log 'register', req.body
+  user = User.fillFrom {}, req.body
   User.create user, (err, user) ->
     if not err
       req.session.user = user
@@ -126,20 +127,11 @@ exports.editInfo = (req, res, next) ->
       username = req.params.username
       editByAdmin = true
     User.getByName username, obtain(user)
-    user.nickname = req.body.nickname
-    user.surname = req.body.surname
-    user.givenname = req.body.givenname
-    user.fullname = req.body.fullname
-    user.email = req.body.email
-    user.mobile = req.body.mobile
-    user.website = req.body.website
-    user.address = req.body.address
-    user.bio = req.body.bio
-    user.birthdate = req.body.birthdate
-    user.fullname = user.surname + user.givenname
-    user.bachelor = year: req.body.bachelorYear, classNumber: req.body.bachelorClassNumber
-    user.master = year: req.body.masterYear, classNumber: req.body.masterClassNumber
-    user.doctor = year: req.body.doctorYear, classNumber: req.body.doctorClassNumber
+    User.fillFrom user, req.body
+
+    User.validate user, obtain()
+    if err?
+      throw err
 
     # Check email
     user.email = user.email.toLowerCase()

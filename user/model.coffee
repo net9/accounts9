@@ -60,7 +60,6 @@ UserSchema.pre 'save', (next) ->
 
 User.sync = (callback) ->
   User.find {}, (err, users) ->
-    console.log err if err
     users.forEach (user) ->
       User.getByName user.name, (err, user) ->
         user.password = ''
@@ -98,13 +97,49 @@ User.getByNames = (usernames, callback) ->
         utils.sortBy users, "uid"
         callback null, users
 
+User.validate = (user, cb) ->
+  unless user.name and user.surname and user.givenname and user.email
+    return cb("fields-required")
+  if user.bachelor?.year and not user.bachelor.classNumber
+    return cb("bachelor-info-required")
+  if user.master?.year and not user.master.classNumber
+    return cb("master-info-required")
+  if user.doctor?.year and not user.doctor.classNumber
+    return cb("doctor-info-required")
+  unless user.bachelor?.classNumber or user.master?.classNumber or user.doctor?.classNumber
+    return cb("thu-student-required")
+  cb null
+
+User.fillFrom = (user, o) ->
+  user.name = o.username
+  user.nickname = o.nickname
+  user.surname = o.surname
+  user.givenname = o.givenname
+  user.fullname = o.fullname
+  user.email = o.email
+  user.mobile = o.mobile
+  user.website = o.website
+  user.address = o.address
+  user.bio = o.bio
+  user.birthdate = o.birthdate
+  user.fullname = o.surname + o.givenname
+  user.bachelor = year: o.bachelorYear, classNumber: o.bachelorClassNumber
+  user.master = year: o.masterYear, classNumber: o.masterClassNumber
+  user.doctor = year: o.doctorYear, classNumber: o.doctorClassNumber
+  if o.password
+    user.password = o.password
+  if o['password-repeat']
+    user.passwordConfirm = o['password-repeat']
+  user
+
 # Create a new user
 User.create = (user, callback) ->
   # Check require fields and if passwords match
-  if not user.name or not user.password or not user.email
+  User.validate user, obtain()
+  unless user.password
     return callback("fields-required")
-  if user.password isnt user["password-repeat"]
-    return callback("password-mismatch")
+  if user.password isnt user.passwordConfirm
+    return cb("password-mismatch")
   
   # Normalize username and email address to lower case
   user.name = user.name.toLowerCase()

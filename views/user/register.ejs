@@ -2,9 +2,9 @@
   <fieldset>
     <legend><%- msg('register') %></legend>
     <div class="field">
-      <label class="control-label" for="name"><%- msg('Username') %></label>
+      <label class="control-label" for="username"><%- msg('Username') %></label>
       <div class="controls">
-        <input type="text" class="text" id="name" name="name">
+        <input type="text" class="text" id="username" name="username">
         <p class="help-block"><%- msg('reg-username-tips') %></p>
       </div>
     </div>
@@ -40,6 +40,33 @@
       <div class="controls">
         <input type="text" class="text" id="email" name="email">
         <p class="help-block"><%- msg('reg-email-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="bachelorYear"><%- msg('bachelor') %></label>
+      <div class="controls">
+        <input type="text" class="text text-tiny" name="bachelorYear">
+        <input type="text" class="text text-tiny" name="bachelorClassNumber">
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-bachelor-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="masterYear"><%- msg('master') %></label>
+      <div class="controls">
+        <input type="text" class="text text-tiny" name="masterYear">
+        <input type="text" class="text text-tiny" name="masterClassNumber">
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-master-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="doctorYear"><%- msg('doctor') %></label>
+      <div class="controls">
+        <input type="text" class="text text-tiny" name="doctorYear">
+        <input type="text" class="text text-tiny" name="doctorClassNumber">
+        <%- msg('class-number') %>
+        <p class="help-block"><%- msg('editinfo-doctor-tips') %></p>
       </div>
     </div>
     <div class="form-actions">
