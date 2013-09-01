@@ -136,29 +136,29 @@ User.fillFrom = (user, o) ->
 
 # Create a new user
 User.create = (user, callback) ->
-  # Check require fields and if passwords match
-  User.validate user, obtain()
-  unless user.password
-    return callback("fields-required")
-  if user.password isnt user.passwordConfirm
-    return cb("password-mismatch")
-  
-  # Normalize username and email address to lower case
-  user.name = user.name.toLowerCase()
-  user.email = user.email.toLowerCase()
-  
-  # Validate username and email format
-  usernameRegex = /^[a-z][a-z0-9_]{3,11}$/
-  if not usernameRegex.exec(user.name)
-    return callback("invalid-username")
-  emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
-  if not emailRegex.exec(user.email)
-    return callback("invalid-email")
-  
-  # Generate password hash
-  user.password = utils.genPassword user.password
-  
   try
+    # Check require fields and if passwords match
+    User.validate user, obtain()
+    unless user.password
+      throw 'fields-required'
+    if user.password isnt user.passwordConfirm
+      throw 'password-mismatch'
+  
+    # Normalize username and email address to lower case
+    user.name = user.name.toLowerCase()
+    user.email = user.email.toLowerCase()
+  
+    # Validate username and email format
+    usernameRegex = /^[a-z][a-z0-9_]{3,11}$/
+    if not usernameRegex.exec(user.name)
+      return callback("invalid-username")
+    emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
+    if not emailRegex.exec(user.email)
+      return callback("invalid-email")
+    
+    # Generate password hash
+    user.password = utils.genPassword user.password
+  
     User.checkName user.name, obtain()
     User.findOne {email: user.email}, obtain(existance)
     if (existance)
