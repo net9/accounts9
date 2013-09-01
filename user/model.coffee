@@ -104,8 +104,8 @@ User.validate = (user, cb) ->
     return cb("fields-required")
   thuStudent = false
   for i in ['bachelor', 'master', 'doctor']
-    if user[i]?.year.match yearRegex
-      unless user[i]?.classNumber.match classNumberRegex
+    if yearRegex.test user[i]?.year
+      unless classNumberRegex.test user[i]?.classNumber
         return cb("#{i}-info-required")
       thuStudent = true
   unless thuStudent
