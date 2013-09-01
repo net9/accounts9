@@ -69,7 +69,7 @@
         <% if (user.bachelor && user.bachelor.year) { %>
           <input type="text" class="text text-tiny" name="bachelorYear" value="<%= user.bachelor.year %>">
         <% } else { %>
-          <input type="text" class="text text-tiny" name="bachelorYear" value="">
+          <input type="text" class="text text-tiny" name="bachelorYear" value="" placeholder="2013">
         <% } %>
         <%- msg('year') %>
         <% if (user.bachelor && user.bachelor.classNumber) { %>
@@ -87,7 +87,7 @@
         <% if (user.master && user.master.year) { %>
           <input type="text" class="text text-tiny" name="masterYear" value="<%= user.master.year %>">
         <% } else { %>
-          <input type="text" class="text text-tiny" name="masterYear" value="">
+          <input type="text" class="text text-tiny" name="masterYear" value="" placeholder="2013">
         <% } %>
         <%- msg('year') %>
         <% if (user.master && user.master.classNumber) { %>
@@ -105,7 +105,7 @@
         <% if (user.doctor && user.doctor.year) { %>
           <input type="text" class="text text-tiny" name="doctorYear" value="<%= user.doctor.year %>">
         <% } else { %>
-          <input type="text" class="text text-tiny" name="doctorYear" value="">
+          <input type="text" class="text text-tiny" name="doctorYear" value="" placeholder="2013">
         <% } %>
         <%- msg('year') %>
         <% if (user.doctor && user.doctor.classNumber) { %>
