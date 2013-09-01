@@ -98,15 +98,17 @@ User.getByNames = (usernames, callback) ->
         callback null, users
 
 User.validate = (user, cb) ->
+  yearRegex = /^\d{4}$/
+  classNumberRegex = /^\d{1,2}$/
   unless user.name and user.surname and user.givenname and user.email
     return cb("fields-required")
-  if user.bachelor?.year and not user.bachelor.classNumber
-    return cb("bachelor-info-required")
-  if user.master?.year and not user.master.classNumber
-    return cb("master-info-required")
-  if user.doctor?.year and not user.doctor.classNumber
-    return cb("doctor-info-required")
-  unless user.bachelor?.classNumber or user.master?.classNumber or user.doctor?.classNumber
+  thuStudent = false
+  for i in ['bachelor', 'master', 'doctor']
+    if user[i]?.year.match yearRegex
+      unless user[i]?.classNumber.match classNumberRegex
+        return cb("#{i}-info-required")
+      thuStudent = true
+  unless thuStudent
     return cb("thu-student-required")
   cb null
 
