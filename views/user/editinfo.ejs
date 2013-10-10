@@ -36,6 +36,13 @@
       </div>
     </div>
     <div class="field">
+      <label for="emails"><%- msg('emails') %></label>
+      <div class="controls">
+        <textarea class="text" id="emails" name="emails"><%= user.emails.join('\n') %></textarea>
+        <p class="help-block"><%- msg('editinfo-emails-tips') %></p>
+      </div>
+    </div>
+    <div class="field">
       <label for="mobile"><%- msg('mobile') %></label>
       <div class="controls">
         <input type="text" class="text" id="mobile" name="mobile" value="<%= user.mobile %>">

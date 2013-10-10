@@ -20,6 +20,7 @@ UserSchema = new mongoose.Schema(
     type: String
     index: true
     unique: true
+  emails: [ String ]
   mobile: String
   website: String
   address: String
@@ -48,6 +49,10 @@ UserSchema.pre 'save', (next) ->
   @fullname ?= ''
   @email ?= ''
   @email = @email.toLowerCase()
+  @emails ?= []
+  @emails = (item.toLowerCase() for item in @emails)
+  emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
+  @emails = @emails.filter (item) -> emailRegex.exec(item)
   @mobile ?= ''
   @website ?= ''
   @address ?= ''
@@ -119,6 +124,7 @@ User.fillFrom = (user, o) ->
   user.givenname = o.givenname
   user.fullname = o.fullname
   user.email = o.email
+  user.emails = o.emails.split(/\r?\n/)
   user.mobile = o.mobile
   user.website = o.website
   user.address = o.address
