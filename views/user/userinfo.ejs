@@ -21,6 +21,14 @@
       <td><a href="mailto:<%= user.email %>"><%= user.email %></a></td>
     </tr>
   <% } %>
+  <% if (user.emails) { %>
+    <tr>
+      <th><%= msg('Emails') %></th>
+      <% for(var i=0; i<user.emails.length; i++) { %>
+      <td><a href="mailto:<%= user.emails[i] %>"><%= user.emails[i] %></a></td>
+      <% } %>
+    </tr>
+  <% } %>
   <% if (user.mobile) { %>
     <tr>
       <th><%= msg('Mobile') %></th>
