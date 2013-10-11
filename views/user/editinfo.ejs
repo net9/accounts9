@@ -38,7 +38,7 @@
     <div class="field">
       <label for="emails"><%- msg('emails') %></label>
       <div class="controls">
-        <textarea class="text" id="emails" name="emails"><%= user.emails.join('\n') %></textarea>
+        <textarea class="text" id="emails" name="emails"><% if (user.emails) { %><%= user.emails.join('\n') %><% } %></textarea>
         <p class="help-block"><%- msg('editinfo-emails-tips') %></p>
       </div>
     </div>
