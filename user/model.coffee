@@ -60,7 +60,7 @@ UserSchema.pre 'save', (next) ->
   @birthdate ?= ''
   @regtime ?= new Date()
   @groups ?= []
-  
+
   next()
 
 User.sync = (callback) ->
@@ -124,7 +124,8 @@ User.fillFrom = (user, o) ->
   user.givenname = o.givenname
   user.fullname = o.fullname
   user.email = o.email
-  user.emails = o.emails.split(/\r?\n/)
+  if o.emails
+    user.emails = o.emails.split(/\r?\n/)
   user.mobile = o.mobile
   user.website = o.website
   user.address = o.address
@@ -149,11 +150,11 @@ User.create = (user, callback) ->
       throw 'fields-required'
     if user.password isnt user.passwordConfirm
       throw 'password-mismatch'
-  
+
     # Normalize username and email address to lower case
     user.name = user.name.toLowerCase()
     user.email = user.email.toLowerCase()
-  
+
     # Validate username and email format
     usernameRegex = /^[a-z][a-z0-9_]{3,11}$/
     if not usernameRegex.exec(user.name)
@@ -161,10 +162,10 @@ User.create = (user, callback) ->
     emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
     if not emailRegex.exec(user.email)
       return callback("invalid-email")
-    
+
     # Generate password hash
     user.password = utils.genPassword user.password
-  
+
     User.checkName user.name, obtain()
     User.findOne {email: user.email}, obtain(existance)
     if (existance)
