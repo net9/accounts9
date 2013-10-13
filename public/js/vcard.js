@@ -24,6 +24,8 @@ $('#export').click(function(ev) {
 		vcards.push('REL:' + isoDate(new Date()));
 		vcards.push('END:VCARD');
 	});
-	window.location = 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'));
+	this.href = 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'));
+	$(this).off();
+	this.click();
 });
 
