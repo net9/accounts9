@@ -85,8 +85,8 @@
 </div>
 <div class="span9">
 <h2><%- msg('user-list') %></h2>
+<p>
 <% if (group.currentUserIsAdmin) { %>
-  <p>
     <a href="/group/<%= group.name %>/adduser" class="btn btn-success">
       <i class="icon-plus icon-white"></i>
       <%- msg('add-user') %>
@@ -95,16 +95,15 @@
     <i class="icon-list-alt icon-white"></i>
       <%- msg('all-users') %>
     </a>
-  </p>
 <% } %>
+<a id="export" href="#" download="contacts-<%= group.name %>.vcf" class="btn"><%- msg('save-as-vcard') %></a>
+</p>
 <% (function () { %>
   <% var users = group.users %>
   <% var showActions = group.currentUserIsAdmin %>
   <% var showBelong = false %>
   <% include ../user/userlist %>
 <% })() %>
-<a id="export" href="#" download="contacts.vcf" class="btn">另存为vCard文件</a>
-
 <script src="/js/base64.js"></script>
 <script src="/js/vcard.js"></script>
 

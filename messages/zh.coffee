@@ -135,3 +135,4 @@ exports.messages =
   "third-party-connection": "第三方连接"
   "renren": "人人网"
   "connect-to-renren": "连接到人人网"
+  "save-as-vcard": "另存为vCard通讯录"
