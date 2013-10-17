@@ -133,6 +133,12 @@ exports.editInfo = (req, res, next) ->
     if err?
       throw err
 
+    # why would an authorized user change his real name!
+    if req.body.surname or req.body.givenname
+      user.isAuthorized obtain(isAuthorized)
+      if isAuthorized
+        throw 'cannot-change-realname'
+
     # Check email
     user.email = user.email.toLowerCase()
     User.findOne {email: user.email}, obtain(existance)

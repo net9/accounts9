@@ -136,3 +136,4 @@ exports.messages =
   "renren": "人人网"
   "connect-to-renren": "连接到人人网"
   "save-as-vcard": "另存为vCard通讯录"
+  "cannot-change-realname": "已认证用户禁止修改真实姓名, 如确有需要请与管理员(net9master@gmail.com)联系"
