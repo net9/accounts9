@@ -134,7 +134,7 @@ exports.editInfo = (req, res, next) ->
       throw err
 
     # why would an authorized user change his real name!
-    if req.body.surname or req.body.givenname
+    if req.body.surname != user.surname or req.body.givenname != user.givenname
       user.isAuthorized obtain(isAuthorized)
       if isAuthorized
         throw 'cannot-change-realname'
