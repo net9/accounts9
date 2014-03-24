@@ -60,7 +60,7 @@
         <% if (user.bachelor.year) { %>
           <%= user.bachelor.year %><%- msg('year') %>
         <% } %>
-        <% if (user.bachelor.classNumber) { %>
+        <% if (user.bachelor.classNumber != undefined) { %>
           <%= user.bachelor.classNumber %><%- msg('class-number') %>
         <% } %>
       </td>
