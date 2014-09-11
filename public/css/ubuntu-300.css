@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Ubuntu Light'), local('Ubuntu-Light'), url(/font/ubuntu-light.ttf) format('truetype');
+}
