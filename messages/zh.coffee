@@ -137,3 +137,8 @@ exports.messages =
   "connect-to-renren": "连接到人人网"
   "save-as-vcard": "另存为vCard通讯录"
   "cannot-change-realname": "已认证用户禁止修改真实姓名, 如确有需要请与管理员(net9master@gmail.com)联系"
+  "fetch-password-tips": "请填入电子邮件地址以获取密码重置链接"
+  "send-mail": "发送邮件"
+  "mail-sent": "邮件已发送"
+  "reset-password": "重置口令"
+  "invalid-code": "无效的校验码"

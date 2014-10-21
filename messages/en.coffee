@@ -68,3 +68,8 @@ exports.messages =
   "app-auth-message": "Are you sure you want to authenticate the application <a href=\"/apps/$1\" target=\"_blank\"><strong>$2</strong></a>? If you do, <strong>$2</strong> will have access to your personal data."
   "footer-text": "<p>This website you're viewing is made possible by countless developers from all over the world. Hail them.</p><p>THU.CS&T.SAST.Network</p>"
   "authorized-apps": "Authorized Apps"
+  "fetch-password-tips": "Please enter your email to receive password recovery link."
+  "send-mail": "Send"
+  "mail-sent": "E-mail successfully sent."
+  "reset-password": "Reset Password"
+  "invalid-code": "Invalid validation code."

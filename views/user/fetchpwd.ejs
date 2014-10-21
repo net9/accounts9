@@ -1,2 +1,15 @@
-<h1>找回口令</h1>
-<p>如果你忘记了登录口令或者用户名，请给站长发邮件（net9master@gmail.com）。</p>
+<form class="horizontal" method="post">
+  <fieldset>
+    <legend><%- msg('fetch-password') %></legend>
+    <div class="field">
+      <label class="control-label" for="email"><%- msg('Email') %></label>
+      <div class="controls">
+        <input type="text" class="text" id="email" name="email">
+        <p class="help-block"><%- msg('fetch-password-tips') %></p>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn"><%- msg('send-mail') %></button>
+    </div>
+  </fieldset>
+</form>
