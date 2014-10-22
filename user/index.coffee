@@ -1,6 +1,7 @@
 'use continuation'
 url = require('url')
 User = require('./model')
+Validation = require('./validation')
 BBSUser = require('../bbs/model')
 ThirdPartyUser = require('./thirdparty')
 Group = require('../group/model')
@@ -69,10 +70,66 @@ exports.login = (req, res) ->
       redirectUrl = '/u/' + user.name  unless redirectUrl
       res.redirect redirectUrl
 
+exports.fetchPassword = (req, res) ->
+  email = req.param('email')
+  emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
+  callback = (err, info) ->
+    if err
+      req.flash 'error', err
+    else if info
+      req.flash 'info', info
+    res.render 'user/fetchpwd',
+      locals:
+        title: messages.get('fetch-password')
+
+  if not email or not emailRegex.exec(email)
+    callback 'invalid-email'
+
+  User.getByEmail email, (err, user) ->
+    return callback(err) if err
+    Validation.newValidationCode user.uid, 'fetchpwd', (err, code) ->
+      return callback(err) if err
+
+      p = {user_name: user.fullname, reset_link: config.host+'/login/resetpwd/'+code}
+      console.log(p)
+      helpers.sendMail 'fetchpwd', p, email, messages.get('fetch-password'), (err, status) ->
+        if err
+          console.log(err)
+          return callback(err) 
+
+        callback null, "mail-sent"
+
 exports.fetchPasswordPage = (req, res) ->
   res.render 'user/fetchpwd',
     locals:
       title: messages.get('fetch-password')
+
+exports.resetPasswordPage = (req, res) ->
+  callback = (err, info) ->
+    if err
+      req.flash 'error', err
+    else if info
+      req.flash 'info', info
+    res.render 'user/resetpwd',
+      locals:
+        title: messages.get('reset-password')
+
+  Validation.checkValidationCode req.params.code, (err, usage, uid) ->
+    if err or usage != 'fetchpwd'
+      console.log(err)
+      return callback('invalid-code') 
+    if req.body.password and req.body["password-repeat"]
+      if req.body.password != req.body["password-repeat"]
+        return callback('password-mismatch')
+      User.getByUid uid, (err, user) ->
+        return callback(err) if err
+        user.password = utils.genPassword req.body.password
+        user.save()
+        Validation.removeValidationCode(req.params.code)
+        req.flash 'info', 'editinfo-success'
+        res.redirect "/login"
+    else
+      callback null, null
 
 exports.logout = (req, res) ->
   req.session.user = null

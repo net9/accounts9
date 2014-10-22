@@ -87,6 +87,22 @@ User.getByName = (name, callback) ->
     else
       callback null, user
 
+User.getByUid = (uid, callback) ->
+  User.findOne uid: uid, (err, user) ->
+    return callback(err) if err
+    if not user
+      callback 'no-such-user'
+    else
+      callback null, user
+
+User.getByEmail = (email, callback) ->
+  User.findOne email: email, (err, user) ->
+    return callback(err) if err
+    if not user
+      callback 'no-such-user'
+    else
+      callback null, user
+
 User.getByNames = (usernames, callback) ->
   users = []
   returned = false

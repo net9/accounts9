@@ -48,7 +48,11 @@ routes = [
     GET: user.logout
   }, {
     path: '/login/fetchpwd'
-    GET: user.fetchPasswordPage
+    POST: user.fetchPassword
+    ALL: user.fetchPasswordPage
+  }, {
+    path: '/login/resetpwd/:code'
+    ALL: user.resetPasswordPage
   }, {
     path: '/register'
     POST: user.register
