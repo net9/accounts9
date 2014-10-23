@@ -81,7 +81,7 @@ exports.genPassword = (rawpass) ->
   hash.update rawpass
   hash.update "salt"
   buf = new Buffer(256)
-  len = buf.write(hash.digest() + "salt", 0, "ascii")
+  len = buf.write(hash.digest('binary') + "salt", 0, "ascii")
   buf.toString("base64", 0, len)
 
 exports.parseJSON = (data, callback) ->
