@@ -79,6 +79,15 @@ User.checkName = (name, callback) ->
     else
       callback null
 
+User.getByNameOrEmail = (name_or_email, callback) ->
+  User.findOne {$or: [{name: name_or_email},{email: name_or_email}]}, (err, user) ->
+    return callback(err) if err
+    if not user
+      callback 'no-such-user'
+    else
+      callback null, user
+
+
 User.getByName = (name, callback) ->
   User.findOne name: name, (err, user) ->
     return callback(err) if err
