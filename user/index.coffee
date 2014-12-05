@@ -55,7 +55,7 @@ exports.loginPage = (req, res) ->
       returnto: req.query.returnto
 
 exports.login = (req, res) ->
-  User.getByName req.body.username, (err, user) ->
+  User.getByNameOrEmail req.body.username, (err, user) ->
     if not err and not (user.checkPassword req.body.password)
       err = 'invalid-password'
     if err
