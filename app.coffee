@@ -96,5 +96,5 @@ app.dynamicHelpers
       null
 
 unless module.parent
-  app.listen 3000
-  console.log "Express server listening on port %d", app.address().port
+  app.listen 3000, "127.0.0.1", ->
+  	console.log "Express server listening on port %d", app.address().port
