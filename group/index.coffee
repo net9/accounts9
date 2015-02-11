@@ -89,7 +89,7 @@ exports.editGroupPage = (req, res, next) ->
     getGroupAndCheckAdminPermission req, res, obtain(group)
     res.render 'group/edit',
       locals:
-        title: messages.get('add-group')
+        title: messages.get('edit-group')
         parentGroup: group.parent
         group: group
   catch err
