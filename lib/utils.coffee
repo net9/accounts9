@@ -82,6 +82,10 @@ exports.genPassword = (rawpass) ->
   hash.update "salt"
   buf = new Buffer(256)
   len = buf.write(hash.digest('binary') + "salt", 0, "ascii")
+  #注意这里，本哈希算法是将 rawpass 加上 “salt” 之后作 sha1 哈希，然后得到二进制的 sha1 散列数据
+  #然后在这个数据的后面加上 “salt” 后进行 base64 编码。
+  #****但是****实际上在写入 buf 的时候，二进制的 sha1 散列数据中的
+  #不可见字符会被替换为 0x20 (即空格)
   buf.toString("base64", 0, len)
 
 exports.parseJSON = (data, callback) ->
