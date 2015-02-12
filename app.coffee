@@ -8,6 +8,7 @@ express = require "express"
 session = require 'express-session'
 methodOverride = require 'method-override'
 errorhandler = require 'errorhandler'
+partials = require 'express-partials'
 MongoStore = (require "connect-mongo") session
 favicon = require 'serve-favicon'
 logger = require 'morgan'
@@ -29,6 +30,7 @@ errorLogfile = fs.createWriteStream config.log.error, flags: "a"
 
 app.use favicon(__dirname + '/public/favicon.ico')
 app.use logger('combined', stream: accessLogfile)
+app.use partials()
 app.set "views", __dirname + "/views"
 app.set "view engine", "ejs"
 app.enable "jsonp callback"

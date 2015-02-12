@@ -9,7 +9,7 @@
           </a>
         <% } %>
     </p>
-    <%- partial('userinfo') %>
+    <%- partial('user/userinfo', {user: user}) %>
     <% if (curUser && curUser.name == user.name) { %>
       <p>
         <a href="/dashboard" class="btn top-right">

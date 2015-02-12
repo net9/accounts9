@@ -3,7 +3,7 @@
         <div class="node" title="<%= groupnode.desc %>"><a href="/group/<%= groupnode.name %>" class="btn"><i class="icon-link"></i></a> <%= groupnode.title %></div>
         <ul>
         <% for (var i in groupnode.children) { %>
-          <%- partial('groupnode', groupnode.children[i]) %>
+          <%- partial('group/groupnode', groupnode.children[i]) %>
         <% } %>
         </ul>
     </li>
