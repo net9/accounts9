@@ -13,6 +13,7 @@ favicon = require 'serve-favicon'
 logger = require 'morgan'
 cookieParser = require 'cookie-parser'
 bodyParser = require 'body-parser'
+extend = require 'node.extend'
 fs = require "fs"
 util = require "util"
 path = require "path"
@@ -56,24 +57,9 @@ app.use require('connect-assets')(
 )
 app.use express.static __dirname + "/public" 
 
-if env is "development"
-  app.use errorhandler(
-    #dumpExceptions: true
-    #showStack: true
-  )
-  app.use logger('combined');
-
-if env is "production"
-  app.error (err, req, res, next) ->
-    meta = "[" + new Date() + "] " + req.url + "\n"
-    errorLogfile.write meta
-    errorLogfile.write err.stack
-    errorLogfile.write "\n"
-    next()
-
 # Helper functions for view rendering
 
-app.helpers
+extend app.locals,
   msg: messages.get.bind messages 
   pageTitle: (title) ->
     if title
@@ -89,24 +75,44 @@ app.helpers
     date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' +
       date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 
-app.dynamicHelpers
-  curUser: (req, res) ->
-    req.session.user
+app.use (req, res, next) ->
+	extend res.locals, 
+		curUser: ((req, res) ->
+			req.session.user
+		) req, res
 
-  error: (req, res) ->
-    err = req.flash "error" 
-    if err.length
-      messages.get err
-    else
-      null
+		error: ((req, res) ->
+			err = req.flash "error" 
+			if err.length
+				messages.get err
+			else
+				null
+		) req, res
 
-  info: (req, res) ->
-    succ = req.flash "info" 
-    if succ.length
-      messages.get succ
-    else
-      null
+		info: ((req, res) ->
+			succ = req.flash "info" 
+			if succ.length
+				messages.get succ
+			else
+				null
+		) req, res
+
+if env is "development"
+  app.use errorhandler(
+    #dumpExceptions: true
+    #showStack: true
+  )
+  app.use logger('combined');
+
+if env is "production"
+  app.error (err, req, res, next) ->
+    meta = "[" + new Date() + "] " + req.url + "\n"
+    errorLogfile.write meta
+    errorLogfile.write err.stack
+    errorLogfile.write "\n"
+    next()
+
 
 unless module.parent
-  app.listen 3000, "127.0.0.1", ->
-  	console.log "Express server listening on port %d", app.address().port
+  server = app.listen 3000, "127.0.0.1", ->
+  	console.log "Express server listening on port %d", server.address().port
