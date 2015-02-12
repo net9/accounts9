@@ -73,3 +73,5 @@ exports.messages =
   "mail-sent": "E-mail successfully sent."
   "reset-password": "Reset Password"
   "invalid-code": "Invalid validation code."
+
+  "search-result": "Search Result"

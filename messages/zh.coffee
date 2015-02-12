@@ -142,3 +142,4 @@ exports.messages =
   "mail-sent": "邮件已发送"
   "reset-password": "重置口令"
   "invalid-code": "无效的校验码"
+  "search-result": "搜索结果"

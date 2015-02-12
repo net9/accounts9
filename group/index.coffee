@@ -47,6 +47,7 @@ exports.groupPage = (req, res, next) ->
     User.getByNames group.admins, obtain(group.admins)
     # Get users that directly belong to this group
     User.getByNames group.users, obtain(group.users)
+    helpers.checkRootAdmin req, res, obtain(group.isRoot), false
     res.render 'group/group',
       locals:
         title: group.title
@@ -157,6 +158,8 @@ exports.allUsersPage = (req, res, next) ->
       user = group.users[i] = group.users[i].toObject()
       Group.getByNames user.groups, obtain(user.groups)
     group.users.indirectList = true
+    helpers.checkRootAdmin req, res, obtain(group.isRoot), false
+    
     res.render 'group/allusers',
       locals:
         title: group.title

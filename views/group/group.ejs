@@ -102,6 +102,7 @@
   <% var users = group.users %>
   <% var showActions = group.currentUserIsAdmin %>
   <% var showBelong = false %>
+  <% var showRootActions = group.isRoot %>
   <% include ../user/userlist %>
 <% })() %>
 <script src="/js/base64.js"></script>

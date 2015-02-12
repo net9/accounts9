@@ -61,14 +61,20 @@ exports.checkAuthorized = (req, res, next) ->
     next err
 
 # Check if current user is root admin
-exports.checkRootAdmin = (req, res, next) ->
+exports.checkRootAdmin = (req, res, next, shouldRedirect = true) ->
   try
     Group.getByName 'root', obtain(rootGroup)
     if req.session.user.name in rootGroup.admins
-      next()
+      if shouldRedirect
+        next()
+      else
+        next(undefined, true)
     else
-      req.flash "error", "permission-denied"
-      res.redirect "/dashboard"
+      if shouldRedirect
+        req.flash "error", "permission-denied"
+        res.redirect "/dashboard"
+      else
+        next(undefined, false)
   catch err
     next err
 

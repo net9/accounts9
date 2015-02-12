@@ -253,10 +253,12 @@ exports.search = (req, res, next) ->
       User.find cond, obtain(users)
     else
       users = []
+    helpers.checkRootAdmin req, res, obtain(isRoot), false
     res.render 'user/searchresult',
       locals:
-        title: '搜索结果'
+        title: messages.get('search-result')
         users: users
+        isRoot: isRoot
   catch err
     next err
 

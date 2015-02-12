@@ -7,7 +7,7 @@
     <th><%= msg('Email') %></th>
     <th><%= msg('mobile') %></th>
     <th><%= msg('birth-date') %></th>
-    <% if (showActions) { %>
+    <% if (showActions||showRootActions) { %>
       <th><%= msg('action') %></th>
     <% } %>
     <% if (showBelong) { %>
@@ -27,14 +27,18 @@
       <td><%= user.email %></td>
       <td><%= user.mobile %></td>
       <td><%= user.birthdate %></td>
-      <% if (showActions) { %>
+      <% if (showActions||showRootActions) { %>
         <td>
-          <a href="/group/<%= group.name %>/deluser/<%= user.name %>" class="btn btn-danger">
-            <i class="icon-trash"></i>
-          </a>
-          <a href="/editinfo/<%= user.name %>" class="btn btn">
-            <i class="icon-edit"></i>
-          </a>
+        	<% if(showActions) { %>
+						<a href="/group/<%= group.name %>/deluser/<%= user.name %>" class="btn btn-danger">
+							<i class="icon-trash"></i>
+						</a>
+					<% } %>
+					<% if(showRootActions) { %>
+						<a href="/editinfo/<%= user.name %>" class="btn btn">
+							<i class="icon-edit"></i>
+						</a>
+					<% } %>
         </td>
       <% } %>
       <% if (showBelong) { %>
