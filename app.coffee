@@ -123,6 +123,12 @@ if env is "production"
     errorLogfile.write "\n"
     next()
 
+app.use (req, res, next) ->
+  res.render 'index',
+    layout: false
+    locals:
+      title: messages.get('404')
+      notFound: true
 
 unless module.parent
   server = app.listen 3000, "127.0.0.1", ->
