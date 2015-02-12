@@ -116,7 +116,7 @@ if env is "development"
   app.use logger('combined');
 
 if env is "production"
-  app.error (err, req, res, next) ->
+  app.use (err, req, res, next) ->
     meta = "[" + new Date() + "] " + req.url + "\n"
     errorLogfile.write meta
     errorLogfile.write err.stack
