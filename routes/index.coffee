@@ -8,7 +8,6 @@ indexPage = (req, res) ->
     layout: false
     locals:
       title: messages.get('index')
-
 aboutPage = (req, res) ->
   res.render 'about',
     locals:

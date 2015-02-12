@@ -11,6 +11,7 @@ errorhandler = require 'errorhandler'
 MongoStore = (require "connect-mongo") session
 favicon = require 'serve-favicon'
 logger = require 'morgan'
+flash = require 'connect-flash'
 cookieParser = require 'cookie-parser'
 bodyParser = require 'body-parser'
 extend = require 'node.extend'
@@ -36,6 +37,7 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded(extended: false)
 app.use methodOverride '_method'
 app.use cookieParser()
+app.use flash()
 app.use session(
 	secret: config.cookieSecret
 	store: new MongoStore(
@@ -46,6 +48,35 @@ app.use session(
 	resave: false
 	saveUninitialized: false
 )
+
+#原来的DynamicHelpers
+app.use (req, res, next) ->
+	extend res.locals, 
+		curUser: ((req, res) ->
+			if req.session.user?
+				req.session.user
+			else
+				null
+		) req, res
+
+		error: ((req, res) ->
+			err = req.flash "error" 
+			if err.length
+				messages.get err
+			else
+				null
+		) req, res
+
+		info: ((req, res) ->
+			succ = req.flash "info" 
+			if succ.length
+				messages.get succ
+			else
+				null
+		) req, res
+	next();
+
+
 
 require("./routes")(app)
 app.use require("./oauth") express.Router()
@@ -74,28 +105,6 @@ extend app.locals,
     date = new Date(timestamp * 1000)
     date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' +
       date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-
-app.use (req, res, next) ->
-	extend res.locals, 
-		curUser: ((req, res) ->
-			req.session.user
-		) req, res
-
-		error: ((req, res) ->
-			err = req.flash "error" 
-			if err.length
-				messages.get err
-			else
-				null
-		) req, res
-
-		info: ((req, res) ->
-			succ = req.flash "info" 
-			if succ.length
-				messages.get succ
-			else
-				null
-		) req, res
 
 if env is "development"
   app.use errorhandler(
