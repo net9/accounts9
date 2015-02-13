@@ -1,3 +1,4 @@
+'use continuation'
 Group = require '../group/model' 
 User = require '../user/model' 
 config = require '../config' 
@@ -5,7 +6,7 @@ assert = require 'assert'
 
 module.exports = (app) ->
   interfacePath = '/interface'
-  app.all interfacePath, (req, res, next) ->
+  app.use interfacePath, (req, res, next) ->
     secret = req.body.interfaceSecret
     secret ?= req.query.interfaceSecret
     if config.interfaceSecret isnt secret
@@ -61,3 +62,9 @@ module.exports = (app) ->
       groups: req.groups
 
     res.json result
+  
+  app.get interfacePath + '/userinfo', (req, res) ->
+    User.getByName req.param('user'), cont(err, user)
+    res.json
+      err: err
+      user: user
