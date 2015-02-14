@@ -64,7 +64,13 @@ module.exports = (app) ->
     res.json result
   
   app.get interfacePath + '/userinfo', (req, res) ->
-    User.getByName req.param('user'), cont(err, user)
+    User.getByName req.query.user, cont(err, user)
     res.json
-      err: err
+      error: err
       user: user
+      
+  app.post interfacePath + '/getUserByIdentity', (req, res) -> 
+  	User.getByIdentity new Buffer(req.body.identity), cont(err, user)
+  	res.json
+  		error: err
+  		user: user
