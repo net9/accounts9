@@ -9,7 +9,7 @@
           </a>
         <% } %>
     </p>
-    <%- partial('user/userinfo', {user: user}) %>
+    <%- partial('user/userinfo', {user: user, isRoot: isRoot}) %>
     <% if (curUser && curUser.name == user.name) { %>
       <p>
         <a href="/dashboard" class="btn top-right">
@@ -17,6 +17,12 @@
           <%= msg('dashboard') %>
         </a>
       </p>
+    <% } %>
+    <% if (isRoot && curUser.name != user.name) { %>
+    	<a href="/editinfo/<%= user.name %>" class="btn top-right">
+					<i class="icon-edit icon-white"></i>
+					<%= msg('edit-userinfo') %>
+			</a>
     <% } %>
 
     <% if (thirdpartyUser) { %>

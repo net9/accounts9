@@ -1,0 +1,20 @@
+<h1><a href="/u/<%= user.name %>"><%= user.name %></a> - <%= msg('bind-cards') %></h1>
+<ul class="action-list">
+	<% user.identity.forEach(function(id) { %>
+		<li>
+			<a href="<%= user.name %>/remove?identity=<%= id.toString('hex') %>" class="btn btn-danger">
+				<i class="icon-trash"></i> <%= msg("del-identity") %>
+			</a>
+			<%= beautify(id.toString('hex').toUpperCase()) %>
+		</li>
+	<% }) %>
+	<li>
+		<form action="<%= user.name %>/add" method="GET">
+			<button type="submit" class="btn">
+				<i class="icon-plus icon-white"></i>
+				<%= msg('add-identity') %>
+			</button>
+			<input type="text" class="text" id="identity" name="identity" />
+		</form>
+	</li>
+</ul>

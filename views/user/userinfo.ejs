@@ -114,4 +114,15 @@
     </td>
   </tr>
   <% } %>
+  <tr>
+  	<th><%= msg('bind-cards') %></th>
+  	<td>
+		<% if (isRoot) { %>
+		<a href="/card9/<%= user.name %>">
+		<% } %>
+		<%= user.identity.length %> <%= msg('card-unit') %>
+		<% if (isRoot) { %>
+		</a>
+		<% } %>
+  	</td>
 </table>

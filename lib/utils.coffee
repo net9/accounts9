@@ -94,3 +94,13 @@ exports.parseJSON = (data, callback) ->
   catch err
     return callback err
   callback null, data
+
+exports.hexStringToBuffer = (str) ->
+	try
+		buf = new Buffer str.replace(///\ +///g, ''), 'hex'
+		buf
+	catch err
+		throw err.message
+
+exports.hexStringBeautify = (str) ->
+	(str.substr(x, 2) for x in [0..str.length] by 2).join(' ')

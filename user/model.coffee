@@ -37,6 +37,7 @@ UserSchema = new mongoose.Schema(
   doctor:
     year: Number
     classNumber: Number
+  identity: [ Buffer ]
 )
 
 mongoose.model "User", UserSchema
@@ -60,6 +61,7 @@ UserSchema.pre 'save', (next) ->
   @birthdate ?= ''
   @regtime ?= new Date()
   @groups ?= []
+  @identity ?= []
 
   next()
 
@@ -78,6 +80,15 @@ User.checkName = (name, callback) ->
       callback "username-occupied"
     else
       callback null
+
+User.checkIdentity = (identity, callback) ->
+	User.getByIdentity identity, (err, user) ->
+		if err is 'no-such-user'
+			callback null
+		else if err
+			callback err
+		else
+			callback 'identity-exist'
 
 User.getByNameOrEmail = (name_or_email, callback) ->
   User.findOne {$or: [{name: name_or_email},{email: name_or_email}]}, (err, user) ->
@@ -111,6 +122,14 @@ User.getByEmail = (email, callback) ->
       callback 'no-such-user'
     else
       callback null, user
+
+User.getByIdentity = (identity, callback) ->
+	User.findOne identity: $elemMatch: $eq: identity, (err, user) ->
+		return callback(err) if err
+		if not user
+		  callback 'no-such-user'
+		else
+			callback null, user
 
 User.getByNames = (usernames, callback) ->
   users = []
@@ -218,6 +237,26 @@ User::addToGroup = (groupName, callback) ->
       return callback("already-in-this-group")
   @groups.push groupName
   @save callback
+
+User::addIdentity = (identity, callback) ->
+  @identity ?= []
+  self = this
+  try
+    User.checkIdentity(identity, obtain())
+    self.identity.push identity
+    self.save callback
+  catch err
+  	callback err
+
+User::removeIdentity = (identity, callback) ->
+	i = 0
+	while i < @identity.length
+    if @identity[i].equals identity
+      @identity = @identity.slice(0, i).concat(@identity.slice(i + 1))
+      @save callback
+      return
+    i++
+  callback "no-such-identity"
 
 User::addToDefaultGroup = (callback) ->
   self = this

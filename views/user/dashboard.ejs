@@ -5,7 +5,7 @@
 </a>
 <h2><%= msg('userinfo') %></h2>
 <div id="profile" class="no-avatar">
-    <%- partial('user/userinfo', {user: user}) %>
+    <%- partial('user/userinfo', {user: user, isRoot: isRoot}) %>
 </div>
 <hr>
 
