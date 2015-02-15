@@ -99,7 +99,7 @@ exports.fetchPassword = (req, res) ->
       helpers.sendMail 'fetchpwd', p, email, messages.get('fetch-password'), (err, status) ->
         if err
           console.log(err)
-          return callback(err) 
+          return callback 'send-failed'
 
         callback null, "mail-sent"
 

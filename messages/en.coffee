@@ -70,6 +70,7 @@ exports.messages =
   "authorized-apps": "Authorized Apps"
   "fetch-password-tips": "Please enter your email to receive password recovery link."
   "send-mail": "Send"
+  "send-failed": "Failed to send E-mail."
   "mail-sent": "E-mail successfully sent."
   "reset-password": "Reset Password"
   "invalid-code": "Invalid validation code."
