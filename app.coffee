@@ -41,42 +41,46 @@ app.use methodOverride '_method'
 app.use cookieParser()
 app.use flash()
 app.use session(
-	secret: config.cookieSecret
-	store: new MongoStore(
-		db: config.db.name
-		host: config.db.host
-		port: config.db.port
-	)
-	resave: false
-	saveUninitialized: false
+  secret: config.cookieSecret
+  store: new MongoStore(
+    db: config.db.name
+    host: config.db.host
+    port: config.db.port
+  )
+  resave: false
+  saveUninitialized: false
 )
 
 #原来的DynamicHelpers
 app.use (req, res, next) ->
-	extend res.locals, 
-		curUser: ((req, res) ->
-			if req.session.user?
-				req.session.user
-			else
-				null
-		) req, res
+  _render =  res.render
+  res.render = () ->
+    extend res.locals, 
+      curUser: ((req, res) ->
+        if req.session.user?
+          req.session.user
+        else
+          null
+      ) req, res
+  
+      error: ((req, res) ->
+        err = req.flash "error" 
+        if err.length
+          messages.get err
+        else
+          null
+      ) req, res
 
-		error: ((req, res) ->
-			err = req.flash "error" 
-			if err.length
-				messages.get err
-			else
-				null
-		) req, res
+      info: ((req, res) ->
+        succ = req.flash "info" 
+        if succ.length
+          messages.get succ
+        else
+          null
+      ) req, res
+    return _render.apply res, arguments
+  next()
 
-		info: ((req, res) ->
-			succ = req.flash "info" 
-			if succ.length
-				messages.get succ
-			else
-				null
-		) req, res
-	next();
 
 
 
@@ -85,8 +89,8 @@ app.use require("./oauth") express.Router()
 app.use require("./app/") express.Router()
 app.use require("./interface") express.Router() 
 app.use require('connect-assets')(
-	src: path.join __dirname, 'assets'
-	buildDir: 'public'
+  src: path.join __dirname, 'assets'
+  buildDir: 'public'
 )
 app.use express.static __dirname + "/public" 
 
@@ -105,7 +109,7 @@ extend app.locals,
   
   displayDate: (timestamp) ->
     date = new Date(timestamp * 1000)
-    date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' +
+    date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' +
       date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 
 if env is "development"
@@ -132,4 +136,4 @@ app.use (req, res, next) ->
 
 unless module.parent
   server = app.listen 3000, "127.0.0.1", ->
-  	console.log "Express server listening on port %d", server.address().port
+    console.log "Express server listening on port %d", server.address().port
