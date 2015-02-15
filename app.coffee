@@ -53,30 +53,34 @@ app.use session(
 
 #原来的DynamicHelpers
 app.use (req, res, next) ->
-	extend res.locals, 
-		curUser: ((req, res) ->
-			if req.session.user?
-				req.session.user
-			else
-				null
-		) req, res
+	_render =  res.render
+	res.render = () ->
+		extend res.locals, 
+			curUser: ((req, res) ->
+				if req.session.user?
+					req.session.user
+				else
+					null
+			) req, res
+	
+			error: ((req, res) ->
+				err = req.flash "error" 
+				if err.length
+					messages.get err
+				else
+					null
+			) req, res
 
-		error: ((req, res) ->
-			err = req.flash "error" 
-			if err.length
-				messages.get err
-			else
-				null
-		) req, res
+			info: ((req, res) ->
+				succ = req.flash "info" 
+				if succ.length
+					messages.get succ
+				else
+					null
+			) req, res
+		return _render.apply res, arguments
+	next()
 
-		info: ((req, res) ->
-			succ = req.flash "info" 
-			if succ.length
-				messages.get succ
-			else
-				null
-		) req, res
-	next();
 
 
 
