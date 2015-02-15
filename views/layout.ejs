@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><%= title %> - Accounts9</title>
     <link rel="shortcut icon" href="/favicon.ico">
-	<!--<link href='//fonts.googleapis.com/css?family=Ubuntu:300' rel='stylesheet' type='text/css'>-->
+  <!--<link href='//fonts.googleapis.com/css?family=Ubuntu:300' rel='stylesheet' type='text/css'>-->
     <link href='/css/ubuntu-300.css' rel='stylesheet' type='text/css'>
     <%- css('style') %>
     <script>
@@ -20,11 +20,11 @@
 <body>
     <div id="page">
         <div id="header">
-					  <% if (curUser) { %>
-							<div id="logo"><a href="/u/<%= curUser.name %>">Accounts9</a></div>
-						<% } else { %>
-							<div id="logo">Accounts9</div>
-						<% } %>
+            <% if (curUser) { %>
+              <div id="logo"><a href="/u/<%= curUser.name %>">Accounts9</a></div>
+            <% } else { %>
+              <div id="logo">Accounts9</div>
+            <% } %>
             <ul id="nav">
               <% if (!curUser) { %>
                 <li><a class="btn" href="/login"><%- msg('Login') %></a></li>
