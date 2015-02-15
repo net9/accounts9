@@ -83,7 +83,7 @@ exports.fetchPassword = (req, res) ->
         title: messages.get('fetch-password')
 
   if not email or not emailRegex.exec(email)
-    callback 'invalid-email'
+    return callback 'invalid-email'
 
   User.getByEmail email, (err, user) ->
     return callback(err) if err
