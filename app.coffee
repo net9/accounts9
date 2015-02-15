@@ -105,7 +105,7 @@ extend app.locals,
   
   displayDate: (timestamp) ->
     date = new Date(timestamp * 1000)
-    date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' +
+    date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' +
       date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 
 if env is "development"
