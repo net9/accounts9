@@ -75,33 +75,26 @@ exports.login = (req, res) ->
       res.redirect redirectUrl
 
 exports.fetchPassword = (req, res) ->
-  email = req.param('email')
-  emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
-  callback = (err, info) ->
-    if err
-      req.flash 'error', err
-    else if info
-      req.flash 'info', info
-    res.render 'user/fetchpwd',
-      locals:
-        title: messages.get('fetch-password')
+  try
+    email = req.param('email')
+    emailRegex = /^([a-z0-9_\.\-])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+$/
+    
+    if not email or not emailRegex.exec(email)
+      throw 'invalid-email'
 
-  if not email or not emailRegex.exec(email)
-    return callback 'invalid-email'
-
-  User.getByEmail email, (err, user) ->
-    return callback(err) if err
-    Validation.newValidationCode user.uid, 'fetchpwd', (err, code) ->
-      return callback(err) if err
-
-      p = {user_name: user.fullname, reset_link: config.host+'/login/resetpwd/'+code}
-      console.log(p)
-      helpers.sendMail 'fetchpwd', p, email, messages.get('fetch-password'), (err, status) ->
-        if err
-          console.log(err)
-          return callback 'send-failed'
-
-        callback null, "mail-sent"
+    User.getByEmail email, obtain(user)
+    Validation.newValidationCode user.uid, 'fetchpwd', obtain(code)
+    p = {user_name: user.fullname, reset_link: config.host+'/login/resetpwd/'+code}
+    console.log(p)
+    helpers.sendMail 'fetchpwd', p, email, messages.get('fetch-password'), (err, status) ->
+      if err
+        console.log err
+      else 
+        console.log "mail sent for " + user.name
+    req.flash 'info', 'mail-sending'
+    res.redirect '/login'
+  catch err
+    helpers.errorRedirect(req, res, err, '/login/fetchpwd')
 
 exports.fetchPasswordPage = (req, res) ->
   res.render 'user/fetchpwd',
