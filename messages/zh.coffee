@@ -141,6 +141,7 @@ exports.messages =
   "fetch-password-tips": "请填入电子邮件地址以获取密码重置链接"
   "send-mail": "发送邮件"
   "send-failed": "邮件发送失败"
+  "mail-sending": "邮件正在发送中"
   "mail-sent": "邮件已发送"
   "reset-password": "重置口令"
   "invalid-code": "无效的校验码"
