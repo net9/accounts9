@@ -81,9 +81,7 @@ app.use (req, res, next) ->
     return _render.apply res, arguments
   next()
 
-
-
-
+app.use (require './lib/utils').jsonOrP
 require("./routes")(app)
 app.use require("./oauth") express.Router()
 app.use require("./app/") express.Router()

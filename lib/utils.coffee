@@ -94,3 +94,12 @@ exports.parseJSON = (data, callback) ->
   catch err
     return callback err
   callback null, data
+exports.jsonOrP = (req, res, next) ->
+  res.jsonOrP = (obj) ->
+    callbackName = req.app.get('jsonp callback name');
+    if req.query[callbackName]?
+      jsonOrP = res.jsonp
+    else
+      jsonOrP = res.json
+    jsonOrP.apply res, [obj] 
+  next()
