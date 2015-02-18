@@ -104,3 +104,13 @@ exports.hexStringToBuffer = (str) ->
 
 exports.hexStringBeautify = (str) ->
 	(str.substr(x, 2) for x in [0..str.length] by 2).join(' ')
+
+exports.jsonOrP = (req, res, next) ->
+  res.jsonOrP = (obj) ->
+    callbackName = req.app.get('jsonp callback name');
+    if req.query[callbackName]?
+      jsonOrP = res.jsonp
+    else
+      jsonOrP = res.json
+    jsonOrP.apply res, [obj] 
+  next()

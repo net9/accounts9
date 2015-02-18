@@ -23,7 +23,7 @@ module.exports = (app) ->
       if redirect_uri
         return res.redirect(redirect_uri + "?error=invalid_request" + state)
       else
-        return res.json(error: "invalid_request", 400)
+        return res.jsonOrP(error: "invalid_request", 400)
     appman.getByID clientid, (result) ->
       if not result.success
         return res.redirect(redirect_uri + "?error=invalid_client" + state)
@@ -77,7 +77,7 @@ module.exports = (app) ->
     res.header 'Access-Control-Allow-Origin', '*'
     res.header 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS'
     if not clientid or not secret or (not code and not username)
-      return res.json error: "invalid_request", 400
+      return res.jsonOrP error: "invalid_request", 400
 
     appman.authenticate
       clientid: clientid
@@ -93,7 +93,7 @@ module.exports = (app) ->
           if not err and code.clientid isnt clientid
             err = "invalid_grant"
           if err
-            return res.json error: err, 400
+            return res.jsonOrP error: err, 400
           req.code = code
           next()
       else
@@ -101,7 +101,7 @@ module.exports = (app) ->
         User.getByName username, (err, user) ->
           if not err and not user.checkPassword password
             err = "invalid_password"
-          return res.json error: err, 400 if err
+          return res.jsonOrP error: err, 400 if err
           req.user = user
           req.clientid = clientid
           next()
@@ -111,7 +111,7 @@ module.exports = (app) ->
     code = req.code
     oauthman.generateAccessTokenFromCode code, (err, token) ->
       #Generate access token from code
-      return res.json error: err, 400 if err
+      return res.jsonOrP error: err, 400 if err
       req.token = token
       next()
 
@@ -124,13 +124,13 @@ module.exports = (app) ->
       scope: 'all'
       clientid: req.clientid
     oauthman.genAccessToken token, (err, token) ->
-      return res.json error: err, 400 if err
+      return res.jsonOrP error: err, 400 if err
       req.token = token
       next()
 
   app.all accessTokenPath, (req, res, next) ->
     token = req.token
-    res.json
+    res.jsonOrP
       access_token: token.accesstoken
       expires_in: ~~((token.expiredate - new Date()) / 1000)
 
@@ -143,15 +143,15 @@ module.exports = (app) ->
           req.tokeninfo = token
           next()
         else
-          res.json error: "invalid_token", 403
+          res.jsonOrP error: "invalid_token", 403
     else
-      res.json error: "invalid_token", 403
+      res.jsonOrP error: "invalid_token", 403
 
   app.get "/api/userinfo", (req, res) ->
     User.getByName req.param('user') ? req.tokeninfo.username, (err, user) ->
       res.header 'Access-Control-Allow-Origin', '*'
       res.header 'Access-Control-Allow-Methods', 'GET'
-      res.json
+      res.jsonOrP
         err: err
         user: user
 
@@ -159,13 +159,13 @@ module.exports = (app) ->
     Group.getByName req.param('group'), (err, group) ->
       res.header 'Access-Control-Allow-Origin', '*'
       res.header 'Access-Control-Allow-Methods', 'GET'
-      res.json
+      res.jsonOrP
         err: err
         group: group
 
   app.get "/api/bbsuserinfo", (req, res) ->
     BBSUser.getAndUpdate req.tokeninfo.uid, (err, bbsUser) ->
-      res.json
+      res.jsonOrP
         err: err
         user: bbsUser
 
@@ -173,18 +173,18 @@ module.exports = (app) ->
   app.get "/api/*", (req, res, next) ->
     interfaceSecret = req.param("interface_secret")
     if not (config.interfaceSecret is interfaceSecret)
-      return res.json error: "invalid_secret", 403
+      return res.jsonOrP error: "invalid_secret", 403
     next()
 
   app.get "/api/grouptimestamp", (req, res) ->
     Metainfo.groupTimestamp (err, group_timestamp) ->
-      res.json
+      res.jsonOrP
         err: err
         group_timestamp: group_timestamp.getTime()
 
   app.get "/api/groups", (req, res) ->
     Group.getAll (err, groups) ->
-      res.json
+      res.jsonOrP
         err: err
         groups: groups
 
@@ -197,7 +197,7 @@ returnCode = (req, res, scope, state, redirect_uri, perm_auth) ->
     clientid: req.query.client_id
   , (err, code) ->
     if err
-      res.json err
+      res.jsonOrP err
     else
       if perm_auth
         appman.markAuthorized req.session.user.name, req.query.client_id
