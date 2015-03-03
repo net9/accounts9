@@ -24,7 +24,7 @@
       var callback = function(data){
         if(data !== null){
           $("#cardList li").removeClass("highLight");
-          var ident = data.map(function(i){return i.toString(16)}).join('');
+          var ident = data.map(function(i){var s=i.toString(16); if(s.length == 1){s = '0' + s} return s;}).join('');
           console.log(ident);
           var exist = $("#card" + ident).length;
           if(exist){
@@ -32,7 +32,7 @@
               $("#card" + ident).addClass("highLight");
             }, 0);
           }else{
-            $("#identity").prop('value', data.map(function(i){return i.toString(16).toUpperCase()}).join(' '));
+            $("#identity").prop('value', data.map(function(i){var s=i.toString(16).toUpperCase(); if(s.length == 1){s = '0' + s} return s;}).join(' '));
           }
         }
         $.getJSON("/card9/whatScanning", callback);
