@@ -70,7 +70,9 @@ module.exports = (app) ->
       user: user
       
   app.post interfacePath + '/getUserByIdentity', (req, res) -> 
-  	User.getByIdentity new Buffer(req.body.identity), cont(err, user)
-  	res.json
-  		error: err
-  		user: user
+    cardIdentity = new Buffer(req.body.identity)
+    req.app.emit('scan', cardIdentity)
+    User.getByIdentity cardIdentity, cont(err, user)
+    res.json
+      error: err
+      user: user

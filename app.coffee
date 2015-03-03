@@ -29,7 +29,10 @@ accessLogfile = fs.createWriteStream config.log.access, flags: "a"
 errorLogfile = fs.createWriteStream config.log.error, flags: "a"
 
 app.use favicon(__dirname + '/public/favicon.ico')
-app.use logger('combined', stream: accessLogfile)
+if env is "development"
+  app.use logger('dev')
+else
+  app.use logger('combined', stream: accessLogfile)
 app.use partials()
 app.set "views", __dirname + "/views"
 app.set "view engine", "ejs"

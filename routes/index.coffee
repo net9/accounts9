@@ -116,24 +116,27 @@ routes = [
     path: '/bbs/token'
     GET: bbs.token
   }, {
-  	path: '/card9'
-  	use: card9.permissionCheck
+    path: '/card9'
+    use: card9.permissionCheck
   }, {
-  	path: '/card9/:username'
-  	use: card9.helper
+    path: '/card9/whatScanning'
+    GET: card9.whatScanning
   }, {
-  	path: '/card9/:username'
-  	GET: card9.userPage
+    path: '/card9/:username'
+    use: card9.helper
   }, {
-  	path: '/card9/:username/add'
-  	GET: card9.add
+    path: '/card9/:username'
+    GET: card9.userPage
   }, {
-  	path: '/card9/:username/remove'
-  	GET: card9.removePage
+    path: '/card9/:username/add'
+    GET: card9.add
   }, {
-  	path: '/card9/:username/remove'
-  	POST: card9.remove
-  }
+    path: '/card9/:username/remove'
+    GET: card9.removePage
+  }, {
+    path: '/card9/:username/remove'
+    POST: card9.remove
+  },
 ]
 
 module.exports = (app) ->

@@ -1,7 +1,7 @@
 <h1><a href="/u/<%= user.name %>"><%= user.name %></a> - <%= msg('bind-cards') %></h1>
-<ul class="action-list">
+<ul class="action-list" id="cardList">
 	<% user.identity.forEach(function(id) { %>
-		<li>
+		<li id="card<%= id.toString('hex') %>">
 			<a href="<%= user.name %>/remove?identity=<%= id.toString('hex') %>" class="btn btn-danger">
 				<i class="icon-trash"></i> <%= msg("del-identity") %>
 			</a>
@@ -18,3 +18,42 @@
 		</form>
 	</li>
 </ul>
+<script>
+  (function($){
+    $().ready(function(){
+      var callback = function(data){
+        if(data !== null){
+          $("#cardList li").removeClass("highLight");
+          var ident = data.map(function(i){return i.toString(16)}).join('');
+          console.log(ident);
+          var exist = $("#card" + ident).length;
+          if(exist){
+            setTimeout(function(){
+              $("#card" + ident).addClass("highLight");
+            }, 0);
+          }else{
+            $("#identity").prop('value', data.map(function(i){return i.toString(16).toUpperCase()}).join(' '));
+          }
+        }
+        $.getJSON("/card9/whatScanning", callback);
+      };
+      callback(null);
+    })
+  })(jQuery);
+</script>
+<style>
+  @-webkit-keyframes twinkling{    /*透明度由0到1*/  
+   0%{  
+      opacity: 1; 
+    }  
+    50%{  
+      opacity: 0;
+    } 
+    100%{
+      opacity: 1;
+    } 
+  }
+  li.highLight{
+    -webkit-animation: twinkling 1s ease-in-out; 
+  }
+</style>

@@ -10,23 +10,23 @@ config = require('../config')
 ########
 
 exports.permissionCheck = (req, res, next) ->
-	try
-		helpers.checkRootAdmin req, res, obtain()
-		next()
-	catch err
-		helpers.errorRedirect(req, res, err, '/dashboard')
-		
+  try
+    helpers.checkRootAdmin req, res, obtain()
+    next()
+  catch err
+    helpers.errorRedirect(req, res, err, '/dashboard')
+    
 exports.helper = (req, res, next) ->
-	try
-		User.getByName req.params.username, obtain(req.user)
-		req.query.identity ?= ""
-		try 
-			req.identity = utils.hexStringToBuffer(req.query.identity)
-			next()
-		catch err
-			helpers.errorRedirect(req, res, err, '/card9/' + req.user.name)
-	catch err
-		helpers.errorRedirect(req, res, err, '/dashboard')
+  try
+    User.getByName req.params.username, obtain(req.user)
+    req.query.identity ?= ""
+    try 
+      req.identity = utils.hexStringToBuffer(req.query.identity)
+      next()
+    catch err
+      helpers.errorRedirect(req, res, err, '/card9/' + req.user.name)
+  catch err
+    helpers.errorRedirect(req, res, err, '/dashboard')
 
 exports.userPage = (req, res, next) ->
   try
@@ -39,20 +39,20 @@ exports.userPage = (req, res, next) ->
     helpers.errorRedirect(req, res, err, '/dashboard')
 
 exports.add = (req, res, next) ->
-	try
-		req.user.addIdentity req.identity, obtain()
-		req.flash 'info', 'add-identity-success'
-		res.redirect '/card9/' + req.user.name
-	catch err
+  try
+    req.user.addIdentity req.identity, obtain()
+    req.flash 'info', 'add-identity-success'
+    res.redirect '/card9/' + req.user.name
+  catch err
     helpers.errorRedirect(req, res, err, '/card9/' + req.user.name)
 
 exports.remove = (req, res, next) ->
-	try
-		req.user.removeIdentity req.identity, obtain()
-		req.flash 'info', 'remove-identity-success'
-		res.redirect '/card9/' + req.user.name
-	catch err
-		helpers.errorRedirect(req, res, err, '/card9/' + req.user.name)
+  try
+    req.user.removeIdentity req.identity, obtain()
+    req.flash 'info', 'remove-identity-success'
+    res.redirect '/card9/' + req.user.name
+  catch err
+    helpers.errorRedirect(req, res, err, '/card9/' + req.user.name)
 
 exports.removePage = (req, res, next) ->
   try
@@ -64,3 +64,13 @@ exports.removePage = (req, res, next) ->
         confirm: messages.get('del-identity-confirm')
   catch err
     helpers.errorRedirect req, res, err, backUrl
+exports.whatScanning = (req, res, next) ->
+  callback = (identity) ->
+    res.json identity
+    clearTimeout timeoutId
+  req.app.once 'scan', callback
+  timeoutId = setTimeout ()->
+    req.app.removeListener('scan', callback)
+    res.json null
+  ,30000
+    
