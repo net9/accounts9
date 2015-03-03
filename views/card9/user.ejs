@@ -42,7 +42,18 @@
   })(jQuery);
 </script>
 <style>
-  @-webkit-keyframes twinkling{    /*透明度由0到1*/  
+  @-webkit-keyframes twinkling{  
+   0%{  
+      opacity: 1; 
+    }  
+    50%{  
+      opacity: 0;
+    } 
+    100%{
+      opacity: 1;
+    } 
+  }
+  @keyframes twinkling{  
    0%{  
       opacity: 1; 
     }  
@@ -54,6 +65,7 @@
     } 
   }
   li.highLight{
-    -webkit-animation: twinkling 1s ease-in-out; 
+    -webkit-animation: twinkling 1s ease-in-out;
+    animation: twinkling 1s ease-in-out; 
   }
 </style>
