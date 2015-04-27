@@ -1,4 +1,7 @@
-#!/usr/bin/env coffee
+#!/bin/sh
+###
+exec continuation -c -e $0 $* 
+###
 
 # Module dependencies
 
