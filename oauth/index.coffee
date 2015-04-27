@@ -1,3 +1,4 @@
+"use continuation"
 appman = require("../app/man")
 oauthman = require("./man")
 messages = require("../messages")
@@ -154,7 +155,20 @@ module.exports = (app) ->
       res.jsonOrP
         err: err
         user: user
-
+  app.get "/api/belongs", (req, res) ->
+    try 
+      res.header 'Access-Control-Allow-Origin', '*'
+      res.header 'Access-Control-Allow-Methods', 'GET'
+      User.getByName req.tokeninfo.username, obtain(user)
+      user.getAllGroups obtain(groups)
+      groups = groups.map (ele)->ele.name
+      result = req.param('group') in groups
+      res.jsonOrP
+        err: null
+        result: result
+    catch err
+      res.jsonOrP
+        err: err
   app.get "/api/groupinfo", (req, res) ->
     Group.getByName req.param('group'), (err, group) ->
       res.header 'Access-Control-Allow-Origin', '*'
