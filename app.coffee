@@ -22,6 +22,7 @@ extend = require 'node.extend'
 fs = require "fs"
 util = require "util"
 path = require "path"
+ldapIfce = require './ldap'
 
 # Configuration
 
@@ -141,3 +142,6 @@ app.use (req, res, next) ->
 unless module.parent
   server = app.listen 3000, "127.0.0.1", ->
     console.log "Express server listening on port %d", server.address().port
+
+    ldapIfce.listen 1389, '0.0.0.0', ->
+      console.log 'LDAP interface up at: %s', ldapIfce.url
