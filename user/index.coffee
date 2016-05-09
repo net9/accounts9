@@ -181,6 +181,8 @@ exports.editInfo = (req, res, next) ->
       username = req.params.username
       editByAdmin = true
     User.getByName username, obtain(user)
+    # force rewrite submitted username to real username
+    req.body.username = username
     User.fillFrom user, req.body
 
     User.validate user, obtain()
